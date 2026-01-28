@@ -6,12 +6,9 @@ Build your English vocabulary with these themed word lists and exercises.
 
 1. [Daily Routines](01-daily-routines.md)
 2. [Travel and Tourism](02-travel-tourism.md)
-3. [Work and Education](03-work-education.md)
-4. [Health and Fitness](04-health-fitness.md)
-5. [Technology and Media](05-technology-media.md)
-6. [Environment and Nature](06-environment-nature.md)
-7. [Common Phrasal Verbs](07-phrasal-verbs.md)
-8. [Expressions and Idioms](08-expressions-idioms.md)
+3. [Common Phrasal Verbs](07-phrasal-verbs.md)
+
+**Coming soon**: Work and Education, Health and Fitness, Technology and Media, Environment and Nature, Expressions and Idioms!
 
 ## How to Learn Vocabulary
 

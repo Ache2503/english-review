@@ -8,8 +8,8 @@ This section covers essential grammar topics for B1 level English learners.
 2. [Conditional Sentences Type 1 & 2](02-conditionals.md)
 3. [Passive Voice](03-passive-voice.md)
 4. [Modal Verbs](04-modal-verbs.md)
-5. [Reported Speech](05-reported-speech.md)
-6. [Relative Clauses](06-relative-clauses.md)
+
+**Coming soon**: Reported Speech, Relative Clauses, and more grammar topics!
 
 ## How to Study
 

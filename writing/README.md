@@ -5,11 +5,8 @@ Develop your writing skills with these prompts and guidelines.
 ## Types of Writing
 
 1. [Informal Letters and Emails](01-informal-letters.md)
-2. [Formal Emails](02-formal-emails.md)
-3. [Descriptive Writing](03-descriptive-writing.md)
-4. [Opinion Essays](04-opinion-essays.md)
-5. [Narrative Writing](05-narrative-writing.md)
-6. [Instructions and Processes](06-instructions.md)
+
+**Coming soon**: Formal Emails, Descriptive Writing, Opinion Essays, Narrative Writing, and Instructions!
 
 ## Writing Process
 

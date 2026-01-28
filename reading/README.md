@@ -23,11 +23,9 @@ Improve your reading skills with these texts and exercises.
 
 ## Reading Texts
 
-1. [A Day in London](01-london-trip.md) - Travel narrative
-2. [The Benefits of Exercise](02-exercise-benefits.md) - Informative text
-3. [A Letter to a Friend](03-friendly-letter.md) - Personal correspondence
-4. [Working from Home](04-remote-work.md) - Opinion article
-5. [Traditional vs Modern Education](05-education-comparison.md) - Comparison text
+1. [A Day in London](01-london-trip.md) - Travel narrative with comprehension exercises
+
+**Coming soon**: More reading texts on various topics including health, work, education, and current events!
 
 ## Tips for Better Reading
 

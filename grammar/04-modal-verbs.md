@@ -101,7 +101,7 @@ Modal verbs are special verbs that modify the meaning of the main verb. They exp
 - The shop **won't** open until 10 AM.
 
 **Offers/Promises**
-- I**'ll** help you with your homework.
+- I **'ll** help you with your homework.
 - I promise I **won't** be late.
 
 **Predictions**
