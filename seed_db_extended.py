@@ -521,7 +521,9 @@ def seed_database_extended():
     """Seed database with enriched content"""
     with app.app_context():
         print("Limpiando base de datos...")
-        db.session.execute(db.text('TRUNCATE TABLE units CASCADE'))
+        # SQLite: Eliminar y recrear tablas
+        db.drop_all()
+        db.create_all()
         db.session.commit()
 
         print("Cargando unidades enriquecidas...")

@@ -145,9 +145,9 @@ def seed_database():
     with app.app_context():
         # Limpiar datos existentes
         print("Limpiando base de datos...")
-        db.session.execute(db.text('TRUNCATE TABLE units CASCADE'))
+        db.drop_all()
+        db.create_all()
         db.session.commit()
-        
         print("Cargando unidades...")
         units_data = load_units_data()
         for unit_data in units_data:
