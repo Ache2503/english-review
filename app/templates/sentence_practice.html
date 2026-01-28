@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Práctica de Oraciones - Unit {{ unit.unit_number }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-sm btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Volver a la Unidad
+        </a>
+        <h1>
+            <i class="fas fa-keyboard"></i> Práctica de Oraciones
+            <span class="badge bg-primary">Unit {{ unit.unit_number }}</span>
+        </h1>
+        <p class="text-muted">Escribe oraciones y recibe feedback automático según la gramática clave.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Escribe tu oración</h5>
+                <form method="POST" id="sentence-form">
+                    <div class="mb-3">
+                        <textarea id="sentence-input" name="sentence" rows="4" class="form-control" placeholder="Escribe una oración..."></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="analyze-btn" class="btn btn-info">
+                            <i class="fas fa-magnifying-glass"></i> Analizar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Resultados en vivo</h5>
+                <div id="metrics" class="small text-muted mb-2">Palabras: 0 • Caracteres: 0</div>
+                <div id="score" class="mb-2"><span class="badge bg-secondary">Score: 0</span></div>
+                <ul id="messages" class="list-group"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Tus oraciones guardadas</h5>
+                {% if submissions %}
+                    <ul class="list-group">
+                        {% for s in submissions %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="fw-semibold" style="white-space: pre-line;">{{ s.sentence }}</div>
+                                    {% if s.feedback %}
+                                    <div class="small text-muted mt-1" style="white-space: pre-line;">{{ s.feedback }}</div>
+                                    {% endif %}
+                                </div>
+                                <span class="badge {{ 'bg-success' if s.score and s.score >= 80 else 'bg-warning' if s.score and s.score >= 60 else 'bg-secondary' }}">{{ s.score if s.score is not none else 0 }}</span>
+                            </div>
+                            <div class="small text-muted mt-1">{{ s.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Aún no has guardado oraciones.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if activities and activities.sentence_prompts %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-lightbulb"></i> Sugerencias de Oraciones</h5>
+                <ul class="small">
+                    {% for p in activities.sentence_prompts %}
+                    <li>{{ p }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+(() => {
+  const input = document.getElementById('sentence-input');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const messagesEl = document.getElementById('messages');
+  const scoreEl = document.getElementById('score');
+  const metricsEl = document.getElementById('metrics');
+  const unitNumber = {{ unit.unit_number }};
+
+  function updateMetrics(text) {
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+    metricsEl.textContent = `Palabras: ${words} • Caracteres: ${chars}`;
+  }
+
+  input.addEventListener('input', () => updateMetrics(input.value));
+  updateMetrics('');
+
+  async function analyze() {
+    const text = input.value.trim();
+    messagesEl.innerHTML = '';
+    scoreEl.innerHTML = '<span class="badge bg-secondary">Score: 0</span>';
+    if (!text) return;
+    try {
+      const res = await fetch('{{ url_for('practice.api_analyze') }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, unit_number: unitNumber })
+      });
+      const data = await res.json();
+      if (!data.ok) return;
+      scoreEl.innerHTML = `<span class="badge ${data.score >= 80 ? 'bg-success' : data.score >= 60 ? 'bg-warning' : 'bg-secondary'}">Score: ${data.score}</span>`;
+      metricsEl.textContent = `Palabras: ${data.metrics.word_count} • Caracteres: ${data.metrics.char_count}`;
+      data.messages.forEach(m => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = m;
+        messagesEl.appendChild(li);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  analyzeBtn.addEventListener('click', analyze);
+})();
+</script>
+{% endblock %}
+{% endblock %}

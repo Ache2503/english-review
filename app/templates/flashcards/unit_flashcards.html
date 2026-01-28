@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Flashcards - {{ unit.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-sm btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <h1>
+                <span class="badge bg-primary">Unit {{ unit.unit_number }}</span>
+                Flashcards - {{ unit.title }}
+            </h1>
+            <p class="text-muted">Repasa vocabulario con tarjetas rápidas</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-layer-group"></i> Progreso</h5>
+                    <p class="mb-1">Total: <strong>{{ total }}</strong></p>
+                    <p class="mb-0">Revisadas: <strong>{{ reviewed }}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if flashcards %}
+    <div class="row">
+        {% for card in flashcards %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card flashcard h-100" data-flip="false">
+                <div class="card-body">
+                    <div class="flashcard-front">
+                        <h4 class="mb-2">{{ card.front }}</h4>
+                        {% if card.example %}
+                        <p class="text-muted small">Ejemplo: {{ card.example }}</p>
+                        {% endif %}
+                        <button class="btn btn-outline-primary btn-sm mt-2" type="button" onclick="toggleFlip(this)">
+                            Ver respuesta
+                        </button>
+                    </div>
+                    <div class="flashcard-back d-none">
+                        <h5 class="mb-2">{{ card.back }}</h5>
+                        <div class="d-flex gap-2">
+                            <form method="POST" action="{{ url_for('flashcards.review_flashcard', flashcard_id=card.id) }}">
+                                <input type="hidden" name="result" value="known">
+                                <button class="btn btn-success btn-sm" type="submit">La sé</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('flashcards.review_flashcard', flashcard_id=card.id) }}">
+                                <input type="hidden" name="result" value="unknown">
+                                <button class="btn btn-warning btn-sm" type="submit">Necesito repaso</button>
+                            </form>
+                        </div>
+                        <button class="btn btn-link btn-sm mt-2" type="button" onclick="toggleFlip(this)">
+                            Volver
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No hay flashcards para esta unidad todavía.
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleFlip(button) {
+    const card = button.closest('.flashcard');
+    const front = card.querySelector('.flashcard-front');
+    const back = card.querySelector('.flashcard-back');
+    const isFlipped = card.getAttribute('data-flip') === 'true';
+
+    if (isFlipped) {
+        back.classList.add('d-none');
+        front.classList.remove('d-none');
+        card.setAttribute('data-flip', 'false');
+    } else {
+        front.classList.add('d-none');
+        back.classList.remove('d-none');
+        card.setAttribute('data-flip', 'true');
+    }
+}
+</script>
+{% endblock %}

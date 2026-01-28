@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Todos los Badges - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <h1><i class="fas fa-star"></i> Sistema de Badges</h1>
+            <p class="text-muted">Completa desafíos para desbloquear badges y demostrar tu progreso en inglés</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="row">
+                {% for badge in badges %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-{{ badge.color }} text-white">
+                            <div style="font-size: 2em; margin: 10px 0;">{{ badge.icon }}</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ badge.name }}</h5>
+                            <p class="card-text">{{ badge.description }}</p>
+                            <p class="text-muted small">
+                                <i class="fas fa-tag"></i> {{ badge.badge_type | replace('_', ' ') | title }}
+                            </p>
+                            {% if badge.criteria %}
+                            <p class="text-muted small">
+                                <strong>Criterio:</strong> {{ badge.criteria }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Categorías -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Categorías de Badges</h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Icono</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for badge in badges %}
+                        <tr>
+                            <td style="font-size: 1.5em;">{{ badge.icon }}</td>
+                            <td><strong>{{ badge.name }}</strong></td>
+                            <td><span class="badge bg-{{ badge.color }}">{{ badge.badge_type | replace('_', ' ') | title }}</span></td>
+                            <td>{{ badge.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

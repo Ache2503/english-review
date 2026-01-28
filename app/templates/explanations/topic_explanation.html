@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic.title }} - Explicación Detallada{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Navegación -->
+    <nav class="mb-4">
+        <a href="{{ url_for('explanations.unit_explanation', unit_id=unit.id) }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Volver a {{ unit.title }}
+        </a>
+        <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-up"></i> Ir a la Unidad
+        </a>
+    </nav>
+
+    <!-- Header -->
+    <div class="card mb-4 border-success">
+        <div class="card-body">
+            <div class="mb-2">
+                <span class="badge bg-info">Unit {{ unit.unit_number }}: {{ unit.title }}</span>
+            </div>
+            <h1 class="card-title mb-2">
+                <i class="fas fa-graduation-cap"></i> {{ topic.title }}
+            </h1>
+            
+            {% if topic.description %}
+            <p class="card-text text-muted">{{ topic.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Explicación del Tema -->
+    {% if topic.detailed_explanation %}
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Explicación Detallada</h5>
+        </div>
+        <div class="card-body">
+            <p>{{ topic.detailed_explanation }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Información Estructurada del Tema -->
+    <div class="row mb-4">
+        {% if topic.key_concepts %}
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="fas fa-key"></i> Conceptos Clave</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for concept in topic.key_concepts %}
+                        <li class="list-group-item">{{ concept }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if topic.common_mistakes %}
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Errores Comunes</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for mistake in topic.common_mistakes %}
+                        <li class="list-group-item"><small>{{ mistake }}</small></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if topic.examples %}
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-warning">
+                    <h6 class="mb-0"><i class="fas fa-comments"></i> Ejemplos</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for example in topic.examples %}
+                        <li class="list-group-item"><small>{{ example }}</small></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if topic.tips %}
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-star"></i> Consejos Útiles</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for tip in topic.tips %}
+                        <li class="list-group-item"><small>{{ tip }}</small></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Secciones Detalladas -->
+    {% if explanations %}
+    <div class="accordion mb-4" id="explanationsAccordion">
+        {% for explanation in explanations %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ explanation.id }}">
+                <button class="accordion-button{% if loop.index != 1 %} collapsed{% endif %}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ explanation.id }}" 
+                        aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}"
+                        aria-controls="collapse{{ explanation.id }}">
+                    <span class="badge bg-secondary me-2">{{ loop.index }}</span>
+                    {{ explanation.section_title }}
+                </button>
+            </h2>
+            <div id="collapse{{ explanation.id }}" 
+                 class="accordion-collapse collapse{% if loop.index == 1 %} show{% endif %}" 
+                 aria-labelledby="heading{{ explanation.id }}" 
+                 data-bs-parent="#explanationsAccordion">
+                <div class="accordion-body">
+                    <div class="content-text">
+                        {{ explanation.content | replace('\n', '<br>') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Botones de Acción -->
+    <div class="text-center mb-4">
+        <a href="{{ url_for('practice.sentence_exercises', unit_id=unit.id) }}" class="btn btn-lg btn-success me-2">
+            <i class="fas fa-tasks"></i> Practicar Ejercicios
+        </a>
+        <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-lg btn-outline-primary">
+            <i class="fas fa-book"></i> Ver Todos los Temas
+        </a>
+    </div>
+</div>
+
+<style>
+    .content-text {
+        line-height: 1.8;
+        white-space: pre-wrap;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #e7f3ff;
+        color: #0c5aa0;
+    }
+    
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

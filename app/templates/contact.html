@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Contacto{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-md-8">
+        <h1><i class="fas fa-envelope"></i> Contacto</h1>
+        <p class="text-muted">Para soporte o sugerencias, deja tu mensaje.</p>
+        <form>
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" placeholder="Tu nombre">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" placeholder="tu@email.com">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mensaje</label>
+                <textarea rows="5" class="form-control" placeholder="Escribe tu mensaje..."></textarea>
+            </div>
+            <button class="btn btn-primary" type="button"><i class="fas fa-paper-plane"></i> Enviar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

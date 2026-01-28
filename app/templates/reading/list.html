@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Lecturas - {{ unit.title }} - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Mensaje Motivacional -->
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            {% set msg = messages | random %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fas fa-lightbulb"></i> <strong>{{ msg.icon if msg.icon else '💡' }}</strong> {{ msg.content }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Encabezado -->
+    <div class="row mb-5">
+        <div class="col-md-8 offset-md-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-0">{{ unit.title }}</h1>
+                    <p class="text-muted">Lecturas y Comprensión</p>
+                </div>
+                <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Lista de Lecturas -->
+    {% if readings %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="row">
+                {% for reading in readings %}
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-book"></i> {{ reading.title }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text text-muted">{{ reading.instructions[:100] }}...</p>
+                            <div class="mb-3">
+                                <span class="badge bg-secondary">{{ reading.difficulty }}</span>
+                                <span class="badge bg-info">{{ reading.content.split()|length }} palabras</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <a href="{{ url_for('reading.view_reading', reading_id=reading.id) }}" 
+                               class="btn btn-sm btn-primary w-100">
+                                <i class="fas fa-play"></i> Leer y Practicar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No hay lecturas disponibles para esta unidad aún.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
+}
+
+.badge {
+    margin-right: 5px;
+}
+</style>
+{% endblock %}

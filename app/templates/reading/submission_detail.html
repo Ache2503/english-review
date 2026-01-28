@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Detalles del Intento - {{ reading.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <a href="{{ url_for('reading.reading_history', reading_id=reading.id) }}" class="btn btn-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Volver al Historial
+            </a>
+
+            <h1>{{ reading.title }}</h1>
+            <p class="text-muted">Intento del {{ submission.submitted_at.strftime('%d/%m/%Y a las %H:%M') }}</p>
+            <hr>
+
+            <!-- Puntuación -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Tu Puntuación</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div style="text-align: center;">
+                                <div style="font-size: 3em; font-weight: bold; color: {% if submission.score >= 80 %}#28a745{% elif submission.score >= 60 %}#ffc107{% else %}#dc3545{% endif %}">
+                                    {{ submission.score | int }}%
+                                </div>
+                                <p class="text-muted">
+                                    {% if submission.score >= 80 %}
+                                    <i class="fas fa-star"></i> Excelente
+                                    {% elif submission.score >= 60 %}
+                                    <i class="fas fa-check"></i> Bien
+                                    {% else %}
+                                    <i class="fas fa-exclamation"></i> Necesita mejora
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="progress" style="height: 30px;">
+                                <div class="progress-bar {% if submission.score >= 80 %}bg-success{% elif submission.score >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ submission.score }}%;"
+                                     aria-valuenow="{{ submission.score }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oraciones Extraídas -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-check-circle"></i> Tus Oraciones ({{ extracted_sentences | length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% for sentence in extracted_sentences %}
+                    <div class="alert alert-light border-left border-success mb-2" style="border-left-width: 4px;">
+                        <strong>{{ loop.index }}.</strong> {{ sentence }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Retroalimentación -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-comment"></i> Retroalimentación del Sistema</h5>
+                </div>
+                <div class="card-body">
+                    {% for msg in feedback %}
+                    <div class="alert alert-info mb-2">
+                        <i class="fas fa-arrow-right"></i> {{ msg }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <a href="{{ url_for('reading.view_reading', reading_id=reading.id) }}" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-redo"></i> Intentar de Nuevo
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ url_for('reading.reading_history', reading_id=reading.id) }}" class="btn btn-info btn-lg w-100">
+                        <i class="fas fa-list"></i> Ver Todos mis Intentos
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+.alert {
+    border-radius: 5px;
+}
+</style>
+{% endblock %}

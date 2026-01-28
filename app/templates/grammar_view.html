@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Gramática - {{ unit.title }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-sm btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Volver a la Unidad
+        </a>
+        <h1>
+            <i class="fas fa-pen-fancy"></i> Gramática - {{ unit.title }}
+        </h1>
+        <p class="text-muted">Reglas claras con ejemplos para comprender mejor.</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for rule in grammar_rules %}
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ rule.topic }}</h5>
+                <p class="card-text">{{ rule.rule }}</p>
+                {% if rule.example %}
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb"></i> <strong>Ejemplo:</strong> {{ rule.example }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

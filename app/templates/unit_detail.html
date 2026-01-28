@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}{{ unit.title }} - English Learning{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <h1>
+            <span class="badge bg-primary">Unit {{ unit.unit_number }}</span>
+            {{ unit.title }}
+        </h1>
+    </div>
+</div>
+
+<!-- Tabs Navigation -->
+<ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" 
+                data-bs-target="#overview" type="button" role="tab">
+            <i class="fas fa-home"></i> Resumen
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="grammar-tab" data-bs-toggle="tab" 
+                data-bs-target="#grammar" type="button" role="tab">
+            <i class="fas fa-pen-fancy"></i> Gramática
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="vocabulary-tab" data-bs-toggle="tab" 
+                data-bs-target="#vocabulary" type="button" role="tab">
+            <i class="fas fa-book-open"></i> Vocabulario
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="writing-tab" data-bs-toggle="tab" 
+                data-bs-target="#writing" type="button" role="tab">
+            <i class="fas fa-pencil-alt"></i> Escritura
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="sentence-tab" data-bs-toggle="tab" 
+                data-bs-target="#sentence" type="button" role="tab">
+            <i class="fas fa-keyboard"></i> Oraciones
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="quiz-tab" data-bs-toggle="tab" 
+                data-bs-target="#quiz" type="button" role="tab">
+            <i class="fas fa-list-check"></i> Quiz
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reading-tab" data-bs-toggle="tab" 
+                data-bs-target="#reading" type="button" role="tab">
+            <i class="fas fa-book"></i> Lecturas
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="flashcards-tab" data-bs-toggle="tab" 
+                data-bs-target="#flashcards" type="button" role="tab">
+            <i class="fas fa-clone"></i> Flashcards
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="structures-tab" data-bs-toggle="tab" 
+                data-bs-target="#structures" type="button" role="tab">
+            <i class="fas fa-sitemap"></i> Estructuras
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="explanations-tab" data-bs-toggle="tab" 
+                data-bs-target="#explanations" type="button" role="tab">
+            <i class="fas fa-graduation-cap"></i> Explicaciones
+        </button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content">
+    <!-- Overview Tab -->
+    <div class="tab-pane fade show active" id="overview" role="tabpanel">
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="mb-4">Tópicos de esta unidad</h3>
+                <div class="list-group">
+                    {% for topic in unit.topics %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ topic.title }}</h5>
+                            <small class="text-muted">
+                                <i class="fas fa-bookmark"></i> Tema {{ loop.index }}
+                            </small>
+                        </div>
+                        <p class="mb-1 text-muted">Explora este tópico en las secciones de gramática y vocabulario.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line"></i> Estadísticas
+                        </h5>
+                        <div class="mb-3">
+                            <label class="form-label">Progreso</label>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ progress.progress_percentage }}%;" 
+                                     aria-valuenow="{{ progress.progress_percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ "%.0f"|format(progress.progress_percentage) }}%
+                                </div>
+                            </div>
+                        </div>
+                            {% if activities and activities.tips %}
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-lightbulb"></i> Tips
+                                    </h5>
+                                    <ul class="small">
+                                        {% for tip in activities.tips %}
+                                        <li>{{ tip }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endif %}
+                        <h5 class="card-title">
+                            <i class="fas fa-lightbulb"></i> Tips
+                        </h5>
+                    {% if activities and (activities.study or activities.practice) %}
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-book"></i> Actividades de Estudio</h5>
+                                    <ul>
+                                        {% for a in activities.study %}
+                                        <li>{{ a }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-pencil"></i> Actividades de Práctica</h5>
+                                    <ul>
+                                        {% for a in activities.practice %}
+                                        <li>{{ a }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                        <ul class="small">
+                            <li>Dedica 20-30 minutos al día</li>
+                            <li>Practica la pronunciación en voz alta</li>
+                            <li>Haz los ejercicios de escritura</li>
+                            <li>Revisa las palabras que aprendiste</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grammar Tab -->
+    <div class="tab-pane fade" id="grammar" role="tabpanel">
+        <a href="{{ url_for('units.view_grammar', unit_id=unit.id) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Gramática Completa
+        </a>
+    </div>
+
+    <!-- Vocabulary Tab -->
+    <div class="tab-pane fade" id="vocabulary" role="tabpanel">
+        <a href="{{ url_for('units.view_vocabulary', unit_id=unit.id) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Vocabulario Completo
+        </a>
+    </div>
+
+    <!-- Writing Tab -->
+    <div class="tab-pane fade" id="writing" role="tabpanel">
+        <a href="{{ url_for('units.view_writing_practices', unit_id=unit.id) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Ejercicios de Escritura
+        </a>
+    </div>
+
+    <!-- Sentence Practice Tab -->
+    <div class="tab-pane fade" id="sentence" role="tabpanel">
+        <div class="alert alert-info mb-3">
+            <i class="fas fa-lightbulb"></i> <strong>Dos modos de práctica:</strong>
+            <ul class="mb-0 mt-2">
+                <li><strong>Ejercicios Estructurados:</strong> Practica con ejercicios específicos de gramática (recomendado)</li>
+                <li><strong>Práctica Libre:</strong> Escribe oraciones libremente y recibe feedback</li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="{{ url_for('practice.sentence_exercises', unit_id=unit.id) }}" class="btn btn-success btn-lg w-100 mb-2">
+                    <i class="fas fa-graduation-cap"></i> Ejercicios de Gramática
+                </a>
+                <small class="text-muted d-block">Practica Articles, Used to, Conditionals, etc.</small>
+            </div>
+            <div class="col-md-6">
+                <a href="{{ url_for('practice.sentence_practice', unit_id=unit.id) }}" class="btn btn-primary btn-lg w-100 mb-2">
+                    <i class="fas fa-pencil-alt"></i> Práctica Libre
+                </a>
+                <small class="text-muted d-block">Escribe tus propias oraciones</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Tab -->
+    <div class="tab-pane fade" id="quiz" role="tabpanel">
+        <a href="{{ url_for('quiz.list_quizzes', unit_id=unit.id) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Quizzes
+        </a>
+    </div>
+
+    <!-- Reading Tab -->
+    <div class="tab-pane fade" id="reading" role="tabpanel">
+        <div class="alert alert-info">
+            <i class="fas fa-lightbulb"></i> <strong>Consejo:</strong> Lee con atención y extrae las oraciones más importantes. El sistema te dará retroalimentación automática.
+        </div>
+        <a href="{{ url_for('reading.unit_readings', unit_number=unit.unit_number) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Lecturas y Practicar
+        </a>
+    </div>
+
+    <!-- Flashcards Tab -->
+    <div class="tab-pane fade" id="flashcards" role="tabpanel">
+        <div class="alert alert-info">
+            <i class="fas fa-lightbulb"></i> <strong>Consejo:</strong> Repasa vocabulario con tarjetas rápidas para memorizar mejor.
+        </div>
+        <a href="{{ url_for('flashcards.unit_flashcards', unit_id=unit.id) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Flashcards
+        </a>
+    </div>
+
+    <!-- Sentence Structures Tab -->
+    <div class="tab-pane fade" id="structures" role="tabpanel">
+        <div class="alert alert-info">
+            <i class="fas fa-lightbulb"></i> <strong>Consejo:</strong> Aprende cómo construir oraciones correctas usando los patrones gramaticales de esta unidad.
+        </div>
+        <a href="{{ url_for('units.view_sentence_structures', unit_id=unit.id) }}" class="btn btn-primary mb-3">
+            <i class="fas fa-arrow-right"></i> Ver Estructuras de Oraciones
+        </a>
+    </div>
+
+    <!-- Explanations Tab -->
+    <div class="tab-pane fade" id="explanations" role="tabpanel">
+        <div class="alert alert-success">
+            <i class="fas fa-graduation-cap"></i> <strong>Aprende detalladamente:</strong> Obtén explicaciones completas y estructuradas de cada unidad y tema.
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-book-open"></i> Explicación de la Unidad</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Lee una explicación detallada sobre todos los aspectos de esta unidad, incluyendo objetivos de aprendizaje y conceptos clave.</p>
+                        <a href="{{ url_for('explanations.unit_explanation', unit_id=unit.id) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-arrow-right"></i> Leer Explicación
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="fas fa-list-ul"></i> Temas Específicos</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text mb-2">Explora explicaciones detalladas de cada tema:</p>
+                        <div class="list-group list-group-sm">
+                            {% for topic in unit.topics %}
+                            <a href="{{ url_for('explanations.topic_explanation', topic_id=topic.id) }}" class="list-group-item list-group-item-action py-2">
+                                <small>
+                                    <i class="fas fa-angle-right"></i> {{ topic.title }}
+                                </small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

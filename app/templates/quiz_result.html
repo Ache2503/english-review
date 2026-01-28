@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado del Quiz{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <a href="{{ url_for('quiz.list_quizzes', unit_id=quiz.unit_id) }}" class="btn btn-sm btn-outline-secondary mb-3">
+      <i class="fas fa-arrow-left"></i> Volver a Quizzes
+    </a>
+    <h1><i class="fas fa-chart-simple"></i> Resultado</h1>
+    <p class="lead">Tu puntaje: <span class="badge {{ 'bg-success' if submission.score >= 80 else 'bg-warning' if submission.score >= 60 else 'bg-secondary' }}">{{ submission.score|round(0) }}%</span></p>
+    <p class="text-muted">Quiz: {{ quiz.title }}</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <a href="{{ url_for('quiz.take_quiz', quiz_id=quiz.id) }}" class="btn btn-primary">
+      <i class="fas fa-repeat"></i> Reintentar
+    </a>
+    <a href="{{ url_for('units.view_unit', unit_id=quiz.unit_id) }}" class="btn btn-outline-secondary">
+      <i class="fas fa-book"></i> Volver a la Unidad
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,362 @@
+[
+  {
+    "unit_number": 7,
+    "title": "MIND (La Mente)",
+    "topics": [
+      "Felicidad",
+      "Internet y el cerebro",
+      "Inteligencia"
+    ],
+    "grammar": [
+      {
+        "title": "Articles (a/an/the/no article)",
+        "rule": "Cuándo usar 'the' y cuándo no. (Ej: I go to school = soy estudiante; I go to the school = voy al edificio).",
+        "example": "The happiness we feel comes from the simple things. I go to school every day (como estudiante), but yesterday I went to the school to pick up my brother (el edificio físico)."
+      },
+      {
+        "title": "Used to",
+        "rule": "Para hábitos en el pasado que ya no ocurren (I used to sleep late).",
+        "example": "I used to feel anxious all the time, but now I practice meditation. She used to watch TV for hours, but now she reads books about the brain."
+      }
+    ],
+    "vocabulary": [
+      "Sentimientos",
+      "Verbos frasales (phrasal verbs)"
+    ],
+    "practice_writing": "In the past, I used to think that money was the only way to find happiness. I felt an emptiness inside. However, I read an article about the human brain and realized that simple things matter. Now, I focus on positive feelings. Going to school (para estudiar) helps me keep my mind active, but going to the school (el edificio) just to meet friends makes me even happier.",
+    "activities": {
+      "study": [
+        "Lee artículos sobre la ciencia de la felicidad y cómo funciona el cerebro",
+        "Investiga sobre inteligencia emocional y su impacto en la mente",
+        "Estudia cómo el internet afecta nuestra capacidad de concentración"
+      ],
+      "practice": [
+        "Escribe 10 oraciones usando 'used to' sobre tus hábitos pasados",
+        "Practica el uso de artículos con lugares comunes: school, hospital, church, home",
+        "Describe tus sentimientos actuales vs. cómo te sentías antes"
+      ],
+      "write": [
+        "Un párrafo sobre qué te hacía feliz antes y qué te hace feliz ahora",
+        "Tu opinión sobre cómo el internet ha cambiado tu forma de pensar",
+        "Una reflexión sobre tu inteligencia emocional"
+      ]
+    },
+    "tips": [
+      "Usa 'used to' solo para el pasado, no para el presente",
+      "Recuerda: 'go to school' (como estudiante) vs 'go to the school' (el edificio)",
+      "Artículos con emociones: 'happiness' (general) vs 'the happiness I felt' (específico)",
+      "Phrasal verbs comunes: cheer up, calm down, freak out, figure out"
+    ],
+    "prompts": [
+      "What did you use to do for fun when you were younger?",
+      "How has the internet changed the way you think?",
+      "What makes you happy now that didn't make you happy before?",
+      "Describe a moment when you felt true happiness"
+    ]
+  },
+  {
+    "unit_number": 8,
+    "title": "ART (Arte)",
+    "topics": [
+      "Gustos musicales",
+      "Arte inusual",
+      "Películas y libros"
+    ],
+    "grammar": [
+      {
+        "title": "Reflexive Pronouns",
+        "rule": "(myself, yourself, himself). Cuando el sujeto y el objeto son el mismo.",
+        "example": "I taught myself to play guitar. She bought herself a new painting. They enjoyed themselves at the concert."
+      },
+      {
+        "title": "Infinitive of Purpose",
+        "rule": "Usar 'to' para explicar para qué haces algo (I went to the gallery to see art).",
+        "example": "I went to the museum to learn about modern art. She reads books to improve her vocabulary. We listen to music to relax."
+      },
+      {
+        "title": "First Conditional",
+        "rule": "Situaciones reales y posibles (If + Present, Will + Verb).",
+        "example": "If I see a good movie, I will recommend it. If you practice daily, you will improve. If the exhibition is free, we will go together."
+      }
+    ],
+    "vocabulary": [
+      "Géneros de música",
+      "Cine"
+    ],
+    "practice_writing": "I bought a ticket to see the new abstract art exhibition. I told myself that I needed to be open-minded. If the exhibition is interesting, I will write a review about it. I love horror movies, but this time I want to explore painting. If I learn enough, maybe I will paint something myself one day.",
+    "activities": {
+      "study": [
+        "Investiga diferentes géneros musicales: jazz, classical, rock, pop, electronic",
+        "Lee reseñas de películas en inglés y aprende vocabulario de crítica",
+        "Explora movimientos artísticos: surrealismo, impresionismo, arte contemporáneo"
+      ],
+      "practice": [
+        "Escribe 5 oraciones usando pronombres reflexivos en contextos diferentes",
+        "Crea 10 frases con infinitivo de propósito sobre actividades artísticas",
+        "Formula 8 primeras condicionales sobre situaciones artísticas posibles"
+      ],
+      "write": [
+        "Tu opinión sobre una película que viste recientemente",
+        "Describe tu género musical favorito y por qué te gusta",
+        "Imagina qué harías si pudieras aprender cualquier arte"
+      ]
+    },
+    "tips": [
+      "Reflexive pronouns: myself, yourself, himself, herself, itself, ourselves, yourselves, themselves",
+      "Infinitive of purpose responde '¿Para qué?' - I study to learn (¿Para qué estudias? Para aprender)",
+      "First conditional: If + present simple, will + verb (situaciones reales futuras)",
+      "Géneros de música: pop, rock, jazz, classical, hip-hop, electronic, folk, blues",
+      "Cine: plot (trama), character (personaje), director, soundtrack, scene, genre"
+    ],
+    "prompts": [
+      "If you could meet any artist, who would it be and why?",
+      "What do you do to relax? Do you listen to music or watch movies?",
+      "Describe a piece of art that impressed you",
+      "What will you do if you have free time this weekend?"
+    ]
+  },
+  {
+    "unit_number": 9,
+    "title": "MONEY (Dinero)",
+    "topics": [
+      "Gastos",
+      "Filantropía",
+      "Habilidades"
+    ],
+    "grammar": [
+      {
+        "title": "Second Conditional",
+        "rule": "Situaciones hipotéticas o imaginarias (If I had money, I would travel).",
+        "example": "If I won the lottery, I would donate to charity. If she had more time, she would volunteer. If they were rich, they would help poor communities."
+      },
+      {
+        "title": "Gerunds",
+        "rule": "Verbos terminados en -ing actuando como sustantivos (Spending money is easy).",
+        "example": "Saving money requires discipline. Learning new skills is important. Working hard helps you succeed. I enjoy helping others."
+      },
+      {
+        "title": "Essential Adjective Clauses",
+        "rule": "Frases con who/which/that que definen al sujeto.",
+        "example": "People who save money are wise. The skills that you learn will help you. Charities which help children are important."
+      }
+    ],
+    "vocabulary": [
+      "Make vs Do",
+      "Frases de dinero"
+    ],
+    "practice_writing": "Spending money responsibly is difficult. If I won the lottery, I would give half to charity. There are people who need help everywhere. I want to do good things for my community, but first I need to make enough money. Bartering (intercambiar bienes) is also a good option when you don't have cash.",
+    "activities": {
+      "study": [
+        "Aprende la diferencia entre 'make' y 'do': make money, make a decision, do homework, do your best",
+        "Investiga organizaciones benéficas y cómo ayudan a la comunidad",
+        "Lee sobre educación financiera: ahorro, inversión, presupuesto"
+      ],
+      "practice": [
+        "Escribe 6 segundas condicionales sobre qué harías con dinero ilimitado",
+        "Crea 8 oraciones con gerundios como sujeto u objeto",
+        "Formula 10 cláusulas adjetivales sobre personas, cosas o lugares"
+      ],
+      "write": [
+        "Tu filosofía sobre el dinero: ¿es importante o no?",
+        "Si ganaras la lotería, ¿cómo usarías el dinero?",
+        "Describe una habilidad que te gustaría aprender y por qué"
+      ]
+    },
+    "tips": [
+      "Second conditional: If + past simple, would + verb (situaciones irreales/hipotéticas)",
+      "Gerunds después de: enjoy, avoid, finish, keep, mind, suggest (I enjoy reading)",
+      "Who = personas, Which = cosas/animales, That = ambos (más informal)",
+      "Make: money, a decision, a mistake, progress, a plan, an effort",
+      "Do: homework, your best, a favor, business, research, exercise",
+      "Frases: save money, spend wisely, waste money, earn a living, make ends meet"
+    ],
+    "prompts": [
+      "If you had a million dollars, what would you do with it?",
+      "What skills do you have that could help you earn money?",
+      "Describe someone who inspired you to be generous",
+      "Is saving money easy or difficult for you? Why?"
+    ]
+  },
+  {
+    "unit_number": 10,
+    "title": "SCIENCE AND TECHNOLOGY (Ciencia y Tecnología)",
+    "topics": [
+      "Dispositivos",
+      "Tipos de tecnología",
+      "El espacio"
+    ],
+    "grammar": [
+      {
+        "title": "Comparatives & Superlatives",
+        "rule": "Faster than, the most expensive.",
+        "example": "Comparatives: My phone is newer than yours. This app is more useful than that one. Superlatives: This is the fastest computer. AI is the most important technology today."
+      },
+      {
+        "title": "Need to",
+        "rule": "Obligación o necesidad.",
+        "example": "We need to learn about AI. You need to update your software. Scientists need to find solutions to climate change."
+      }
+    ],
+    "vocabulary": [
+      "Dispositivos electrónicos",
+      "Colocaciones de ciencia"
+    ],
+    "practice_writing": "My new smartphone is faster than my old tablet. It is the most useful device I own. However, technology changes quickly, so we need to update our skills constantly. Doing research on the internet is easier now than it was ten years ago. I think working in space would be the most exciting job in the world.",
+    "activities": {
+      "study": [
+        "Aprende vocabulario tecnológico: smartphone, laptop, tablet, AI, software, hardware",
+        "Investiga sobre avances científicos recientes: inteligencia artificial, exploración espacial",
+        "Lee artículos sobre el impacto de la tecnología en la sociedad"
+      ],
+      "practice": [
+        "Compara 5 dispositivos electrónicos usando comparativos",
+        "Escribe 5 superlativos sobre tecnología o ciencia",
+        "Crea 8 oraciones con 'need to' sobre obligaciones tecnológicas"
+      ],
+      "write": [
+        "Compara dos dispositivos que usas frecuentemente",
+        "Describe el dispositivo más importante en tu vida",
+        "Tu opinión sobre la exploración espacial"
+      ]
+    },
+    "tips": [
+      "Comparatives: 1 sílaba + er (faster), 2+ sílabas: more + adj (more expensive)",
+      "Superlatives: 1 sílaba + est (fastest), 2+ sílabas: most + adj (most expensive)",
+      "Irregulares: good→better→best, bad→worse→worst",
+      "Need to = obligación/necesidad (similar a 'have to' pero menos fuerte)",
+      "Dispositivos: smartphone, laptop, tablet, smartwatch, earbuds, charger",
+      "Colocaciones: conduct research, make a discovery, develop technology, launch a rocket"
+    ],
+    "prompts": [
+      "Which is more important: smartphones or laptops? Why?",
+      "What is the most useful technology you use daily?",
+      "Do you think we need to explore space? Why or why not?",
+      "Compare technology now vs. 10 years ago"
+    ]
+  },
+  {
+    "unit_number": 11,
+    "title": "NATURAL WORLD (Mundo Natural)",
+    "topics": [
+      "Maravillas naturales",
+      "Fotografía de vida salvaje",
+      "Contaminación plástica"
+    ],
+    "grammar": [
+      {
+        "title": "Passive Voice",
+        "rule": "Cuando la acción es más importante que quien la hace (Plastic is found in the ocean).",
+        "example": "Present: Animals are affected by pollution. Past: The photos were taken by wildlife photographers. The rainforest is being destroyed."
+      },
+      {
+        "title": "Adjective + Infinitive",
+        "rule": "It is hard to believe.",
+        "example": "It is important to protect nature. It is difficult to clean the oceans. It is amazing to see wild animals. It is sad to witness destruction."
+      },
+      {
+        "title": "Words with -where",
+        "rule": "Somewhere, nowhere, everywhere.",
+        "example": "Pollution is found everywhere. There is nowhere for animals to hide. We need to find somewhere safe for endangered species."
+      }
+    ],
+    "vocabulary": [
+      "Animales",
+      "Características naturales"
+    ],
+    "practice_writing": "Plastic pollution is found everywhere, even in the deepest oceans. It is sad to see animals suffering because of our waste. Many photos were taken by wildlife photographers to show this problem. We must do something before there is nowhere safe for these animals to live. It is important to protect our natural wonders.",
+    "activities": {
+      "study": [
+        "Aprende nombres de animales en peligro: tiger, elephant, whale, panda, gorilla",
+        "Investiga sobre maravillas naturales: Great Barrier Reef, Amazon Rainforest, Grand Canyon",
+        "Lee sobre problemas ambientales: pollution, deforestation, climate change"
+      ],
+      "practice": [
+        "Transforma 8 oraciones activas a voz pasiva sobre el medio ambiente",
+        "Escribe 6 oraciones con 'It is + adj + to + verb' sobre la naturaleza",
+        "Crea 5 frases usando somewhere/nowhere/everywhere"
+      ],
+      "write": [
+        "Describe una maravilla natural que te gustaría visitar",
+        "Tu opinión sobre la contaminación plástica",
+        "La importancia de proteger a los animales en peligro"
+      ]
+    },
+    "tips": [
+      "Passive: be + past participle (is found, are affected, was taken, were destroyed)",
+      "Usa passive cuando: 1) no sabes quién hizo la acción, 2) la acción es más importante, 3) es obvio quién hizo la acción",
+      "It is + adjective + to + verb: common, easy, difficult, hard, important, necessary, possible, impossible",
+      "Somewhere = algún lugar, Nowhere = ningún lugar, Everywhere = todos lados, Anywhere = cualquier lugar",
+      "Animales: mammal, reptile, amphibian, bird, fish, endangered species",
+      "Naturaleza: forest, ocean, mountain, river, desert, jungle, wildlife"
+    ],
+    "prompts": [
+      "What can be done to protect endangered animals?",
+      "Describe a natural place that is important to you",
+      "Is it easy or difficult to live without plastic? Why?",
+      "Where in nature would you like to go and why?"
+    ]
+  },
+  {
+    "unit_number": 12,
+    "title": "MEDIA (Medios de Comunicación)",
+    "topics": [
+      "Noticias online",
+      "Hábitos de TV",
+      "Publicidad"
+    ],
+    "grammar": [
+      {
+        "title": "Reported Speech",
+        "rule": "Contar lo que otro dijo. (Directo: 'I like TV' -> Indirecto: He said he liked TV).",
+        "example": "Direct: 'I watch the news daily.' Reported: She said she watched the news daily. Direct: 'We will check the facts.' Reported: They said they would check the facts."
+      },
+      {
+        "title": "Past Perfect",
+        "rule": "Una acción en el pasado que ocurrió antes que otra (When I turned on the TV, the show had already started).",
+        "example": "When I arrived, the movie had already finished. She had never seen fake news before that incident. They had warned us about misleading ads."
+      },
+      {
+        "title": "Should",
+        "rule": "Recomendaciones.",
+        "example": "You should verify news sources. We should limit our screen time. People should be critical of advertisements. You shouldn't believe everything you read."
+      }
+    ],
+    "vocabulary": [
+      "Expresiones de noticias",
+      "Publicidad"
+    ],
+    "practice_writing": "The journalist said that fake news had become a big problem. He told us that we should check the sources before sharing. Last night, I wanted to watch the news, but when I arrived home, the program had finished. So, I watched a documentary about advertising instead. People say that binge-watching TV series is addictive.",
+    "activities": {
+      "study": [
+        "Aprende vocabulario de medios: headline, article, broadcast, streaming, viral, trending",
+        "Investiga sobre fake news y cómo identificarla",
+        "Lee sobre el impacto de las redes sociales en la sociedad"
+      ],
+      "practice": [
+        "Transforma 8 oraciones directas a estilo indirecto (reported speech)",
+        "Escribe 6 oraciones usando past perfect para eventos secuenciales",
+        "Crea 10 recomendaciones con 'should' sobre consumo de medios"
+      ],
+      "write": [
+        "Tu opinión sobre las noticias falsas y cómo combatirlas",
+        "Describe tus hábitos de consumo de TV/streaming",
+        "El impacto de la publicidad en tus decisiones de compra"
+      ]
+    },
+    "tips": [
+      "Reported speech cambios: present→past, will→would, can→could, am/is→was, are→were",
+      "Say vs Tell: say (+ that), tell (+ person + that). 'He said that...' vs 'He told me that...'",
+      "Past Perfect: had + past participle (usado antes de otra acción pasada)",
+      "Should = recomendación/consejo (menos fuerte que 'must' o 'have to')",
+      "Noticias: headline (titular), source (fuente), journalist, reporter, coverage, breaking news",
+      "TV: series, episode, season, binge-watch, stream, channel, documentary",
+      "Publicidad: ad/advertisement, commercial, brand, slogan, campaign, target audience"
+    ],
+    "prompts": [
+      "What did your friend say about the news yesterday? (Use reported speech)",
+      "Describe a time when you had already finished something before an event",
+      "What should people do to avoid fake news?",
+      "Do you think advertising influences you? Why or why not?"
+    ]
+  }
+]

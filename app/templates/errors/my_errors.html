@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Errores - English Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <h1><i class="fas fa-exclamation-triangle"></i> Banco de Errores</h1>
+            <p class="text-muted">Aquí puedes ver tus errores frecuentes y aprender de ellos.</p>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <a href="{{ url_for('errors.clear_errors') }}" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-trash"></i> Limpiar errores
+            </a>
+        </div>
+    </div>
+
+    {% if logs %}
+    <div class="row">
+        <div class="col-12">
+            <div class="list-group">
+                {% for log in logs %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">
+                            <span class="badge bg-warning text-dark">{{ log.source }}</span>
+                            {{ log.message }}
+                        </h6>
+                        <small class="text-muted">{{ log.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                    </div>
+                    {% if log.context %}
+                    <p class="mb-1 text-muted"><strong>Contexto:</strong> {{ log.context }}</p>
+                    {% endif %}
+                    {% if log.rule %}
+                    <small class="text-muted">Regla: {{ log.rule }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No hay errores registrados todavía. ¡Sigue practicando!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

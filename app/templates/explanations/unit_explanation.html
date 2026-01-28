@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}{{ unit.title }} - Explicación Detallada{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Navegación -->
+    <nav class="mb-4">
+        <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Volver a {{ unit.title }}
+        </a>
+    </nav>
+
+    <!-- Header -->
+    <div class="card mb-4 border-primary">
+        <div class="card-body">
+            <h1 class="card-title mb-2">
+                <i class="fas fa-book"></i> {{ unit.title }}
+            </h1>
+            <p class="card-text text-muted mb-3">Unit {{ unit.unit_number }}</p>
+            
+            {% if unit.overview %}
+            <div class="alert alert-info mb-0">
+                <strong>Vista General:</strong> {{ unit.overview }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Objetivos de Aprendizaje -->
+    {% if unit.learning_objectives %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-target"></i> Objetivos de Aprendizaje</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                {% for objective in unit.learning_objectives %}
+                <li class="list-group-item">
+                    <i class="fas fa-check-circle text-success"></i> {{ objective }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Explicación Detallada -->
+    {% if unit.detailed_explanation %}
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Explicación Detallada</h5>
+        </div>
+        <div class="card-body">
+            <p>{{ unit.detailed_explanation }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Secciones de Explicación -->
+    {% if explanations %}
+    <div class="accordion mb-4" id="explanationsAccordion">
+        {% for explanation in explanations %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ explanation.id }}">
+                <button class="accordion-button{% if loop.index != 1 %} collapsed{% endif %}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ explanation.id }}" 
+                        aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}"
+                        aria-controls="collapse{{ explanation.id }}">
+                    <span class="badge bg-secondary me-2">{{ loop.index }}</span>
+                    {{ explanation.section_title }}
+                </button>
+            </h2>
+            <div id="collapse{{ explanation.id }}" 
+                 class="accordion-collapse collapse{% if loop.index == 1 %} show{% endif %}" 
+                 aria-labelledby="heading{{ explanation.id }}" 
+                 data-bs-parent="#explanationsAccordion">
+                <div class="accordion-body">
+                    <div class="content-text">
+                        {{ explanation.content | replace('\n', '<br>') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Temas Relacionados -->
+    {% if unit.topics %}
+    <div class="card mb-4">
+        <div class="card-header bg-warning">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Temas en Esta Unidad</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for topic in unit.topics %}
+                <div class="col-md-6 mb-2">
+                    <a href="{{ url_for('explanations.topic_explanation', topic_id=topic.id) }}" 
+                       class="btn btn-outline-primary btn-sm btn-block">
+                        <i class="fas fa-angle-right"></i> {{ topic.title }}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Botón para Prácticar -->
+    <div class="text-center mb-4">
+        <a href="{{ url_for('practice.sentence_exercises', unit_id=unit.id) }}" class="btn btn-lg btn-success">
+            <i class="fas fa-tasks"></i> Practicar Ejercicios de Esta Unidad
+        </a>
+    </div>
+</div>
+
+<style>
+    .content-text {
+        line-height: 1.8;
+        white-space: pre-wrap;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #e7f3ff;
+        color: #0c5aa0;
+    }
+    
+    .btn-block {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+</style>
+{% endblock %}

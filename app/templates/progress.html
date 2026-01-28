@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Progreso{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+        <h1><i class="fas fa-chart-bar"></i> Progreso Detallado</h1>
+        <p class="text-muted">Resumen de tu avance por unidad.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Progreso General</h5>
+                <h2 class="mb-3">{{ "%.1f"|format(progress_data.percentage) }}%</h2>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ progress_data.percentage }}%;" 
+                         aria-valuenow="{{ progress_data.percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    {{ progress_data.completed_units }} de {{ progress_data.total_units }} unidades completadas
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for up in user_progress %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Unidad {{ up.unit.unit_number }} - {{ up.unit.title }}</h5>
+                <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ up.progress_percentage }}%;" 
+                         aria-valuenow="{{ up.progress_percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        {{ "%.0f"|format(up.progress_percentage) }}%
+                    </div>
+                </div>
+                {% if up.completed %}
+                <span class="badge bg-success"><i class="fas fa-check-circle"></i> Completada</span>
+                {% else %}
+                <span class="badge bg-warning text-dark">En progreso</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

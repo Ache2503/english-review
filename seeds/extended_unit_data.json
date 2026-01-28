@@ -1,0 +1,180 @@
+[
+  {
+    "unit_number": 7,
+    "title": "MIND (La Mente)",
+    "description": "Exploring topics about happiness, the internet's impact on the brain, and intelligence.",
+    "topics": [
+      "Felicidad",
+      "Internet y el cerebro",
+      "Inteligencia"
+    ],
+    "grammar": [
+      {
+        "title": "Articles (a/an/the/no article)",
+        "rule": "Use 'the' with specific things, use 'a/an' with general things, use no article for general uncountable nouns.",
+        "example": "I go to school (as a student) vs I go to the school (the building). The happiness I feel is real. A good book can change your perspective.",
+        "level": "beginner",
+        "tips": ["Use 'the' before unique places: the brain, the internet", "Phrases: go to school (student), go to the school (building)", "Use 'a' before consonants, 'an' before vowels"]
+      },
+      {
+        "title": "Used to",
+        "rule": "Express habits or states in the past that no longer occur now.",
+        "example": "I used to feel anxious all the time. She used to spend hours on social media. We used to think intelligence was only about IQ.",
+        "level": "beginner",
+        "tips": ["Only use with past", "Negative: didn't use to", "Question: Did you use to...?", "Common with emotions: used to feel, used to think"]
+      }
+    ],
+    "vocabulary": {
+      "categories": [
+        {
+          "name": "Sentimientos",
+          "description": "Emotions and feelings related to happiness and well-being",
+          "words": [
+            {"word": "happiness", "translation": "felicidad", "pronunciation": "/ˈhæpɪnəs/", "example": "True happiness comes from within.", "difficulty": "beginner"},
+            {"word": "sadness", "translation": "tristeza", "pronunciation": "/ˈsædnəs/", "example": "She felt a deep sadness after the loss.", "difficulty": "beginner"},
+            {"word": "anxiety", "translation": "ansiedad", "pronunciation": "/æŋˈzaɪəti/", "example": "Meditation helps reduce anxiety.", "difficulty": "intermediate"},
+            {"word": "contentment", "translation": "satisfacción", "pronunciation": "/kənˈtɛntmənt/", "example": "He found contentment in simple things.", "difficulty": "intermediate"},
+            {"word": "fulfillment", "translation": "realización", "pronunciation": "/fʊlˈfɪlmənt/", "example": "Career fulfillment is important to many people.", "difficulty": "advanced"},
+            {"word": "peace of mind", "translation": "tranquilidad mental", "pronunciation": "/pis əv maɪnd/", "example": "Exercise gives me peace of mind.", "difficulty": "intermediate"}
+          ]
+        },
+        {
+          "name": "Phrasal Verbs",
+          "description": "Phrasal verbs related to emotions and mental states",
+          "words": [
+            {"word": "cheer up", "translation": "animarse", "pronunciation": "/tʃɪr ʌp/", "example": "He cheered up when he saw his friends.", "difficulty": "beginner"},
+            {"word": "calm down", "translation": "calmarse", "pronunciation": "/kɑːm daʊn/", "example": "Take a deep breath and calm down.", "difficulty": "beginner"},
+            {"word": "freak out", "translation": "asustarse/estresarse", "pronunciation": "/frik aʊt/", "example": "Don't freak out about the exam.", "difficulty": "intermediate"},
+            {"word": "figure out", "translation": "descubrir/entender", "pronunciation": "/ˈfɪɡər aʊt/", "example": "I need to figure out what makes me happy.", "difficulty": "intermediate"},
+            {"word": "deal with", "translation": "lidiar con", "pronunciation": "/dil wɪð/", "example": "How do you deal with stress?", "difficulty": "beginner"},
+            {"word": "think through", "translation": "pensar bien en", "pronunciation": "/θɪŋk θruː/", "example": "Think through your decisions carefully.", "difficulty": "intermediate"}
+          ]
+        }
+      ]
+    },
+    "exercises": [
+      {
+        "id": "writing_7_1",
+        "title": "Past Habits Reflection",
+        "description": "Write about your habits and feelings from the past",
+        "instructions": "Write 5-7 sentences about what you used to do, think, or feel that is different now. Include at least 3 'used to' structures and correct articles.",
+        "example": "I used to think that money was the only way to be happy. When I was younger, I used to spend all my time on the internet. Now I realize that real connections matter more than likes. The happiness I feel today comes from different places than it did before.",
+        "difficulty": "beginner",
+        "min_words": 50,
+        "grammar_focus": ["Used to", "Articles"]
+      },
+      {
+        "id": "writing_7_2",
+        "title": "Your Brain & The Internet",
+        "description": "Analyze how the internet affects your brain and mind",
+        "instructions": "Write 6-8 sentences about how the internet has changed your thinking patterns, memory, or emotions. Use articles correctly when mentioning specific things (the internet, the brain, etc.)",
+        "example": "The internet has changed the way my brain works. I used to read books for hours, but now I scroll through content quickly. The constant notifications affect my concentration. An article I read explained how this impacts the prefrontal cortex of the brain.",
+        "difficulty": "intermediate",
+        "min_words": 70,
+        "grammar_focus": ["Articles", "Used to"]
+      },
+      {
+        "id": "writing_7_3",
+        "title": "Intelligence Redefined",
+        "description": "Discuss different types of intelligence",
+        "instructions": "Write 7-10 sentences about what intelligence means to you beyond just IQ. Use various article structures and describe what you used to think vs what you think now.",
+        "example": "I used to believe that intelligence was only measured by test scores. Now I understand that there are many types of intelligence. The emotional intelligence I've developed is as important as academic knowledge. People who have practical intelligence can solve real problems. A truly intelligent person combines different skills and perspectives.",
+        "difficulty": "advanced",
+        "min_words": 100,
+        "grammar_focus": ["Articles", "Used to"]
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "Coffee Shop Conversation About Happiness",
+        "situation": "Two friends discussing what makes them happy",
+        "conversation": [
+          {"speaker": "Alex", "text": "I used to think happiness was about having money and success.", "notes": "Simple past habit"},
+          {"speaker": "Jordan", "text": "Yeah, but then you realize the simple things matter more, right?", "notes": "Question form"},
+          {"speaker": "Alex", "text": "Exactly! The real happiness comes from relationships and personal growth.", "notes": "Using 'the' for specific things"},
+          {"speaker": "Jordan", "text": "I couldn't agree more. I used to worry about everything, but now I focus on what I can control.", "notes": "Negative + used to"}
+        ],
+        "vocabulary": ["used to", "happiness", "relationships", "personal growth", "worry"]
+      },
+      {
+        "title": "Discussing Internet Habits",
+        "situation": "A parent and teenager talking about internet use",
+        "conversation": [
+          {"speaker": "Parent", "text": "You used to spend more time outside. Now you're always on your phone.", "notes": "Comparing past vs present"},
+          {"speaker": "Teen", "text": "I know, but the internet helps me stay connected with friends.", "notes": "Using 'the' before specific noun"},
+          {"speaker": "Parent", "text": "Connection is important, but face-to-face interaction is different.", "notes": "Countable vs uncountable"},
+          {"speaker": "Teen", "text": "You're right. I used to enjoy outdoor activities more.", "notes": "Acknowledging past preference"}
+        ],
+        "vocabulary": ["used to", "internet", "connected", "interaction", "activities"]
+      }
+    ],
+    "practice_activities": [
+      {
+        "type": "fill-in-the-blank",
+        "title": "Articles and Used to Practice",
+        "instructions": "Fill in the blanks with 'a', 'an', 'the', or leave blank (Ø) if no article is needed.",
+        "sentences": [
+          "I ___ used to feel anxious, but now I practice meditation.",
+          "The ___ happiness I feel today is different from ___ happiness in the past.",
+          "___ School is important for learning, but I also learned a lot outside ___ school.",
+          "He has ___ intelligence that helps him solve complex problems.",
+          "She used to spend ___ hour on ___ internet every day."
+        ]
+      },
+      {
+        "type": "multiple-choice",
+        "title": "Correct Articles and Used to",
+        "questions": [
+          {
+            "question": "I ___ enjoy reading, but now I prefer watching videos.",
+            "options": ["A) used to", "B) use to", "C) am used to", "D) get used to"],
+            "correct": "A"
+          },
+          {
+            "question": "The ___ brain is affected by ___ internet usage.",
+            "options": ["A) Ø, the", "B) the, the", "C) the, Ø", "D) Ø, Ø"],
+            "correct": "C"
+          }
+        ]
+      }
+    ],
+    "activities": {
+      "study": [
+        "Research: 'The science of happiness' - find 3 interesting facts",
+        "Watch: A TED talk about intelligence or happiness (with subtitles)",
+        "Read: An article about how social media affects the brain",
+        "Compare: Your own internet habits from 5 years ago vs now",
+        "Analyze: Different types of intelligence (emotional, practical, analytical)"
+      ],
+      "practice": [
+        "Write 15 sentences using 'used to' + 5 different emotions",
+        "Create 10 examples of 'the' vs no article with school, home, hospital",
+        "Make sentences with 6 different phrasal verbs from the vocabulary",
+        "Record yourself speaking about past habits (use 'used to')",
+        "Interview someone about what they used to believe vs what they believe now"
+      ],
+      "write": [
+        "Paragraph: How your thinking has changed over the years",
+        "Reflection: What made you happy as a child vs now",
+        "Opinion: Is intelligence more important than happiness?",
+        "Analysis: How the internet has impacted your intelligence and mood"
+      ]
+    },
+    "tips": [
+      "ARTICLES: 'go to school' = as a student, 'go to the school' = the building",
+      "USED TO: Only for past, negative is 'didn't use to', question is 'Did you use to...?'",
+      "THE: Use with unique things, but NOT with general plural nouns",
+      "PHRASAL VERBS: Remember they are verbs + prepositions, keep them together",
+      "PRONUNCIATION: Practice the difference between 'used to' (you-st-to) and 'use to' (use-to)",
+      "CONTEXT: 'Used to' shows change - what was true before is not true now"
+    ],
+    "prompts": [
+      "What did you use to believe about success that you don't believe anymore?",
+      "How have your feelings about the internet changed over time?",
+      "What type of intelligence do you think you have the most of?",
+      "Write about a time when you had to deal with anxiety or stress",
+      "What habits have you successfully changed? How did you do it?",
+      "Do you think artificial intelligence will change human happiness? Why?"
+    ]
+  }
+]

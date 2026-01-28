@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}{{ reading.title }} - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Mensaje Motivacional -->
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-10 offset-md-1">
+            {% set random_msg = messages | random %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-star"></i> <strong>{{ random_msg.icon if random_msg.icon else '✨' }} Consejo:</strong> {{ random_msg.content }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <!-- Encabezado -->
+            <div class="mb-4">
+                <a href="{{ url_for('reading.unit_readings', unit_number=unit.unit_number) }}" class="btn btn-sm btn-secondary mb-3">
+                    <i class="fas fa-arrow-left"></i> Volver a Lecturas
+                </a>
+                <h1>{{ reading.title }}</h1>
+                <p class="text-muted">Dificultad: <span class="badge bg-secondary">{{ reading.difficulty }}</span></p>
+            </div>
+
+            <!-- Instrucciones -->
+            <div class="alert alert-info">
+                <h5><i class="fas fa-tasks"></i> Instrucciones:</h5>
+                <p>{{ reading.instructions }}</p>
+            </div>
+
+            <!-- El Texto de Lectura -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-book"></i> Lectura</h5>
+                </div>
+                <div class="card-body" style="font-size: 1.1em; line-height: 1.8;">
+                    <p id="readingText">{{ reading.content }}</p>
+                </div>
+            </div>
+
+            <!-- Área de Extracción de Oraciones -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-pencil"></i> Extrae Oraciones Importantes</h5>
+                </div>
+                <div class="card-body">
+                    <div id="sentencesContainer">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control sentence-input" 
+                                   placeholder="Escribe una oración de la lectura" 
+                                   autocomplete="off">
+                            <button class="btn btn-primary" type="button" onclick="addSentenceField()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-lightbulb"></i> Puedes agregar múltiples oraciones. Haz clic en "+" para agregar más campos.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <button class="btn btn-success btn-lg w-100" onclick="submitReading()">
+                        <i class="fas fa-check"></i> Enviar Respuestas
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ url_for('reading.reading_history', reading_id=reading.id) }}" class="btn btn-info btn-lg w-100">
+                        <i class="fas fa-history"></i> Ver Historial
+                    </a>
+                </div>
+            </div>
+
+            <!-- Área de Resultados -->
+            <div id="resultsArea" style="display: none;">
+                <div class="card">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0"><i class="fas fa-check-circle"></i> Resultados</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Puntuación:</h6>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div id="scoreBar" class="progress-bar" role="progressbar" 
+                                     style="width: 0%; font-size: 1.1em;">0%</div>
+                            </div>
+                        </div>
+                        <div id="feedbackMessages" class="mb-3">
+                            <!-- Los mensajes de feedback aparecerán aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intentos Anteriores -->
+            {% if previous_submissions %}
+            <div class="mt-5">
+                <h4><i class="fas fa-clock"></i> Tus Intentos Anteriores</h4>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Puntuación</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for submission in previous_submissions %}
+                            <tr>
+                                <td>{{ submission.submitted_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    <span class="badge" style="background-color: {% if submission.score >= 80 %}green{% elif submission.score >= 60 %}orange{% else %}red{% endif %}">
+                                        {{ submission.score | int }}%
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('reading.view_submission', submission_id=submission.id) }}" 
+                                       class="btn btn-sm btn-info">
+                                        Ver Detalles
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+function addSentenceField() {
+    const container = document.getElementById('sentencesContainer');
+    const newInput = document.createElement('div');
+    newInput.className = 'input-group mb-2';
+    newInput.innerHTML = `
+        <input type="text" class="form-control sentence-input" 
+               placeholder="Escribe otra oración" 
+               autocomplete="off">
+        <button class="btn btn-danger" type="button" onclick="this.parentElement.remove()">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(newInput);
+}
+
+function submitReading() {
+    const sentences = Array.from(document.querySelectorAll('.sentence-input'))
+        .map(input => input.value.trim())
+        .filter(val => val.length > 0);
+
+    if (sentences.length === 0) {
+        alert('Por favor extrae al menos una oración');
+        return;
+    }
+
+    // Mostrar indicador de carga
+    const submitBtn = event.target;
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analizando...';
+
+    fetch(`{{ url_for('reading.submit_reading', reading_id=reading.id) }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sentences: sentences })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mostrar resultados
+            displayResults(data);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Hubo un error al procesar tu respuesta');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    });
+}
+
+function displayResults(data) {
+    const resultsArea = document.getElementById('resultsArea');
+    const scoreBar = document.getElementById('scoreBar');
+    const feedbackMessages = document.getElementById('feedbackMessages');
+
+    // Actualizar barra de puntuación
+    const score = Math.round(data.score);
+    scoreBar.style.width = score + '%';
+    scoreBar.textContent = score + '%';
+
+    // Cambiar color según puntuación
+    scoreBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+    if (score >= 80) {
+        scoreBar.classList.add('bg-success');
+    } else if (score >= 60) {
+        scoreBar.classList.add('bg-warning');
+        scoreBar.style.color = 'black';
+    } else {
+        scoreBar.classList.add('bg-danger');
+    }
+
+    // Mostrar mensajes de feedback
+    feedbackMessages.innerHTML = data.messages.map(msg => `
+        <div class="alert alert-info mb-2">
+            <i class="fas fa-comment"></i> ${msg}
+        </div>
+    `).join('');
+
+    resultsArea.style.display = 'block';
+    resultsArea.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+<style>
+.card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.progress {
+    background-color: #e9ecef;
+}
+
+.sentence-input {
+    font-size: 1.05em;
+}
+
+#readingText {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}

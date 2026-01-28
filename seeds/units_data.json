@@ -1,0 +1,161 @@
+[
+  {
+    "unit_number": 7,
+    "title": "MIND (La Mente)",
+    "topics": ["Felicidad", "Internet y el cerebro", "Inteligencia"],
+    "grammar": [
+      {
+        "topic": "Articles (a/an/the/no article)",
+        "rule": "Cuándo usar 'the' y cuándo no.",
+        "examples": [
+          "I go to school (estudiante)",
+          "I go to the school (el edificio)"
+        ]
+      },
+      {
+        "topic": "Used to",
+        "rule": "Hábitos en el pasado que ya no ocurren.",
+        "examples": ["I used to sleep late."]
+      }
+    ],
+    "vocabulary_categories": ["Sentimientos", "Verbos frasales (phrasal verbs)"],
+    "practice_writing": {
+      "instructions": "Escribe un párrafo sobre tu camino hacia la felicidad utilizando 'used to' y artículos correctamente.",
+      "example_text": "In the past, I used to think that money was the only way to find happiness..."
+    },
+    "activities": {
+      "study": [
+        "Lee la regla de artículos y subraya 5 ejemplos.",
+        "Escribe 3 oraciones con 'used to' y corrige tiempos."
+      ],
+      "practice": [
+        "Contrasta 'go to school' vs 'go to the school' en dos oraciones.",
+        "Escribe 3 verbos frasales con ejemplos."
+      ],
+      "tips": [
+        "Usa 'the' para cosas específicas.",
+        "'Used to' no se usa para hábitos actuales."
+      ],
+      "sentence_prompts": [
+        "Write a sentence with 'used to' about a past habit.",
+        "Use 'the' only when referring to a specific object."
+      ]
+    }
+  },
+  {
+    "unit_number": 8,
+    "title": "ART (Arte)",
+    "topics": ["Gustos musicales", "Arte inusual", "Películas y libros"],
+    "grammar": [
+      {
+        "topic": "Reflexive Pronouns",
+        "rule": "Cuando el sujeto y el objeto son el mismo.",
+        "examples": ["I told myself to be open-minded."]
+      },
+      {
+        "topic": "Infinitive of Purpose",
+        "rule": "Usar 'to' para explicar propósito.",
+        "examples": ["I went to the gallery to see art."]
+      },
+      {
+        "topic": "First Conditional",
+        "rule": "If + Present, will + Verb.",
+        "examples": ["If the exhibition is interesting, I will write a review."]
+      }
+    ],
+    "vocabulary_categories": ["Géneros de música", "Cine"],
+    "practice_writing": {
+      "instructions": "Escribe un párrafo sobre una exposición que planeas visitar usando un primer condicional.",
+      "example_text": "I bought a ticket to see the new abstract art exhibition..."
+    },
+    "activities": {
+      "study": ["Lista 5 pronombres reflexivos con ejemplos."],
+      "practice": ["Escribe 3 oraciones con 'to' + verbo indicando propósito."],
+      "tips": ["El primer condicional usa presente en la cláusula 'if'."],
+      "sentence_prompts": ["Write an 'if' sentence about visiting a gallery."]
+    }
+  },
+  {
+    "unit_number": 9,
+    "title": "MONEY (Dinero)",
+    "topics": ["Gastos", "Filantropía", "Habilidades"],
+    "grammar": [
+      {"topic": "Second Conditional", "rule": "If + Past, would + Verb.", "examples": ["If I won the lottery, I would give half to charity."]},
+      {"topic": "Gerunds", "rule": "-ing como sustantivo.", "examples": ["Spending money is easy."]},
+      {"topic": "Essential Adjective Clauses", "rule": "who/which/that.", "examples": ["People who help others inspire me."]}
+    ],
+    "vocabulary_categories": ["Make vs Do", "Frases de dinero"],
+    "practice_writing": {
+      "instructions": "Describe cómo usarías dinero para ayudar a tu comunidad usando el segundo condicional.",
+      "example_text": "Spending money responsibly is difficult..."
+    },
+    "activities": {
+      "study": ["Diferencia 'make' vs 'do' con 5 ejemplos."],
+      "practice": ["Escribe una cláusula con 'who/which/that'."],
+      "tips": ["Usa 'were' para 'If I were...' en registro formal."],
+      "sentence_prompts": ["Write a sentence starting 'If I had money, I would...'"]
+    }
+  },
+  {
+    "unit_number": 10,
+    "title": "SCIENCE AND TECHNOLOGY (Ciencia y Tecnología)",
+    "topics": ["Dispositivos", "Tipos de tecnología", "El espacio"],
+    "grammar": [
+      {"topic": "Comparatives & Superlatives", "rule": "er/more/less ... than; the most/least/-est.", "examples": ["My smartphone is faster than my tablet.", "It is the most useful device I own."]},
+      {"topic": "Need to", "rule": "Obligación o necesidad.", "examples": ["We need to update our skills."]}
+    ],
+    "vocabulary_categories": ["Dispositivos electrónicos", "Colocaciones de ciencia"],
+    "practice_writing": {
+      "instructions": "Compara dos dispositivos e incluye un superlativo y 'need to'.",
+      "example_text": "My new smartphone is faster than my old tablet..."
+    },
+    "activities": {
+      "study": ["Lista 5 comparativos y 3 superlativos correctos."],
+      "practice": ["Escribe 2 oraciones con 'need to'."],
+      "tips": ["Recuerda 'more + adjective (>=3 sílabas)'."],
+      "sentence_prompts": ["Write a superlative sentence about a device."]
+    }
+  },
+  {
+    "unit_number": 11,
+    "title": "NATURAL WORLD (Mundo Natural)",
+    "topics": ["Maravillas naturales", "Fotografía de vida salvaje", "Contaminación plástica"],
+    "grammar": [
+      {"topic": "Passive Voice", "rule": "be + past participle.", "examples": ["Plastic is found in the ocean."]},
+      {"topic": "Adjective + Infinitive", "rule": "It is [adj] to [verb].", "examples": ["It is hard to believe."]},
+      {"topic": "Words with -where", "rule": "Somewhere, nowhere, everywhere.", "examples": ["Plastic is found everywhere."]}
+    ],
+    "vocabulary_categories": ["Animales", "Características naturales"],
+    "practice_writing": {
+      "instructions": "Describe un problema ambiental usando voz pasiva y 'It is [adj] to [verb]'.",
+      "example_text": "Plastic pollution is found everywhere..."
+    },
+    "activities": {
+      "study": ["Identifica 3 oraciones pasivas en un artículo."],
+      "practice": ["Escribe 2 oraciones con 'everywhere/nowhere'."],
+      "tips": ["No uses 'by' si el agente no es importante."],
+      "sentence_prompts": ["Write a passive sentence about animals."]
+    }
+  },
+  {
+    "unit_number": 12,
+    "title": "MEDIA (Medios de Comunicación)",
+    "topics": ["Noticias online", "Hábitos de TV", "Publicidad"],
+    "grammar": [
+      {"topic": "Reported Speech", "rule": "said/told that ... (backshift opcional).", "examples": ["He said that fake news had become a big problem."]},
+      {"topic": "Past Perfect", "rule": "had + past participle.", "examples": ["The show had already started."]},
+      {"topic": "Should", "rule": "Recomendaciones.", "examples": ["We should check sources before sharing."]}
+    ],
+    "vocabulary_categories": ["Expresiones de noticias", "Publicidad"],
+    "practice_writing": {
+      "instructions": "Redacta un breve comentario sobre medios usando reported speech y past perfect.",
+      "example_text": "The journalist said that fake news had become a big problem..."
+    },
+    "activities": {
+      "study": ["Convierte 3 frases directas a estilo indirecto."],
+      "practice": ["Escribe 2 oraciones con 'had + participle'."],
+      "tips": ["Aplica 'should' para recomendaciones."],
+      "sentence_prompts": ["Write a sentence using 'He said that ...'."]
+    }
+  }
+]

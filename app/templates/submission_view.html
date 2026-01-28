@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Envío de Escritura{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{{ url_for('units.view_writing_practices', unit_id=submission.practice.unit_id) }}" class="btn btn-sm btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <h1>
+            <i class="fas fa-file-alt"></i> Envío #{{ submission.id }}
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Tu texto</h5>
+                <p class="card-text" style="white-space: pre-line;">{{ submission.text }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Feedback</h5>
+                {% if submission.feedback %}
+                <p class="card-text">{{ submission.feedback }}</p>
+                {% else %}
+                <p class="text-muted">Aún no hay feedback.</p>
+                {% endif %}
+                
+                <h5 class="card-title mt-3">Puntuación</h5>
+                {% if submission.score is not none %}
+                <p class="card-text">{{ submission.score }}/100</p>
+                {% else %}
+                <p class="text-muted">Sin puntuación aún.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

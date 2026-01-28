@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - English Learning{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-3">
+            <i class="fas fa-chart-line"></i> Bienvenido, {{ user.full_name }}!
+        </h1>
+        <p class="text-muted">Aquí puedes ver tu progreso y continuar aprendiendo.</p>
+    </div>
+</div>
+
+<!-- Progress Summary -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-chart-pie"></i> Tu Progreso General
+                </h5>
+                <h2 class="mb-3">{{ "%.1f"|format(user_progress.percentage) }}%</h2>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ user_progress.percentage }}%;" 
+                         aria-valuenow="{{ user_progress.percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    {{ user_progress.completed_units }} de {{ user_progress.total_units }} unidades completadas
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-calendar"></i> Información del Usuario
+                </h5>
+                <p class="mb-2">
+                    <strong>Usuario:</strong> @{{ user.username }}
+                </p>
+                <p class="mb-2">
+                    <strong>Email:</strong> {{ user.email }}
+                </p>
+                <p class="mb-2">
+                    <strong>Miembro desde:</strong> {{ user.created_at.strftime('%d/%m/%Y') }}
+                </p>
+                <a href="{{ url_for('dashboard.progress') }}" class="btn btn-sm btn-outline-primary mt-2">
+                    <i class="fas fa-chart-bar"></i> Ver Progreso Detallado
+                </a>
+                    <a href="{{ url_for('errors.my_errors') }}" class="btn btn-sm btn-outline-warning mt-2">
+                        <i class="fas fa-exclamation-triangle"></i> Ver Banco de Errores
+                    </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Streak Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-1"><i class="fas fa-fire"></i> Racha de Estudio</h5>
+                        {% if streak %}
+                            <p class="mb-0">Actual: <strong>{{ streak.current_streak }}</strong> días</p>
+                            <small class="text-muted">Récord: {{ streak.longest_streak }} días</small>
+                        {% else %}
+                            <p class="mb-0">Aún no tienes racha registrada.</p>
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 2.5em;">🔥</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Badges Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-trophy"></i> Mis Logros (Badges)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if user.badges_earned %}
+                        {% for badge in user.badges_earned | slice(3) %}
+                        <div class="col-md-4 text-center mb-3">
+                            <div style="font-size: 2.5em;">{{ badge.icon }}</div>
+                            <small class="text-muted">{{ badge.name }}</small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="col-12">
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-star"></i> Completa ejercicios para desbloquear badges
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="text-center mt-3 pt-3 border-top">
+                    <a href="{{ url_for('badges.my_badges') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-trophy"></i> Ver Todos mis Logros
+                    </a>
+                    <a href="{{ url_for('badges.all_badges') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-list"></i> Ver Todos los Badges
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Units List -->
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-3">
+            <i class="fas fa-book"></i> Mis Unidades
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    {% for item in units %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="badge badge-unit bg-primary">Unit {{ item.unit.unit_number }}</div>
+                    {% if item.progress.completed %}
+                    <span class="badge bg-success">
+                        <i class="fas fa-check-circle"></i> Completada
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <h5 class="card-title">{{ item.unit.title }}</h5>
+                
+                <div class="mb-3">
+                    <small class="d-block text-muted mb-2">Progreso</small>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ item.progress.progress_percentage }}%;" 
+                             aria-valuenow="{{ item.progress.progress_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ "%.0f"|format(item.progress.progress_percentage) }}%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row text-center mb-3">
+                    <div class="col-4">
+                        <small class="d-block text-muted">Tópicos</small>
+                        <strong>{{ item.topics_count }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <small class="d-block text-muted">Gramática</small>
+                        <strong>{{ item.grammar_count }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <small class="d-block text-muted">Vocabulario</small>
+                        <strong>{{ item.vocabulary_count }}</strong>
+                    </div>
+                </div>
+
+                <div class="btn-group w-100" role="group">
+                    <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}" 
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye"></i> Ver
+                    </a>
+                    <a href="{{ url_for('units.view_grammar', unit_id=item.unit.id) }}" 
+                       class="btn btn-sm btn-outline-info">
+                        <i class="fas fa-pen-fancy"></i> Gramática
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

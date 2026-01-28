@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}English Learning Platform - Home{% endblock %}
+
+{% block content %}
+<div class="row align-items-center">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">
+            <span style="color: #0066cc;">Aprende</span> Inglés de Forma Interactiva
+        </h1>
+        <p class="lead mb-4">
+            Una plataforma escalable y amigable para todos los usuarios. Aprende gramática, vocabulario 
+            y práctica de escritura en un solo lugar.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="fas fa-arrow-right"></i> Ir al Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="fas fa-user-plus"></i> Registrarse Gratis
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card bg-light border-0">
+            <div class="card-body p-5">
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-lightbulb" style="color: #00cc99;"></i> Características
+                </h3>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle" style="color: #00cc99;"></i>
+                        <strong>6 Unidades Completas</strong> - Desde nivel intermedio hasta avanzado
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle" style="color: #00cc99;"></i>
+                        <strong>Gramática Estructurada</strong> - Reglas claras con ejemplos
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle" style="color: #00cc99;"></i>
+                        <strong>Vocabulario Organizado</strong> - Por categorías y niveles
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle" style="color: #00cc99;"></i>
+                        <strong>Ejercicios de Escritura</strong> - Practica con textos reales
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check-circle" style="color: #00cc99;"></i>
+                        <strong>Seguimiento de Progreso</strong> - Monitorea tu avance
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Unidades Preview -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-book"></i> Unidades Disponibles
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="badge badge-unit bg-primary mb-2">Unit 7</div>
+                <h5 class="card-title">MIND (La Mente)</h5>
+                <p class="card-text text-muted">
+                    Felicidad, Internet y el cerebro, Inteligencia
+                </p>
+                <div class="small">
+                    <i class="fas fa-graduation-cap"></i> Intermediate Level
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="badge badge-unit bg-info mb-2">Unit 8</div>
+                <h5 class="card-title">ART (Arte)</h5>
+                <p class="card-text text-muted">
+                    Gustos musicales, Arte inusual, Películas y libros
+                </p>
+                <div class="small">
+                    <i class="fas fa-graduation-cap"></i> Intermediate Level
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="badge badge-unit bg-success mb-2">Unit 9</div>
+                <h5 class="card-title">MONEY (Dinero)</h5>
+                <p class="card-text text-muted">
+                    Gastos, Filantropía, Habilidades
+                </p>
+                <div class="small">
+                    <i class="fas fa-graduation-cap"></i> Intermediate Level
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="badge badge-unit bg-warning mb-2">Unit 10</div>
+                <h5 class="card-title">SCIENCE & TECHNOLOGY</h5>
+                <p class="card-text text-muted">
+                    Dispositivos, Tipos de tecnología, El espacio
+                </p>
+                <div class="small">
+                    <i class="fas fa-graduation-cap"></i> Intermediate Level
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="badge badge-unit bg-danger mb-2">Unit 11</div>
+                <h5 class="card-title">NATURAL WORLD</h5>
+                <p class="card-text text-muted">
+                    Maravillas naturales, Fotografía de vida salvaje
+                </p>
+                <div class="small">
+                    <i class="fas fa-graduation-cap"></i> Intermediate Level
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 unit-card">
+            <div class="card-body">
+                <div class="badge badge-unit bg-secondary mb-2">Unit 12</div>
+                <h5 class="card-title">MEDIA (Medios)</h5>
+                <p class="card-text text-muted">
+                    Noticias online, Hábitos de TV, Publicidad
+                </p>
+                <div class="small">
+                    <i class="fas fa-graduation-cap"></i> Intermediate Level
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

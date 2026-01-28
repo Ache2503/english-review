@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Badges - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <h1><i class="fas fa-trophy"></i> Mis Logros</h1>
+        </div>
+    </div>
+
+    <!-- Resumen de Badges -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Badges Ganados</h5>
+                    <h2 class="mb-0">{{ total_earned }} / {{ total_badges }}</h2>
+                    <div class="progress mt-3" style="height: 25px;">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ (total_earned / total_badges * 100) | int }}%;"
+                             aria-valuenow="{{ total_earned }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="{{ total_badges }}">
+                            {{ ((total_earned / total_badges * 100) | int) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Progreso</h5>
+                    <p class="mb-2">Falta ganar {{ total_badges - total_earned }} badges</p>
+                    <small>Completa más ejercicios y unidades para desbloquear logros</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badges Ganados -->
+    {% if earned_badges %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="mb-4">🏆 Badges Desbloqueados</h3>
+            <div class="row">
+                {% for badge in earned_badges %}
+                <div class="col-md-4 mb-3">
+                    <div class="card badge-card h-100 border-success" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+                        <div class="card-body text-center">
+                            <div style="font-size: 3em; margin: 20px 0;">{{ badge.icon }}</div>
+                            <h5 class="card-title">{{ badge.name }}</h5>
+                            <p class="card-text small text-muted">{{ badge.description }}</p>
+                            <span class="badge bg-success">Desbloqueado ✓</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mb-5">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Aún no has ganado badges.</strong> Completa unidades, haz ejercicios y quizzes para desbloquearlos.
+    </div>
+    {% endif %}
+
+    <!-- Badges No Ganados -->
+    {% if not_earned_badges %}
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">🔒 Badges por Desbloquear</h3>
+            <div class="row">
+                {% for badge in not_earned_badges %}
+                <div class="col-md-4 mb-3">
+                    <div class="card badge-card h-100 opacity-50" style="background: #f8f9fa;">
+                        <div class="card-body text-center">
+                            <div style="font-size: 3em; margin: 20px 0; filter: grayscale(100%);">{{ badge.icon }}</div>
+                            <h5 class="card-title">{{ badge.name }}</h5>
+                            <p class="card-text small text-muted">{{ badge.description }}</p>
+                            <small class="text-warning">
+                                <i class="fas fa-lock"></i> Bloqueado
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+    .badge-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .badge-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
