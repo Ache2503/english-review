@@ -1,0 +1,761 @@
+{% extends "base.html" %}
+
+{% block title %}Buscador de Verbos - Grammar{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('grammar.index') }}">Gramática</a></li>
+          <li class="breadcrumb-item active">Buscador de Verbos</li>
+        </ol>
+      </nav>
+      
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="verb-icon-large">📖</div>
+        <div>
+          <h1 class="mb-1">Buscador de Verbos</h1>
+          <p class="text-muted mb-0">Encuentra verbos en inglés con sus conjugaciones, traducciones y ejemplos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="row mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-primary text-white">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total Verbos</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-danger text-white">
+        <div class="stat-number">{{ stats.irregular }}</div>
+        <div class="stat-label">Irregulares</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-success text-white">
+        <div class="stat-number">{{ stats.regular }}</div>
+        <div class="stat-label">Regulares</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-warning text-dark">
+        <div class="stat-number">{{ stats.modal }}</div>
+        <div class="stat-label">Modales</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buscador con Dropdown -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="search-container position-relative">
+            <div class="input-group input-group-lg">
+              <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+              <input type="text" id="verbSearch" class="form-control" 
+                     placeholder="Buscar verbo (ej: jugar, play, run)..." 
+                     autocomplete="off">
+              <button class="btn btn-outline-secondary" type="button" id="clearSearch" style="display: none;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <!-- Dropdown de resultados -->
+            <div id="searchDropdown" class="search-dropdown">
+              <div id="dropdownResults"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select id="verbType" class="form-select form-select-lg">
+            <option value="all">Todos los tipos</option>
+            <option value="irregular">Solo Irregulares</option>
+            <option value="regular">Solo Regulares</option>
+            <option value="modal">Solo Modales</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select id="verbCategory" class="form-select form-select-lg">
+            <option value="">Todas las categorías</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat|capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Verbo seleccionado (se muestra cuando eliges uno del dropdown) -->
+  <div id="selectedVerb" class="mb-4" style="display: none;">
+    <div class="card border-0 shadow-lg selected-verb-card">
+      <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-book-open"></i> Verbo Seleccionado</h5>
+        <button class="btn btn-sm btn-light" onclick="closeSelectedVerb()">
+          <i class="fas fa-times"></i> Cerrar
+        </button>
+      </div>
+      <div class="card-body" id="selectedVerbContent"></div>
+    </div>
+  </div>
+
+  <!-- Verbos más usados -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-gradient-primary text-white">
+      <h5 class="mb-0"><i class="fas fa-star"></i> Verbos Más Usados (Top 20)</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        {% for verb in featured_verbs %}
+        <div class="col-md-6 col-lg-4">
+          <div class="verb-card" data-verb="{{ verb.infinitive }}">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="verb-infinitive mb-1">
+                  <i class="fas fa-volume-up speak-btn me-2" onclick="event.stopPropagation(); speak('{{ verb.infinitive }}')"></i>
+                  {{ verb.infinitive }}
+                </h5>
+                <span class="text-muted">{{ verb.spanish_translation }}</span>
+              </div>
+              <div>
+                {% if verb.is_irregular %}
+                <span class="badge bg-danger">Irregular</span>
+                {% else %}
+                <span class="badge bg-success">Regular</span>
+                {% endif %}
+                {% if verb.is_modal %}
+                <span class="badge bg-warning text-dark">Modal</span>
+                {% endif %}
+              </div>
+            </div>
+            <div class="verb-conjugations mt-3">
+              <div class="row g-2 text-center">
+                <div class="col-4">
+                  <small class="text-muted d-block">Past</small>
+                  <span class="fw-bold">{{ verb.past_simple }}</span>
+                </div>
+                <div class="col-4">
+                  <small class="text-muted d-block">Participle</small>
+                  <span class="fw-bold">{{ verb.past_participle }}</span>
+                </div>
+                <div class="col-4">
+                  <small class="text-muted d-block">-ing</small>
+                  <span class="fw-bold">{{ verb.present_participle }}</span>
+                </div>
+              </div>
+            </div>
+            {% if verb.example_sentence %}
+            <div class="verb-example mt-3 p-2 bg-light rounded">
+              <small class="text-primary">{{ verb.example_sentence }}</small>
+              {% if verb.example_translation %}
+              <br><small class="text-muted">{{ verb.example_translation }}</small>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Practica con verbos aleatorios -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-gradient-purple text-white">
+      <h5 class="mb-0"><i class="fas fa-random"></i> Practica con Verbos Aleatorios</h5>
+    </div>
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div id="practiceArea">
+            <p class="mb-3">Pon a prueba tu conocimiento de verbos irregulares</p>
+            <div id="practiceQuestion" style="display: none;">
+              <div class="practice-verb mb-3">
+                <span class="badge bg-light text-dark me-2">Infinitivo:</span>
+                <span id="practiceInfinitive" class="h4"></span>
+                <span class="text-muted ms-2">(<span id="practiceSpanish"></span>)</span>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Past Simple:</label>
+                  <input type="text" id="answerPast" class="form-control" placeholder="Escribe el pasado...">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Past Participle:</label>
+                  <input type="text" id="answerParticiple" class="form-control" placeholder="Escribe el participio...">
+                </div>
+              </div>
+              <div id="practiceResult" class="mt-3" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <button id="startPractice" class="btn btn-lg btn-light px-4">
+            <i class="fas fa-play"></i> Empezar
+          </button>
+          <button id="checkPractice" class="btn btn-lg btn-success px-4" style="display: none;">
+            <i class="fas fa-check"></i> Verificar
+          </button>
+          <button id="nextPractice" class="btn btn-lg btn-primary px-4" style="display: none;">
+            <i class="fas fa-forward"></i> Siguiente
+          </button>
+        </div>
+      </div>
+      <div class="mt-3">
+        <span class="badge bg-light text-dark me-2">Puntuación:</span>
+        <span id="practiceScore">0</span> / <span id="practiceTotal">0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.verb-icon-large {
+  font-size: 3rem;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Estilos del dropdown de búsqueda */
+.search-container {
+  position: relative;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1050;
+  display: none;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.search-dropdown.show {
+  display: block;
+}
+
+.dropdown-verb-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-verb-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-verb-item:hover {
+  background: #f8f9fa;
+}
+
+.dropdown-verb-item .verb-name {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.dropdown-verb-item .verb-translation {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.dropdown-verb-item .verb-conjugations {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+.dropdown-no-results {
+  padding: 1rem;
+  text-align: center;
+  color: #888;
+}
+
+.selected-verb-card {
+  border: 2px solid #667eea;
+}
+
+.selected-verb-card .verb-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.selected-verb-card .verb-detail-infinitive {
+  font-size: 2rem;
+  color: #667eea;
+}
+
+.selected-verb-card .conjugation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.selected-verb-card .conjugation-item {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.selected-verb-card .conjugation-label {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.selected-verb-card .conjugation-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.verb-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.verb-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  border-color: #667eea;
+}
+
+.verb-infinitive {
+  color: #667eea;
+}
+
+.speak-btn {
+  color: #667eea;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.speak-btn:hover {
+  transform: scale(1.2);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+}
+
+.practice-verb {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .search-dropdown {
+  background: #2d2d2d;
+  border-color: #444;
+}
+
+[data-bs-theme="dark"] .dropdown-verb-item {
+  border-color: #444;
+}
+
+[data-bs-theme="dark"] .dropdown-verb-item:hover {
+  background: #383838;
+}
+
+[data-bs-theme="dark"] .dropdown-verb-item .verb-translation,
+[data-bs-theme="dark"] .dropdown-verb-item .verb-conjugations {
+  color: #aaa;
+}
+
+[data-bs-theme="dark"] .selected-verb-card .conjugation-item {
+  background: #333;
+}
+
+[data-bs-theme="dark"] .selected-verb-card .conjugation-value {
+  color: #eee;
+}
+
+[data-bs-theme="dark"] .verb-card {
+  background: #2d2d2d;
+  border-color: #444;
+}
+
+[data-bs-theme="dark"] .verb-card:hover {
+  border-color: #667eea;
+}
+
+[data-bs-theme="dark"] .practice-verb,
+[data-bs-theme="dark"] .verb-example {
+  background: #333 !important;
+}
+</style>
+
+<script>
+// Text to Speech
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+// Cerrar verbo seleccionado
+function closeSelectedVerb() {
+  document.getElementById('selectedVerb').style.display = 'none';
+}
+
+// Mostrar verbo seleccionado en detalle
+function showVerbDetail(verb) {
+  const container = document.getElementById('selectedVerbContent');
+  container.innerHTML = `
+    <div class="verb-detail-header">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="verb-detail-infinitive">
+            <i class="fas fa-volume-up speak-btn" onclick="speak('${verb.infinitive}')"></i>
+            ${verb.infinitive}
+          </span>
+          ${verb.is_irregular ? '<span class="badge bg-danger">Irregular</span>' : '<span class="badge bg-success">Regular</span>'}
+          ${verb.is_modal ? '<span class="badge bg-warning text-dark">Modal</span>' : ''}
+        </div>
+        <p class="text-muted mb-0 mt-1">
+          <i class="fas fa-language"></i> ${verb.spanish}
+          ${verb.category ? `<span class="badge bg-light text-dark ms-2">${verb.category}</span>` : ''}
+        </p>
+      </div>
+    </div>
+    
+    <h6 class="text-muted mb-3"><i class="fas fa-table"></i> Conjugaciones</h6>
+    <div class="conjugation-grid">
+      <div class="conjugation-item">
+        <div class="conjugation-label">Infinitive</div>
+        <div class="conjugation-value">${verb.infinitive}</div>
+      </div>
+      <div class="conjugation-item">
+        <div class="conjugation-label">Past Simple</div>
+        <div class="conjugation-value">${verb.past_simple}</div>
+      </div>
+      <div class="conjugation-item">
+        <div class="conjugation-label">Past Participle</div>
+        <div class="conjugation-value">${verb.past_participle}</div>
+      </div>
+      <div class="conjugation-item">
+        <div class="conjugation-label">Present Participle (-ing)</div>
+        <div class="conjugation-value">${verb.present_participle}</div>
+      </div>
+      <div class="conjugation-item">
+        <div class="conjugation-label">3rd Person (he/she/it)</div>
+        <div class="conjugation-value">${verb.third_person || verb.infinitive + 's'}</div>
+      </div>
+    </div>
+    
+    ${verb.example ? `
+    <div class="mt-4">
+      <h6 class="text-muted mb-2"><i class="fas fa-quote-left"></i> Ejemplo</h6>
+      <div class="p-3 bg-light rounded">
+        <p class="mb-1 text-primary fw-bold">
+          <i class="fas fa-volume-up speak-btn me-2" onclick="speak('${verb.example.replace(/'/g, "\\'")}')"></i>
+          ${verb.example}
+        </p>
+        ${verb.example_translation ? `<p class="mb-0 text-muted">${verb.example_translation}</p>` : ''}
+      </div>
+    </div>
+    ` : ''}
+    
+    ${verb.notes ? `
+    <div class="mt-3">
+      <p class="text-muted small"><i class="fas fa-info-circle"></i> ${verb.notes}</p>
+    </div>
+    ` : ''}
+  `;
+  
+  document.getElementById('selectedVerb').style.display = 'block';
+  document.getElementById('selectedVerb').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  // Cerrar dropdown
+  document.getElementById('searchDropdown').classList.remove('show');
+}
+
+// Variables de práctica
+let currentVerb = null;
+let practiceScore = 0;
+let practiceTotal = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('verbSearch');
+  const typeSelect = document.getElementById('verbType');
+  const categorySelect = document.getElementById('verbCategory');
+  const dropdown = document.getElementById('searchDropdown');
+  const dropdownResults = document.getElementById('dropdownResults');
+  const clearBtn = document.getElementById('clearSearch');
+  
+  let searchTimeout;
+  
+  function performSearch() {
+    const query = searchInput.value.trim();
+    const type = typeSelect.value;
+    const category = categorySelect.value;
+    
+    // Mostrar/ocultar botón de limpiar
+    clearBtn.style.display = query ? 'block' : 'none';
+    
+    if (!query && type === 'all' && !category) {
+      dropdown.classList.remove('show');
+      return;
+    }
+    
+    // Si no hay query pero hay filtros, buscar todos los que coincidan
+    fetch(`/grammar/verbs/search?q=${encodeURIComponent(query)}&type=${type}&category=${encodeURIComponent(category)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.verbs.length > 0) {
+          dropdownResults.innerHTML = data.verbs.slice(0, 10).map(verb => `
+            <div class="dropdown-verb-item" data-verb='${JSON.stringify(verb).replace(/'/g, "&#39;")}'>
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <span class="verb-name">${verb.infinitive}</span>
+                  <span class="verb-translation ms-2">- ${verb.spanish}</span>
+                </div>
+                <div>
+                  ${verb.is_irregular ? '<span class="badge bg-danger badge-sm">Irreg</span>' : '<span class="badge bg-success badge-sm">Reg</span>'}
+                  ${verb.is_modal ? '<span class="badge bg-warning text-dark badge-sm">Modal</span>' : ''}
+                </div>
+              </div>
+              <div class="verb-conjugations">
+                <i class="fas fa-arrow-right me-1"></i>
+                ${verb.past_simple} / ${verb.past_participle} / ${verb.present_participle}
+              </div>
+            </div>
+          `).join('');
+          
+          if (data.verbs.length > 10) {
+            dropdownResults.innerHTML += `
+              <div class="dropdown-no-results">
+                <small>Mostrando 10 de ${data.verbs.length} resultados. Escribe más para filtrar.</small>
+              </div>
+            `;
+          }
+          
+          dropdown.classList.add('show');
+          
+          // Agregar listeners a los items
+          document.querySelectorAll('.dropdown-verb-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const verbData = JSON.parse(this.dataset.verb.replace(/&#39;/g, "'"));
+              showVerbDetail(verbData);
+              searchInput.value = verbData.infinitive;
+              clearBtn.style.display = 'block';
+            });
+          });
+        } else if (query) {
+          dropdownResults.innerHTML = `
+            <div class="dropdown-no-results">
+              <i class="fas fa-search"></i> No se encontraron verbos para "<strong>${query}</strong>"
+            </div>
+          `;
+          dropdown.classList.add('show');
+        } else {
+          dropdown.classList.remove('show');
+        }
+      });
+  }
+  
+  // Eventos del buscador
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(performSearch, 200);
+  });
+  
+  searchInput.addEventListener('focus', function() {
+    if (this.value.trim() || typeSelect.value !== 'all' || categorySelect.value) {
+      performSearch();
+    }
+  });
+  
+  // Cerrar dropdown al hacer click fuera
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-container')) {
+      dropdown.classList.remove('show');
+    }
+  });
+  
+  // Limpiar búsqueda
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    dropdown.classList.remove('show');
+    searchInput.focus();
+  });
+  
+  // Filtros también disparan búsqueda
+  typeSelect.addEventListener('change', performSearch);
+  categorySelect.addEventListener('change', performSearch);
+  
+  // Navegación con teclado
+  searchInput.addEventListener('keydown', function(e) {
+    const items = dropdown.querySelectorAll('.dropdown-verb-item');
+    const active = dropdown.querySelector('.dropdown-verb-item.active');
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!active && items.length > 0) {
+        items[0].classList.add('active');
+        items[0].style.background = '#e9ecef';
+      } else if (active) {
+        const next = active.nextElementSibling;
+        if (next && next.classList.contains('dropdown-verb-item')) {
+          active.classList.remove('active');
+          active.style.background = '';
+          next.classList.add('active');
+          next.style.background = '#e9ecef';
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (active) {
+        const prev = active.previousElementSibling;
+        if (prev && prev.classList.contains('dropdown-verb-item')) {
+          active.classList.remove('active');
+          active.style.background = '';
+          prev.classList.add('active');
+          prev.style.background = '#e9ecef';
+        }
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (active) {
+        active.click();
+      }
+    } else if (e.key === 'Escape') {
+      dropdown.classList.remove('show');
+    }
+  });
+  
+  // Práctica de verbos
+  const startBtn = document.getElementById('startPractice');
+  const checkBtn = document.getElementById('checkPractice');
+  const nextBtn = document.getElementById('nextPractice');
+  const questionArea = document.getElementById('practiceQuestion');
+  const resultArea = document.getElementById('practiceResult');
+  
+  function loadRandomVerb() {
+    fetch('/grammar/verbs/random?type=irregular')
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          currentVerb = data.verb;
+          document.getElementById('practiceInfinitive').textContent = currentVerb.infinitive;
+          document.getElementById('practiceSpanish').textContent = currentVerb.spanish;
+          document.getElementById('answerPast').value = '';
+          document.getElementById('answerParticiple').value = '';
+          resultArea.style.display = 'none';
+          questionArea.style.display = 'block';
+          startBtn.style.display = 'none';
+          checkBtn.style.display = 'inline-block';
+          nextBtn.style.display = 'none';
+        }
+      });
+  }
+  
+  startBtn.addEventListener('click', loadRandomVerb);
+  
+  checkBtn.addEventListener('click', function() {
+    if (!currentVerb) return;
+    
+    const pastAnswer = document.getElementById('answerPast').value.trim().toLowerCase();
+    const participleAnswer = document.getElementById('answerParticiple').value.trim().toLowerCase();
+    
+    const correctPast = currentVerb.past_simple.toLowerCase();
+    const correctParticiple = currentVerb.past_participle.toLowerCase();
+    
+    // Verificar (considerar opciones múltiples separadas por /)
+    const pastOptions = correctPast.split('/').map(s => s.trim());
+    const participleOptions = correctParticiple.split('/').map(s => s.trim());
+    
+    const pastCorrect = pastOptions.includes(pastAnswer);
+    const participleCorrect = participleOptions.includes(participleAnswer);
+    
+    practiceTotal++;
+    
+    let html = '';
+    if (pastCorrect && participleCorrect) {
+      html = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> ¡Perfecto! Ambas respuestas correctas.</div>';
+      practiceScore++;
+    } else {
+      html = '<div class="alert alert-warning"><i class="fas fa-times-circle"></i> ';
+      if (!pastCorrect) html += `Past Simple: <strong>${correctPast}</strong>. `;
+      if (!participleCorrect) html += `Past Participle: <strong>${correctParticiple}</strong>`;
+      html += '</div>';
+    }
+    
+    resultArea.innerHTML = html;
+    resultArea.style.display = 'block';
+    
+    document.getElementById('practiceScore').textContent = practiceScore;
+    document.getElementById('practiceTotal').textContent = practiceTotal;
+    
+    checkBtn.style.display = 'none';
+    nextBtn.style.display = 'inline-block';
+  });
+  
+  nextBtn.addEventListener('click', loadRandomVerb);
+  
+  // Enter para verificar
+  document.getElementById('answerPast').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') document.getElementById('answerParticiple').focus();
+  });
+  
+  document.getElementById('answerParticiple').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') checkBtn.click();
+  });
+});
+</script>
+{% endblock %}

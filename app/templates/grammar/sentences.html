@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Oraciones de la Comunidad - {{ topic.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('grammar.index') }}">Gramática</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('grammar.topic_detail', topic_key=topic_key) }}">{{ topic.title }}</a></li>
+      <li class="breadcrumb-item active">Oraciones</li>
+    </ol>
+  </nav>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex align-items-center gap-3">
+        <div class="topic-icon-large">{{ topic.icon }}</div>
+        <div>
+          <h1 class="mb-1">Oraciones de la Comunidad</h1>
+          <p class="text-muted mb-0">{{ topic.title }} - Aprende con ejemplos de otros estudiantes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Columna principal -->
+    <div class="col-lg-8">
+      <!-- Formulario para agregar oración -->
+      {% if current_user.is_authenticated %}
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-gradient-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Comparte tu oración</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-3">Escribe una oración usando <strong>{{ topic.title }}</strong> y ayuda a otros a aprender</p>
+          <div class="mb-3">
+            <label class="form-label">Tu oración en inglés:</label>
+            <textarea id="newSentence" class="form-control" rows="2" 
+                      placeholder="Ejemplo: I am a student from Mexico."></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Traducción al español (opcional):</label>
+            <input type="text" id="newTranslation" class="form-control" 
+                   placeholder="Soy un estudiante de México.">
+          </div>
+          <button id="submitSentence" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Enviar Oración
+          </button>
+          <div id="submitResult" class="mt-3" style="display: none;"></div>
+        </div>
+      </div>
+      {% else %}
+      <div class="alert alert-info mb-4">
+        <i class="fas fa-info-circle"></i> 
+        <a href="{{ url_for('auth.login') }}">Inicia sesión</a> para compartir tus oraciones con la comunidad.
+      </div>
+      {% endif %}
+
+      <!-- Oraciones destacadas -->
+      {% if featured %}
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0"><i class="fas fa-star"></i> Oraciones Destacadas</h5>
+        </div>
+        <div class="card-body">
+          {% for sentence in featured %}
+          <div class="sentence-item featured mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+            <div class="d-flex gap-3">
+              <div class="sentence-avatar">⭐</div>
+              <div class="flex-grow-1">
+                <div class="sentence-english">
+                  <i class="fas fa-volume-up speak-btn me-2" onclick="speak('{{ sentence.corrected_sentence or sentence.original_sentence }}')"></i>
+                  {{ sentence.corrected_sentence or sentence.original_sentence }}
+                </div>
+                {% if sentence.spanish_translation %}
+                <div class="sentence-spanish text-muted">
+                  <i class="fas fa-language me-2"></i>{{ sentence.spanish_translation }}
+                </div>
+                {% endif %}
+                <div class="sentence-meta mt-2">
+                  <span class="badge bg-light text-dark">
+                    <i class="fas fa-user"></i> {{ sentence.user.username if sentence.user else 'Anónimo' }}
+                  </span>
+                  <span class="badge bg-light text-dark">
+                    <i class="fas fa-heart text-danger"></i> {{ sentence.likes_count }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Todas las oraciones -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-comments"></i> Oraciones de la Comunidad ({{ sentences|length }})</h5>
+        </div>
+        <div class="card-body">
+          {% if sentences %}
+            {% for sentence in sentences %}
+            <div class="sentence-item mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}" data-sentence-id="{{ sentence.id }}">
+              <div class="d-flex gap-3">
+                <div class="sentence-number">{{ loop.index }}</div>
+                <div class="flex-grow-1">
+                  <div class="sentence-english">
+                    <i class="fas fa-volume-up speak-btn me-2" onclick="speak('{{ sentence.corrected_sentence or sentence.original_sentence }}')"></i>
+                    {{ sentence.corrected_sentence or sentence.original_sentence }}
+                  </div>
+                  {% if sentence.spanish_translation %}
+                  <div class="sentence-spanish text-muted">
+                    <i class="fas fa-language me-2"></i>{{ sentence.spanish_translation }}
+                  </div>
+                  {% endif %}
+                  {% if sentence.correction_notes %}
+                  <div class="correction-note mt-2 p-2 bg-light rounded">
+                    <small><i class="fas fa-lightbulb text-warning"></i> {{ sentence.correction_notes }}</small>
+                  </div>
+                  {% endif %}
+                  <div class="sentence-actions mt-2">
+                    <button class="btn btn-sm btn-outline-danger like-btn" data-id="{{ sentence.id }}">
+                      <i class="fas fa-heart"></i> <span class="likes-count">{{ sentence.likes_count }}</span>
+                    </button>
+                    <span class="text-muted small ms-2">
+                      por {{ sentence.user.username if sentence.user else 'Anónimo' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-5">
+              <div class="mb-3" style="font-size: 4rem;">📝</div>
+              <h5>¡Sé el primero en compartir!</h5>
+              <p class="text-muted">Aún no hay oraciones para este tema. ¡Comparte la tuya!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Volver al tema -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body text-center">
+          <a href="{{ url_for('grammar.topic_detail', topic_key=topic_key) }}" class="btn btn-outline-primary btn-lg w-100">
+            <i class="fas fa-arrow-left"></i> Volver a {{ topic.title }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Tips para escribir -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+          <h6 class="mb-0"><i class="fas fa-lightbulb"></i> Tips para escribir</h6>
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Usa vocabulario simple</li>
+            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Verifica la ortografía</li>
+            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Incluye sujeto y verbo</li>
+            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Comienza con mayúscula</li>
+            <li><i class="fas fa-check text-success me-2"></i>Termina con punto</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h6 class="mb-0"><i class="fas fa-chart-bar"></i> Estadísticas</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <span>Total oraciones:</span>
+            <strong>{{ sentences|length }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Destacadas:</span>
+            <strong>{{ featured|length }}</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span>Total likes:</span>
+            <strong>{{ sentences|sum(attribute='likes_count') }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.topic-icon-large {
+  font-size: 2.5rem;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.sentence-item {
+  transition: background 0.2s;
+}
+
+.sentence-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.sentence-item.featured {
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.sentence-number, .sentence-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.sentence-english {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.speak-btn {
+  color: #667eea;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.speak-btn:hover {
+  transform: scale(1.2);
+}
+
+.like-btn.liked {
+  background: #dc3545;
+  color: white;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .sentence-english {
+  color: #f0f0f0;
+}
+
+[data-bs-theme="dark"] .sentence-item.featured {
+  background: rgba(255, 193, 7, 0.15);
+}
+</style>
+
+<script>
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Enviar oración
+  const submitBtn = document.getElementById('submitSentence');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function() {
+      const sentence = document.getElementById('newSentence').value.trim();
+      const translation = document.getElementById('newTranslation').value.trim();
+      const resultDiv = document.getElementById('submitResult');
+      
+      if (!sentence) {
+        resultDiv.innerHTML = '<div class="alert alert-warning">Escribe una oración</div>';
+        resultDiv.style.display = 'block';
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+      
+      fetch('/grammar/submit-sentence', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          topic: '{{ topic_key }}',
+          sentence: sentence,
+          translation: translation
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          resultDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> ' + data.message + '</div>';
+          document.getElementById('newSentence').value = '';
+          document.getElementById('newTranslation').value = '';
+        } else {
+          resultDiv.innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+        }
+        resultDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Oración';
+      })
+      .catch(err => {
+        resultDiv.innerHTML = '<div class="alert alert-danger">Error al enviar</div>';
+        resultDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Oración';
+      });
+    });
+  }
+  
+  // Like oraciones
+  document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const sentenceId = this.dataset.id;
+      const countSpan = this.querySelector('.likes-count');
+      
+      fetch(`/grammar/like-sentence/${sentenceId}`, {method: 'POST'})
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            countSpan.textContent = data.likes_count;
+            this.classList.toggle('liked', data.liked);
+          }
+        });
+    });
+  });
+});
+</script>
+{% endblock %}

@@ -4,7 +4,7 @@ from config import config
 from app.extensions import db, login_manager, init_app
 from app.models import User
 from dotenv import load_dotenv
-
+from app.routes.conversation import conversation_bp
 # OPTIMIZACIÓN: Inicializar caché
 cache = Cache(config={
     'CACHE_TYPE': 'simple',  # SimpleCache (en memoria)
@@ -48,7 +48,11 @@ def create_app(config_name='development'):
     from app.routes.flashcards import flashcards_bp
     from app.routes.errors import errors_bp
     from app.routes.explanations import explanations_bp
-    
+    from app.routes.conversation import conversation_bp
+    from app.routes.grammar import grammar_bp
+    from app.routes.stats import stats_bp
+    from app.routes.study import study_bp
+
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -60,6 +64,10 @@ def create_app(config_name='development'):
     app.register_blueprint(flashcards_bp)
     app.register_blueprint(errors_bp)
     app.register_blueprint(explanations_bp)
+    app.register_blueprint(conversation_bp)
+    app.register_blueprint(grammar_bp)
+    app.register_blueprint(stats_bp)
+    app.register_blueprint(study_bp)
     
     # Error handlers
     @app.errorhandler(404)

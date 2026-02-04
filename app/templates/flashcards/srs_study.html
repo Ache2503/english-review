@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Modo de Estudio SRS{% if unit %} - {{ unit.title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-12">
+            <a href="{{ url_for('flashcards.srs_overview') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al SRS
+            </a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2>
+                <i class="fas fa-brain"></i> Modo de Estudio
+                {% if unit %}
+                <span class="badge bg-primary">Unit {{ unit.unit_number }}</span>
+                {% endif %}
+            </h2>
+            <p class="text-muted">
+                <span id="remaining-count">{{ total_due }}</span> tarjetas por revisar
+            </p>
+        </div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-success" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-1">
+                <small class="text-muted">
+                    <span id="completed-count">0</span> completadas
+                </small>
+                <small class="text-muted">
+                    {{ total_due }} total
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de tarjetas -->
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div id="flashcard-container">
+                {% if due_cards %}
+                {% set card_data = due_cards[0] %}
+                <div class="card flashcard-srs shadow-lg" id="current-card" 
+                     data-flashcard-id="{{ card_data.flashcard.id }}"
+                     data-index="0">
+                    <div class="card-body p-5">
+                        <!-- Frente de la tarjeta -->
+                        <div class="flashcard-front text-center" id="card-front">
+                            {% if card_data.is_new %}
+                            <span class="badge bg-info mb-3">Nueva</span>
+                            {% elif card_data.days_overdue > 0 %}
+                            <span class="badge bg-warning mb-3">Pendiente {{ card_data.days_overdue }} días</span>
+                            {% endif %}
+                            
+                            <h2 class="mb-4">{{ card_data.flashcard.front }}</h2>
+                            
+                            {% if card_data.flashcard.example %}
+                            <p class="text-muted fst-italic mb-4">
+                                "{{ card_data.flashcard.example }}"
+                            </p>
+                            {% endif %}
+                            
+                            <button class="btn btn-primary btn-lg px-5" onclick="showAnswer()">
+                                <i class="fas fa-eye"></i> Mostrar Respuesta
+                            </button>
+                        </div>
+                        
+                        <!-- Reverso de la tarjeta -->
+                        <div class="flashcard-back text-center d-none" id="card-back">
+                            <h4 class="text-muted mb-2">{{ card_data.flashcard.front }}</h4>
+                            <hr>
+                            <h2 class="text-primary mb-4">{{ card_data.flashcard.back }}</h2>
+                            
+                            <p class="text-center text-muted mb-4">¿Qué tan bien la recordaste?</p>
+                            
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <button class="btn btn-danger btn-lg" onclick="rateCard(1)">
+                                    <i class="fas fa-times"></i><br>
+                                    <small>Olvidé</small>
+                                </button>
+                                <button class="btn btn-warning btn-lg" onclick="rateCard(3)">
+                                    <i class="fas fa-meh"></i><br>
+                                    <small>Difícil</small>
+                                </button>
+                                <button class="btn btn-primary btn-lg" onclick="rateCard(4)">
+                                    <i class="fas fa-smile"></i><br>
+                                    <small>Bien</small>
+                                </button>
+                                <button class="btn btn-success btn-lg" onclick="rateCard(5)">
+                                    <i class="fas fa-star"></i><br>
+                                    <small>¡Perfecto!</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Mensaje de completado -->
+            <div id="completed-message" class="d-none text-center">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="display-1 mb-4">🎉</div>
+                        <h2 class="text-success mb-4">¡Sesión Completada!</h2>
+                        <div class="row text-center mb-4">
+                            <div class="col-4">
+                                <h3 id="stat-correct" class="text-success">0</h3>
+                                <small class="text-muted">Correctas</small>
+                            </div>
+                            <div class="col-4">
+                                <h3 id="stat-hard" class="text-warning">0</h3>
+                                <small class="text-muted">Difíciles</small>
+                            </div>
+                            <div class="col-4">
+                                <h3 id="stat-forgot" class="text-danger">0</h3>
+                                <small class="text-muted">A repasar</small>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{{ url_for('flashcards.srs_overview') }}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-chart-bar"></i> Ver Estadísticas
+                            </a>
+                            <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-home"></i> Ir al Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Atajos de teclado -->
+    <div class="row mt-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="alert alert-light text-center">
+                <small>
+                    <strong>Atajos:</strong> 
+                    <kbd>Espacio</kbd> Mostrar respuesta · 
+                    <kbd>1</kbd> Olvidé · 
+                    <kbd>2</kbd> Difícil · 
+                    <kbd>3</kbd> Bien · 
+                    <kbd>4</kbd> Perfecto
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.flashcard-srs {
+    min-height: 350px;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.flashcard-srs:hover {
+    transform: translateY(-5px);
+}
+
+.btn-lg {
+    min-width: 80px;
+}
+
+.flashcard-back .btn-lg {
+    flex-direction: column;
+    padding: 15px 20px;
+}
+
+.flashcard-back .btn-lg small {
+    font-size: 0.7rem;
+    margin-top: 5px;
+}
+
+kbd {
+    background: #333;
+    border-radius: 3px;
+    padding: 2px 6px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.card-animate {
+    animation: slideIn 0.3s ease;
+}
+</style>
+
+<script>
+// Datos de las tarjetas
+const allCards = [
+    {% for card_data in due_cards %}
+    {
+        id: {{ card_data.flashcard.id }},
+        front: "{{ card_data.flashcard.front | e }}",
+        back: "{{ card_data.flashcard.back | e }}",
+        example: "{{ card_data.flashcard.example | e if card_data.flashcard.example else '' }}",
+        isNew: {{ 'true' if card_data.is_new else 'false' }},
+        daysOverdue: {{ card_data.days_overdue }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+let currentIndex = 0;
+let stats = { correct: 0, hard: 0, forgot: 0 };
+const totalCards = allCards.length;
+const unitId = {{ unit.id if unit else 'null' }};
+
+function showAnswer() {
+    document.getElementById('card-front').classList.add('d-none');
+    document.getElementById('card-back').classList.remove('d-none');
+}
+
+function rateCard(quality) {
+    const card = allCards[currentIndex];
+    
+    // Actualizar estadísticas locales
+    if (quality >= 4) stats.correct++;
+    else if (quality === 3) stats.hard++;
+    else stats.forgot++;
+    
+    // Enviar al servidor
+    const formData = new FormData();
+    formData.append('quality', quality);
+    if (unitId) formData.append('unit_id', unitId);
+    
+    fetch(`/flashcards/srs/review/${card.id}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }).then(response => response.json()).then(data => {
+        console.log('Review saved:', data);
+    });
+    
+    // Siguiente tarjeta
+    currentIndex++;
+    updateProgress();
+    
+    if (currentIndex < totalCards) {
+        showNextCard();
+    } else {
+        showCompleted();
+    }
+}
+
+function showNextCard() {
+    const card = allCards[currentIndex];
+    const container = document.getElementById('flashcard-container');
+    
+    let badgeHtml = '';
+    if (card.isNew) {
+        badgeHtml = '<span class="badge bg-info mb-3">Nueva</span>';
+    } else if (card.daysOverdue > 0) {
+        badgeHtml = `<span class="badge bg-warning mb-3">Pendiente ${card.daysOverdue} días</span>`;
+    }
+    
+    container.innerHTML = `
+        <div class="card flashcard-srs shadow-lg card-animate" id="current-card" data-flashcard-id="${card.id}">
+            <div class="card-body p-5">
+                <div class="flashcard-front text-center" id="card-front">
+                    ${badgeHtml}
+                    <h2 class="mb-4">${card.front}</h2>
+                    ${card.example ? `<p class="text-muted fst-italic mb-4">"${card.example}"</p>` : ''}
+                    <button class="btn btn-primary btn-lg px-5" onclick="showAnswer()">
+                        <i class="fas fa-eye"></i> Mostrar Respuesta
+                    </button>
+                </div>
+                <div class="flashcard-back text-center d-none" id="card-back">
+                    <h4 class="text-muted mb-2">${card.front}</h4>
+                    <hr>
+                    <h2 class="text-primary mb-4">${card.back}</h2>
+                    <p class="text-center text-muted mb-4">¿Qué tan bien la recordaste?</p>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <button class="btn btn-danger btn-lg" onclick="rateCard(1)">
+                            <i class="fas fa-times"></i><br><small>Olvidé</small>
+                        </button>
+                        <button class="btn btn-warning btn-lg" onclick="rateCard(3)">
+                            <i class="fas fa-meh"></i><br><small>Difícil</small>
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="rateCard(4)">
+                            <i class="fas fa-smile"></i><br><small>Bien</small>
+                        </button>
+                        <button class="btn btn-success btn-lg" onclick="rateCard(5)">
+                            <i class="fas fa-star"></i><br><small>¡Perfecto!</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updateProgress() {
+    const progress = (currentIndex / totalCards) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+    document.getElementById('completed-count').textContent = currentIndex;
+    document.getElementById('remaining-count').textContent = totalCards - currentIndex;
+}
+
+function showCompleted() {
+    document.getElementById('flashcard-container').classList.add('d-none');
+    document.getElementById('completed-message').classList.remove('d-none');
+    document.getElementById('stat-correct').textContent = stats.correct;
+    document.getElementById('stat-hard').textContent = stats.hard;
+    document.getElementById('stat-forgot').textContent = stats.forgot;
+}
+
+// Atajos de teclado
+document.addEventListener('keydown', function(e) {
+    if (currentIndex >= totalCards) return;
+    
+    const front = document.getElementById('card-front');
+    const isShowingFront = front && !front.classList.contains('d-none');
+    
+    if (e.code === 'Space' && isShowingFront) {
+        e.preventDefault();
+        showAnswer();
+    } else if (!isShowingFront) {
+        switch(e.key) {
+            case '1': rateCard(1); break;
+            case '2': rateCard(3); break;
+            case '3': rateCard(4); break;
+            case '4': rateCard(5); break;
+        }
+    }
+});
+</script>
+{% endblock %}

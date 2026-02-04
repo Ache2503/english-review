@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Grammar Topics - English Learning{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header -->
+  <div class="text-center mb-5">
+    <div class="display-4 mb-3 animate__animated animate__fadeInDown">
+      <span class="text-primary">📚</span> Temas Gramaticales
+    </div>
+    <p class="lead text-muted">
+      Domina la gramática inglesa con explicaciones claras, tablas interactivas y ejercicios prácticos
+    </p>
+    
+    <!-- Accesos rápidos -->
+    <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+      <a href="{{ url_for('grammar.verbs_index') }}" class="btn btn-lg btn-primary">
+        <i class="fas fa-search"></i> Buscador de Verbos
+      </a>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('grammar.my_sentences') }}" class="btn btn-lg btn-outline-success">
+        <i class="fas fa-edit"></i> Mis Oraciones
+      </a>
+      <a href="{{ url_for('grammar.grammar_progress') }}" class="btn btn-lg btn-outline-info">
+        <i class="fas fa-chart-line"></i> Mi Progreso
+      </a>
+      {% endif %}
+    </div>
+    
+    <!-- Estadísticas -->
+    <div class="row justify-content-center mt-4">
+      <div class="col-auto">
+        <div class="d-flex align-items-center gap-4 flex-wrap justify-content-center">
+          <div class="stat-pill bg-success text-white">
+            <span class="stat-number">{{ levels.Beginner|length }}</span>
+            <span class="stat-label">Principiante</span>
+          </div>
+          <div class="stat-pill bg-warning text-dark">
+            <span class="stat-number">{{ levels.Intermediate|length }}</span>
+            <span class="stat-label">Intermedio</span>
+          </div>
+          <div class="stat-pill bg-danger text-white">
+            <span class="stat-number">{{ levels.Advanced|length }}</span>
+            <span class="stat-label">Avanzado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-bar mb-4">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-outline-secondary active" onclick="filterTopics('all')">
+        📚 Todos
+      </button>
+      <button type="button" class="btn btn-outline-success" onclick="filterTopics('Beginner')">
+        🟢 Principiante
+      </button>
+      <button type="button" class="btn btn-outline-warning" onclick="filterTopics('Intermediate')">
+        🟡 Intermedio
+      </button>
+      <button type="button" class="btn btn-outline-danger" onclick="filterTopics('Advanced')">
+        🔴 Avanzado
+      </button>
+    </div>
+    
+    <!-- Búsqueda -->
+    <div class="search-box mt-3">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="fas fa-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-start-0" 
+               id="searchInput" placeholder="Buscar tema..."
+               onkeyup="searchTopics(this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección Principiante -->
+  {% if levels.Beginner %}
+  <div class="level-section mb-5" data-level="Beginner">
+    <div class="level-header beginner mb-4">
+      <h2><span class="level-icon">🟢</span> Nivel Principiante</h2>
+      <p class="mb-0">Fundamentos esenciales para empezar</p>
+    </div>
+    
+    <div class="row g-4">
+      {% for topic in levels.Beginner %}
+      <div class="col-sm-6 col-lg-4 topic-card" data-level="Beginner" data-title="{{ topic.title|lower }}">
+        <a href="{{ url_for('grammar.topic_detail', topic_key=topic.key) }}" class="text-decoration-none">
+          <div class="card h-100 border-0 shadow-sm topic-hover">
+            <div class="card-body">
+              <div class="d-flex align-items-start gap-3">
+                <div class="topic-icon">{{ topic.icon }}</div>
+                <div class="flex-grow-1">
+                  <h5 class="card-title mb-1">{{ topic.title }}</h5>
+                  <p class="card-text text-muted small mb-2">{{ topic.subtitle }}</p>
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="badge bg-success-subtle text-success">{{ topic.category }}</span>
+                    <span class="badge bg-light text-muted">
+                      <i class="fas fa-clock"></i> {{ topic.estimated_time }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <small class="text-muted">{{ topic.description }}</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sección Intermedio -->
+  {% if levels.Intermediate %}
+  <div class="level-section mb-5" data-level="Intermediate">
+    <div class="level-header intermediate mb-4">
+      <h2><span class="level-icon">🟡</span> Nivel Intermedio</h2>
+      <p class="mb-0">Profundiza tu conocimiento gramatical</p>
+    </div>
+    
+    <div class="row g-4">
+      {% for topic in levels.Intermediate %}
+      <div class="col-sm-6 col-lg-4 topic-card" data-level="Intermediate" data-title="{{ topic.title|lower }}">
+        <a href="{{ url_for('grammar.topic_detail', topic_key=topic.key) }}" class="text-decoration-none">
+          <div class="card h-100 border-0 shadow-sm topic-hover">
+            <div class="card-body">
+              <div class="d-flex align-items-start gap-3">
+                <div class="topic-icon">{{ topic.icon }}</div>
+                <div class="flex-grow-1">
+                  <h5 class="card-title mb-1">{{ topic.title }}</h5>
+                  <p class="card-text text-muted small mb-2">{{ topic.subtitle }}</p>
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="badge bg-warning-subtle text-warning">{{ topic.category }}</span>
+                    <span class="badge bg-light text-muted">
+                      <i class="fas fa-clock"></i> {{ topic.estimated_time }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <small class="text-muted">{{ topic.description }}</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sección Avanzado -->
+  {% if levels.Advanced %}
+  <div class="level-section mb-5" data-level="Advanced">
+    <div class="level-header advanced mb-4">
+      <h2><span class="level-icon">🔴</span> Nivel Avanzado</h2>
+      <p class="mb-0">Perfecciona tu dominio del inglés</p>
+    </div>
+    
+    <div class="row g-4">
+      {% for topic in levels.Advanced %}
+      <div class="col-sm-6 col-lg-4 topic-card" data-level="Advanced" data-title="{{ topic.title|lower }}">
+        <a href="{{ url_for('grammar.topic_detail', topic_key=topic.key) }}" class="text-decoration-none">
+          <div class="card h-100 border-0 shadow-sm topic-hover">
+            <div class="card-body">
+              <div class="d-flex align-items-start gap-3">
+                <div class="topic-icon">{{ topic.icon }}</div>
+                <div class="flex-grow-1">
+                  <h5 class="card-title mb-1">{{ topic.title }}</h5>
+                  <p class="card-text text-muted small mb-2">{{ topic.subtitle }}</p>
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="badge bg-danger-subtle text-danger">{{ topic.category }}</span>
+                    <span class="badge bg-light text-muted">
+                      <i class="fas fa-clock"></i> {{ topic.estimated_time }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <small class="text-muted">{{ topic.description }}</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Botón de regreso -->
+  <div class="text-center mt-5">
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary btn-lg">
+      <i class="fas fa-arrow-left"></i> Volver al Dashboard
+    </a>
+  </div>
+</div>
+
+<style>
+/* Estadísticas */
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 500;
+}
+
+.stat-number {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+}
+
+/* Filtros */
+.filter-bar {
+  text-align: center;
+}
+
+.search-box {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.search-box .input-group {
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.search-box .form-control {
+  border: none;
+}
+
+/* Headers de nivel */
+.level-header {
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  border-left: 5px solid;
+}
+
+.level-header.beginner { border-color: #28a745; background: linear-gradient(135deg, rgba(40,167,69,0.1), rgba(40,167,69,0.05)); }
+.level-header.intermediate { border-color: #ffc107; background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,193,7,0.05)); }
+.level-header.advanced { border-color: #dc3545; background: linear-gradient(135deg, rgba(220,53,69,0.1), rgba(220,53,69,0.05)); }
+
+.level-header h2 {
+  margin-bottom: 0.25rem;
+  font-size: 1.5rem;
+}
+
+.level-icon {
+  margin-right: 0.5rem;
+}
+
+/* Tarjetas de temas */
+.topic-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.topic-hover {
+  transition: all 0.3s ease;
+  border-radius: 1rem;
+}
+
+.topic-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.topic-hover .card-title {
+  color: #333;
+  transition: color 0.2s;
+}
+
+.topic-hover:hover .card-title {
+  color: #2563eb;
+}
+
+/* Ocultar elementos filtrados */
+.topic-card.hidden,
+.level-section.hidden {
+  display: none !important;
+}
+
+/* Animaciones */
+.topic-card {
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .topic-icon {
+    font-size: 2rem;
+  }
+  
+  .level-header h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Dark mode */
+[data-theme="dark"] .level-header {
+  background: linear-gradient(135deg, rgba(45,55,72,0.8), rgba(26,32,44,0.8));
+}
+
+[data-theme="dark"] .topic-hover {
+  background: #2d3748;
+}
+
+[data-theme="dark"] .topic-hover .card-title {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .search-box .form-control,
+[data-theme="dark"] .search-box .input-group-text {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+</style>
+
+<script>
+function filterTopics(level) {
+  const cards = document.querySelectorAll('.topic-card');
+  const sections = document.querySelectorAll('.level-section');
+  const buttons = document.querySelectorAll('.filter-bar .btn');
+  
+  // Actualizar botón activo
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  if (level === 'all') {
+    cards.forEach(card => card.classList.remove('hidden'));
+    sections.forEach(section => section.classList.remove('hidden'));
+  } else {
+    cards.forEach(card => {
+      if (card.dataset.level === level) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    sections.forEach(section => {
+      if (section.dataset.level === level) {
+        section.classList.remove('hidden');
+      } else {
+        section.classList.add('hidden');
+      }
+    });
+  }
+}
+
+function searchTopics(query) {
+  const cards = document.querySelectorAll('.topic-card');
+  const sections = document.querySelectorAll('.level-section');
+  const searchLower = query.toLowerCase();
+  
+  if (query.trim() === '') {
+    cards.forEach(card => card.classList.remove('hidden'));
+    sections.forEach(section => section.classList.remove('hidden'));
+    return;
+  }
+  
+  // Contar visibles por sección
+  const visibleByLevel = {'Beginner': 0, 'Intermediate': 0, 'Advanced': 0};
+  
+  cards.forEach(card => {
+    const title = card.dataset.title;
+    if (title.includes(searchLower)) {
+      card.classList.remove('hidden');
+      visibleByLevel[card.dataset.level]++;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+  
+  // Ocultar secciones vacías
+  sections.forEach(section => {
+    if (visibleByLevel[section.dataset.level] === 0) {
+      section.classList.add('hidden');
+    } else {
+      section.classList.remove('hidden');
+    }
+  });
+}
+</script>
+{% endblock %}

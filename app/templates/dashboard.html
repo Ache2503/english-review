@@ -12,6 +12,257 @@
     </div>
 </div>
 
+<!-- Banner de Práctica Conversacional -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="exam-study-banner card border-0 overflow-hidden">
+            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
+                <div class="banner-icon-exam">
+                    <span class="display-4">📚</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="mb-1 text-dark fw-bold">🎯 ¡Modo Examen - Estudio Intensivo!</h4>
+                    <p class="mb-0 text-dark opacity-75">
+                        9 temas de gramática completos con teoría, ejercicios, tips y referencia rápida para tu examen.
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ url_for('study.study_home') }}" class="btn btn-dark btn-lg px-4 shadow">
+                        <i class="fas fa-graduation-cap"></i> Estudiar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner de Conversaciones -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="conversation-banner card border-0 overflow-hidden">
+            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
+                <div class="banner-icon">
+                    <span class="display-4">💬</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="mb-1 text-white fw-bold">¡Practica Conversaciones en Inglés!</h4>
+                    <p class="mb-0 text-white-50">
+                        Mejora tu inglés hablado con 11 escenarios interactivos: tienda, restaurante, hotel y más.
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ url_for('conversation.list') }}" class="btn btn-light btn-lg px-4 shadow-sm">
+                        <i class="fas fa-play-circle"></i> Comenzar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner de Gramática -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="grammar-banner card border-0 overflow-hidden">
+            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
+                <div class="banner-icon-grammar">
+                    <span class="display-4">📚</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="mb-1 text-white fw-bold">¡Aprende Gramática Inglesa!</h4>
+                    <p class="mb-0 text-white-50">
+                        Domina verbos, tiempos, artículos y más con explicaciones claras, tablas y ejercicios.
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ url_for('grammar.index') }}" class="btn btn-light btn-lg px-4 shadow-sm">
+                        <i class="fas fa-book-open"></i> Explorar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner de Repetición Espaciada (SRS) -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="srs-banner card border-0 overflow-hidden h-100">
+            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-3">
+                <div class="banner-icon-srs">
+                    <span class="display-5">🧠</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="mb-1 text-white fw-bold">Repetición Espaciada</h5>
+                    <p class="mb-0 text-white-50 small">
+                        Memoriza vocabulario de forma científica
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ url_for('flashcards.srs_overview') }}" class="btn btn-light px-3 shadow-sm">
+                        <i class="fas fa-brain"></i> Estudiar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stats-banner card border-0 overflow-hidden h-100">
+            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-3">
+                <div class="banner-icon-stats">
+                    <span class="display-5">📊</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="mb-1 text-white fw-bold">Mis Estadísticas</h5>
+                    <p class="mb-0 text-white-50 small">
+                        Analiza tu progreso con gráficos detallados
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ url_for('stats.index') }}" class="btn btn-light px-3 shadow-sm">
+                        <i class="fas fa-chart-line"></i> Ver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Banner de Estudio Intensivo/Examen */
+.exam-study-banner {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 3px solid #f59e0b !important;
+}
+
+.exam-study-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+}
+
+.banner-icon-exam {
+    width: 70px;
+    height: 70px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-exam 1.5s infinite;
+}
+
+@keyframes pulse-exam {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    50% { transform: scale(1.08); box-shadow: 0 0 20px 10px rgba(245, 158, 11, 0.2); }
+}
+
+.conversation-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.conversation-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.banner-icon {
+    width: 70px;
+    height: 70px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-banner 2s infinite;
+}
+
+@keyframes pulse-banner {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.conversation-banner .btn-light:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Banner de Gramática */
+.grammar-banner {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grammar-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+}
+
+.banner-icon-grammar {
+    width: 70px;
+    height: 70px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-banner 2s infinite;
+}
+
+.grammar-banner .btn-light:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Banner de SRS */
+.srs-banner {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.srs-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+}
+
+.banner-icon-srs {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Banner de Estadísticas */
+.stats-banner {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+}
+
+.banner-icon-stats {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+
 <!-- Progress Summary -->
 <div class="row mb-4">
     <div class="col-md-6">

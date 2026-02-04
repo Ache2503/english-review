@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas - English Learning{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-chart-line"></i> Mis Estadísticas</h1>
+                    <p class="text-muted">Analiza tu progreso y rendimiento en detalle</p>
+                </div>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-2 col-6 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-tasks fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.totals.total_activities }}</h3>
+                    <small>Total Actividades</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-fire fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.streak.current }}</h3>
+                    <small>Racha Actual</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-pen fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.totals.writings }}</h3>
+                    <small>Escrituras</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-question-circle fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.totals.quizzes }}</h3>
+                    <small>Quizzes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6 mb-3">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-clone fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.totals.flashcards }}</h3>
+                    <small>Flashcards</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-6 mb-3">
+            <div class="card bg-dark text-white h-100">
+                <div class="card-body text-center py-3">
+                    <i class="fas fa-comments fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.totals.conversations }}</h3>
+                    <small>Conversaciones</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos principales -->
+    <div class="row mb-4">
+        <!-- Radar de Habilidades -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-spider"></i> Habilidades por Área</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="skillsChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actividad Semanal -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Actividad Semanal</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="weeklyChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Distribución por día -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-calendar-week"></i> Distribución por Día de la Semana</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="daysChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promedios -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-percentage"></i> Promedios de Rendimiento</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-4">
+                            <div class="progress-circle mx-auto mb-2" data-value="{{ stats.averages.quiz }}">
+                                <canvas id="quizGauge" width="120" height="120"></canvas>
+                            </div>
+                            <h4>{{ stats.averages.quiz }}%</h4>
+                            <p class="text-muted mb-0">Promedio Quizzes</p>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <div class="progress-circle mx-auto mb-2" data-value="{{ stats.averages.writing }}">
+                                <canvas id="writingGauge" width="120" height="120"></canvas>
+                            </div>
+                            <h4>{{ stats.averages.writing }}%</h4>
+                            <p class="text-muted mb-0">Promedio Escritura</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="mb-1"><strong>Mejor racha:</strong></p>
+                            <h5 class="text-success">
+                                <i class="fas fa-fire"></i> {{ stats.streak.longest }} días
+                            </h5>
+                        </div>
+                        <div class="col-6">
+                            <p class="mb-1"><strong>Última actividad:</strong></p>
+                            <h5 class="text-info">
+                                <i class="fas fa-clock"></i> {{ stats.streak.last_activity or 'Sin registro' }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progreso por Unidad -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-book"></i> Progreso por Unidad</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="unitsChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Heatmap de Actividad -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-th"></i> Mapa de Actividad (Último Año)</h5>
+                    <div>
+                        <span class="text-muted small me-2">Menos</span>
+                        <span class="heatmap-legend level-0"></span>
+                        <span class="heatmap-legend level-1"></span>
+                        <span class="heatmap-legend level-2"></span>
+                        <span class="heatmap-legend level-3"></span>
+                        <span class="heatmap-legend level-4"></span>
+                        <span class="text-muted small ms-2">Más</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="heatmap-container" class="heatmap-grid">
+                        <!-- Se llena con JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Resumen de Actividad</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="border-end">
+                                <h2 class="text-primary">{{ stats.recent_activity }}</h2>
+                                <p class="text-muted mb-0">Actividades esta semana</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="border-end">
+                                <h2 class="text-success">{{ stats.totals.readings }}</h2>
+                                <p class="text-muted mb-0">Lecturas completadas</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="border-end">
+                                <h2 class="text-info">{{ stats.totals.sentences }}</h2>
+                                <p class="text-muted mb-0">Oraciones practicadas</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div>
+                                <h2 class="text-warning">{{ stats.streak.current }}</h2>
+                                <p class="text-muted mb-0">Días consecutivos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.heatmap-legend {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin: 0 2px;
+}
+.level-0 { background: #ebedf0; }
+.level-1 { background: #9be9a8; }
+.level-2 { background: #40c463; }
+.level-3 { background: #30a14e; }
+.level-4 { background: #216e39; }
+
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(53, 12px);
+    grid-template-rows: repeat(7, 12px);
+    gap: 2px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.heatmap-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.heatmap-cell:hover {
+    outline: 1px solid #333;
+}
+
+/* Dark mode support */
+[data-bs-theme="dark"] .level-0 {
+    background: #161b22;
+}
+
+.progress-circle {
+    width: 120px;
+    height: 120px;
+}
+</style>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Colores del tema
+    const colors = {
+        primary: '#667eea',
+        success: '#28a745',
+        warning: '#ffc107',
+        danger: '#dc3545',
+        info: '#17a2b8',
+        secondary: '#6c757d'
+    };
+
+    // 1. Gráfico de Radar - Habilidades
+    const skillsData = {{ stats.skills | tojson }};
+    new Chart(document.getElementById('skillsChart'), {
+        type: 'radar',
+        data: {
+            labels: ['Gramática', 'Vocabulario', 'Escritura', 'Lectura', 'Conversación'],
+            datasets: [{
+                label: 'Nivel de Habilidad',
+                data: [
+                    skillsData.grammar,
+                    skillsData.vocabulary,
+                    skillsData.writing,
+                    skillsData.reading,
+                    skillsData.speaking
+                ],
+                backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                borderColor: colors.primary,
+                pointBackgroundColor: colors.primary,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: colors.primary
+            }]
+        },
+        options: {
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        stepSize: 20
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // 2. Gráfico de Barras - Actividad Semanal
+    const weeklyData = {{ stats.weekly | tojson }};
+    new Chart(document.getElementById('weeklyChart'), {
+        type: 'bar',
+        data: {
+            labels: weeklyData.labels,
+            datasets: [
+                {
+                    label: 'Escritura',
+                    data: weeklyData.weeks.map(w => w.writing),
+                    backgroundColor: colors.info
+                },
+                {
+                    label: 'Quizzes',
+                    data: weeklyData.weeks.map(w => w.quizzes),
+                    backgroundColor: colors.warning
+                },
+                {
+                    label: 'Flashcards',
+                    data: weeklyData.weeks.map(w => w.flashcards),
+                    backgroundColor: colors.secondary
+                },
+                {
+                    label: 'Oraciones',
+                    data: weeklyData.weeks.map(w => w.sentences),
+                    backgroundColor: colors.success
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // 3. Gráfico de Distribución por Día
+    const daysData = {{ stats.study_days | tojson }};
+    new Chart(document.getElementById('daysChart'), {
+        type: 'doughnut',
+        data: {
+            labels: daysData.labels,
+            datasets: [{
+                data: daysData.data,
+                backgroundColor: [
+                    '#667eea', '#764ba2', '#f093fb', '#f5576c',
+                    '#4facfe', '#43e97b', '#fa709a'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+
+    // 4. Gráfico de Progreso por Unidad
+    const unitsData = {{ stats.unit_progress | tojson }};
+    new Chart(document.getElementById('unitsChart'), {
+        type: 'bar',
+        data: {
+            labels: unitsData.map(u => `Unit ${u.unit_number}`),
+            datasets: [{
+                label: 'Progreso (%)',
+                data: unitsData.map(u => u.progress),
+                backgroundColor: unitsData.map(u => u.completed ? colors.success : colors.primary),
+                borderRadius: 5
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // 5. Gauges de Promedio
+    function drawGauge(canvasId, value, color) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        const centerX = 60;
+        const centerY = 60;
+        const radius = 50;
+        
+        // Fondo
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0.75 * Math.PI, 2.25 * Math.PI);
+        ctx.strokeStyle = '#eee';
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        
+        // Valor
+        const endAngle = 0.75 * Math.PI + (1.5 * Math.PI * (value / 100));
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0.75 * Math.PI, endAngle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 10;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+    }
+    
+    drawGauge('quizGauge', {{ stats.averages.quiz }}, colors.primary);
+    drawGauge('writingGauge', {{ stats.averages.writing }}, colors.success);
+
+    // 6. Heatmap de Actividad
+    fetch('/stats/api/heatmap?days=365')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('heatmap-container');
+            
+            // Organizar por semanas
+            data.forEach((day, index) => {
+                const level = day.count === 0 ? 0 :
+                              day.count <= 2 ? 1 :
+                              day.count <= 5 ? 2 :
+                              day.count <= 10 ? 3 : 4;
+                
+                const cell = document.createElement('div');
+                cell.className = `heatmap-cell level-${level}`;
+                cell.title = `${day.date}: ${day.count} actividades`;
+                container.appendChild(cell);
+            });
+        });
+});
+</script>
+{% endblock %}

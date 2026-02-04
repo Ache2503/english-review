@@ -17,6 +17,55 @@
         </div>
     </div>
 
+    <!-- Estadísticas SRS -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card bg-gradient border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1"><i class="fas fa-brain"></i> Modo Repetición Espaciada</h5>
+                            <p class="mb-0 opacity-75">Memoriza de forma científica y eficiente</p>
+                        </div>
+                        <div class="text-end">
+                            {% if srs_stats.due_today > 0 or srs_stats.new > 0 %}
+                            <a href="{{ url_for('flashcards.srs_study', unit_id=unit.id) }}" class="btn btn-light btn-lg">
+                                <i class="fas fa-play"></i> 
+                                Estudiar ({{ srs_stats.due_today + srs_stats.new }})
+                            </a>
+                            {% else %}
+                            <span class="badge bg-success fs-6 p-2">
+                                <i class="fas fa-check"></i> ¡Al día!
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fas fa-chart-pie"></i> Progreso SRS</h6>
+                    <div class="d-flex justify-content-around text-center">
+                        <div>
+                            <strong class="text-success">{{ srs_stats.learned }}</strong>
+                            <small class="d-block text-muted">Dominadas</small>
+                        </div>
+                        <div>
+                            <strong class="text-warning">{{ srs_stats.learning }}</strong>
+                            <small class="d-block text-muted">Aprendiendo</small>
+                        </div>
+                        <div>
+                            <strong class="text-secondary">{{ srs_stats.new }}</strong>
+                            <small class="d-block text-muted">Nuevas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card bg-light">
@@ -24,6 +73,14 @@
                     <h5 class="card-title"><i class="fas fa-layer-group"></i> Progreso</h5>
                     <p class="mb-1">Total: <strong>{{ total }}</strong></p>
                     <p class="mb-0">Revisadas: <strong>{{ reviewed }}</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="fas fa-percentage"></i> Retención</h5>
+                    <h3 class="mb-0 text-primary">{{ srs_stats.retention_rate }}%</h3>
                 </div>
             </div>
         </div>

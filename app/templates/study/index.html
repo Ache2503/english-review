@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}📚 Estudio Intensivo - Prepárate para tu Examen{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header con mensaje motivacional -->
+    <div class="text-center mb-5">
+        <div class="display-1 mb-3">📚</div>
+        <h1 class="display-5 fw-bold mb-3">Estudio Intensivo</h1>
+        <p class="lead text-muted">
+            9 temas de gramática esencial para tu examen. 
+            Cada tema incluye teoría completa, ejemplos, tips y ejercicios interactivos.
+        </p>
+        <div class="alert alert-info d-inline-block mt-3">
+            <i class="fas fa-lightbulb me-2"></i>
+            <strong>Consejo:</strong> Estudia cada tema en orden y completa todos los ejercicios para reforzar tu aprendizaje.
+        </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4 fw-bold">9</h2>
+                    <p class="mb-0">Temas Completos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4 fw-bold">100+</h2>
+                    <p class="mb-0">Ejercicios Interactivos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body text-center">
+                    <h2 class="display-4 fw-bold">~3h</h2>
+                    <p class="mb-0">Tiempo Estimado Total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de temas -->
+    <h2 class="h4 mb-4">
+        <i class="fas fa-book-open me-2 text-primary"></i>
+        Temas de Estudio
+    </h2>
+    
+    <div class="row g-4">
+        {% for topic in topics %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 topic-card" data-topic="{{ topic.id }}">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0 text-center">
+                    <span class="display-4">{{ topic.icon }}</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-center mb-3">{{ topic.title }}</h5>
+                    <p class="card-text text-muted small">{{ topic.description }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge 
+                            {% if topic.difficulty == 'beginner' %}bg-success
+                            {% elif topic.difficulty == 'intermediate' %}bg-warning text-dark
+                            {% else %}bg-danger{% endif %}">
+                            {{ topic.difficulty | capitalize }}
+                        </span>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ topic.estimated_time }}
+                        </small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-4">
+                    <a href="{{ url_for('study.study_topic', topic_id=topic.id) }}" 
+                       class="btn btn-primary w-100">
+                        <i class="fas fa-play me-2"></i>Estudiar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Sección de consejos -->
+    <div class="card mt-5 border-0 bg-light">
+        <div class="card-body p-4">
+            <h3 class="h5 mb-4">
+                <i class="fas fa-star text-warning me-2"></i>
+                Consejos para Estudiar Efectivamente
+            </h3>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <span class="badge bg-primary rounded-circle p-3">1</span>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Lee la teoría primero</h6>
+                            <small class="text-muted">Entiende los conceptos antes de hacer ejercicios.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <span class="badge bg-primary rounded-circle p-3">2</span>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Anota los errores comunes</h6>
+                            <small class="text-muted">Evita caer en las mismas trampas del examen.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <span class="badge bg-primary rounded-circle p-3">3</span>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Practica con los ejercicios</h6>
+                            <small class="text-muted">La práctica es la clave para memorizar.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.topic-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.topic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-color: var(--bs-primary);
+}
+
+.display-4 {
+    font-size: 3.5rem;
+}
+
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,1289 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic.title }} - Grammar{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Breadcrumb y navegación -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('grammar.index') }}">Gramática</a></li>
+      <li class="breadcrumb-item active">{{ topic.title }}</li>
+    </ol>
+  </nav>
+
+  <!-- Header del tema -->
+  <div class="topic-header mb-4">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <div class="topic-icon-large">{{ topic.icon }}</div>
+      </div>
+      <div class="col">
+        <h1 class="mb-1">{{ topic.title }}</h1>
+        <p class="lead text-muted mb-2">{{ topic.subtitle }}</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="badge bg-{{ 'success' if topic.level == 'Beginner' else 'warning' if topic.level == 'Intermediate' else 'danger' }} px-3 py-2">
+            {{ '🟢' if topic.level == 'Beginner' else '🟡' if topic.level == 'Intermediate' else '🔴' }} {{ topic.level }}
+          </span>
+          <span class="badge bg-secondary px-3 py-2">
+            <i class="fas fa-folder"></i> {{ topic.category }}
+          </span>
+          <span class="badge bg-light text-dark px-3 py-2">
+            <i class="fas fa-clock"></i> {{ topic.estimated_time }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Contenido Principal -->
+    <div class="col-lg-8">
+      <!-- Secciones del tema -->
+      {% for section in topic.sections %}
+      <div class="content-section mb-4" id="section-{{ loop.index }}">
+        
+        {% if section.type == 'explanation' %}
+        <!-- Sección de explicación -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-info-circle"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body">
+            {{ section.content|safe }}
+          </div>
+        </div>
+        
+        {% elif section.type == 'table' %}
+        <!-- Sección de tabla -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-table"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0 grammar-table">
+                <thead class="table-light">
+                  <tr>
+                    {% for header in section.headers %}
+                    <th>{{ header }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in section.rows %}
+                  <tr>
+                    {% for cell in row %}
+                    <td class="{{ 'highlight-cell' if loop.index0 == section.highlight_column }}">
+                      {{ cell }}
+                    </td>
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% if section.note %}
+            <div class="note-box p-3 border-top">
+              {{ section.note }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        {% elif section.type == 'comparison' %}
+        <!-- Sección de comparación -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="fas fa-arrows-left-right"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="comparison-box comparison-{{ section.left.color }}">
+                  <h5 class="comparison-title">{{ section.left.title }}</h5>
+                  <p class="comparison-desc">{{ section.left.description }}</p>
+                  <ul class="comparison-examples">
+                    {% for ex in section.left.examples %}
+                    <li>{{ ex }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="comparison-box comparison-{{ section.right.color }}">
+                  <h5 class="comparison-title">{{ section.right.title }}</h5>
+                  <p class="comparison-desc">{{ section.right.description }}</p>
+                  <ul class="comparison-examples">
+                    {% for ex in section.right.examples %}
+                    <li>{{ ex }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {% if section.note %}
+            <div class="note-box mt-3 p-3">
+              {{ section.note }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        {% elif section.type == 'examples' %}
+        <!-- Sección de ejemplos -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-quote-left"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body">
+            {% for ex in section.examples %}
+            <div class="example-item mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+              <div class="d-flex align-items-start gap-3">
+                <div class="example-number">{{ loop.index }}</div>
+                <div class="flex-grow-1">
+                  <div class="example-english">
+                    <i class="fas fa-volume-up text-primary me-2 speak-btn" onclick="speak('{{ ex.english }}')" title="Escuchar"></i>
+                    {{ ex.english }}
+                  </div>
+                  <div class="example-spanish text-muted">
+                    <i class="fas fa-language me-2"></i>{{ ex.spanish }}
+                  </div>
+                  {% if ex.note %}
+                  <span class="badge bg-light text-dark mt-1">{{ ex.note }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        {% elif section.type == 'list' %}
+        <!-- Sección de lista -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="fas fa-list"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body">
+            {% for item in section['items'] %}
+            <div class="list-item mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+              <div class="fw-bold mb-1">
+                <i class="fas fa-chevron-right text-warning me-2"></i>{{ item.text }}
+              </div>
+              <div class="text-muted small ps-4">
+                <code class="bg-light p-1 rounded">{{ item.example }}</code>
+              </div>
+            </div>
+            {% endfor %}
+            {% if section.note %}
+            <div class="note-box mt-3 p-3">
+              {{ section.note }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        {% elif section.type == 'chips' %}
+        <!-- Sección de chips/etiquetas -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="fas fa-tags"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body">
+            <div class="chips-container">
+              {% for item in section['items'] %}
+              <div class="vocab-chip" onclick="speak('{{ item.text }}')">
+                <span class="chip-english">{{ item.text }}</span>
+                <span class="chip-spanish">{{ item.translation }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        
+        {% elif section.type == 'exercise' %}
+        <!-- Sección de ejercicios -->
+        <div class="card border-0 shadow-sm exercise-card">
+          <div class="card-header bg-gradient-purple text-white">
+            <h5 class="mb-0"><i class="fas fa-pencil-alt"></i> {{ section.title }}</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted mb-4">
+              <i class="fas fa-info-circle"></i> {{ section.instructions }}
+            </p>
+            
+            <div class="exercises-list" data-exercise-type="{{ section.exercise_type }}">
+              {% for q in section.questions %}
+              <div class="exercise-item mb-4" data-correct="{{ q.answer }}" data-index="{{ loop.index }}">
+                <div class="exercise-number">{{ loop.index }}</div>
+                <div class="exercise-content">
+                  <div class="exercise-sentence mb-2">
+                    {{ q.sentence if q.sentence else q.words|join(' / ') }}
+                  </div>
+                  <div class="input-group">
+                    <input type="text" class="form-control exercise-input" 
+                           placeholder="Tu respuesta..." 
+                           data-answer="{{ q.answer }}"
+                           onkeypress="if(event.key==='Enter') checkAnswer(this)">
+                    <button class="btn btn-primary" onclick="checkAnswer(this.previousElementSibling)">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
+                  {% if q.hint %}
+                  <small class="text-muted hint-text">
+                    <i class="fas fa-lightbulb"></i> Pista: {{ q.hint }}
+                  </small>
+                  {% endif %}
+                  <div class="feedback-text mt-2" style="display: none;"></div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
+            <!-- Score -->
+            <div class="exercise-score mt-4 p-3 bg-light rounded" style="display: none;">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="mb-0">Tu puntuación</h5>
+                  <p class="mb-0 text-muted">Respuestas correctas: <span id="correctCount">0</span>/{{ section.questions|length }}</p>
+                </div>
+                <div class="score-circle">
+                  <span id="scorePercent">0</span>%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        
+      </div>
+      {% endfor %}
+
+      <!-- Errores comunes -->
+      {% if topic.common_mistakes %}
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Errores Comunes a Evitar</h5>
+        </div>
+        <div class="card-body">
+          {% for mistake in topic.common_mistakes %}
+          <div class="mistake-item mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="wrong-example">
+                  <i class="fas fa-times-circle text-danger"></i>
+                  <del>{{ mistake.wrong }}</del>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="correct-example">
+                  <i class="fas fa-check-circle text-success"></i>
+                  {{ mistake.correct }}
+                </div>
+              </div>
+              <div class="col-md-12 mt-2">
+                <small class="text-muted">
+                  <i class="fas fa-info-circle"></i> {{ mistake.explanation }}
+                </small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Sección de Oraciones de la Comunidad -->
+      <div class="card border-0 shadow-sm mb-4" id="community-sentences">
+        <div class="card-header bg-gradient-community text-white">
+          <h5 class="mb-0"><i class="fas fa-users"></i> Practica con la Comunidad</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-3">
+            Comparte oraciones usando <strong>{{ topic.title }}</strong> y aprende de otros estudiantes.
+          </p>
+          
+          <!-- Formulario rápido -->
+          {% if current_user.is_authenticated %}
+          <div class="quick-sentence-form mb-4">
+            <div class="mb-2">
+              <textarea id="quickSentence" class="form-control" rows="2" 
+                        placeholder="Escribe una oración usando {{ topic.title }}..."></textarea>
+            </div>
+            <div class="d-flex gap-2">
+              <button id="submitQuickSentence" class="btn btn-primary btn-sm">
+                <i class="fas fa-paper-plane"></i> Enviar
+              </button>
+              <a href="{{ url_for('grammar.topic_sentences', topic_key=topic_key) }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-eye"></i> Ver todas
+              </a>
+            </div>
+            <div id="quickSubmitResult" class="mt-2" style="display: none;"></div>
+          </div>
+          {% else %}
+          <div class="alert alert-light border mb-3">
+            <a href="{{ url_for('auth.login') }}">Inicia sesión</a> para compartir oraciones.
+          </div>
+          {% endif %}
+          
+          <!-- Oraciones aleatorias de la comunidad -->
+          <div id="communityExamples">
+            <h6 class="text-muted mb-3"><i class="fas fa-quote-left"></i> Ejemplos de la comunidad</h6>
+            <div id="randomSentences" class="mb-3">
+              <div class="text-center text-muted py-3">
+                <i class="fas fa-spinner fa-spin"></i> Cargando...
+              </div>
+            </div>
+            <button id="loadMoreSentences" class="btn btn-outline-primary btn-sm w-100">
+              <i class="fas fa-sync-alt"></i> Cargar más ejemplos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegación entre temas -->
+      <div class="topic-navigation d-flex justify-content-between flex-wrap gap-3 mb-4">
+        {% if prev_topic %}
+        <a href="{{ url_for('grammar.topic_detail', topic_key=prev_topic) }}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left"></i> {{ prev_title }}
+        </a>
+        {% else %}
+        <div></div>
+        {% endif %}
+        
+        {% if next_topic %}
+        <a href="{{ url_for('grammar.topic_detail', topic_key=next_topic) }}" class="btn btn-primary">
+          {{ next_title }} <i class="fas fa-arrow-right"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Mini Buscador de Verbos -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-gradient-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-search"></i> Buscar Verbo</h5>
+        </div>
+        <div class="card-body">
+          <div class="mini-search-container position-relative">
+            <div class="input-group">
+              <input type="text" id="miniVerbSearch" class="form-control" 
+                     placeholder="Ej: jugar, play, run..." 
+                     autocomplete="off">
+              <button class="btn btn-outline-secondary" type="button" id="miniClearSearch" style="display: none;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <small class="text-muted d-block mt-1">Busca en español o inglés</small>
+            
+            <!-- Dropdown de resultados -->
+            <div id="miniSearchDropdown" class="mini-search-dropdown">
+              <div id="miniDropdownResults"></div>
+            </div>
+          </div>
+          
+          <!-- Verbo encontrado se muestra aquí -->
+          <div id="miniVerbResult" class="mt-3" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Accesos rápidos -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-gradient-purple text-white">
+          <h5 class="mb-0"><i class="fas fa-bolt"></i> Accesos Rápidos</h5>
+        </div>
+        <div class="card-body">
+          <a href="{{ url_for('grammar.verbs_index') }}" class="btn btn-outline-primary w-100 mb-2">
+            <i class="fas fa-search"></i> Buscador de Verbos
+          </a>
+          <a href="{{ url_for('grammar.topic_sentences', topic_key=topic_key) }}" class="btn btn-outline-success w-100 mb-2">
+            <i class="fas fa-users"></i> Oraciones Comunidad
+          </a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('grammar.my_sentences') }}" class="btn btn-outline-secondary w-100">
+            <i class="fas fa-edit"></i> Mis Oraciones
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Tips -->
+      {% if topic.tips %}
+      <div class="card border-0 shadow-sm mb-4 sticky-sidebar">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-lightbulb text-warning"></i> Tips para Recordar</h5>
+        </div>
+        <div class="card-body">
+          <ul class="tips-list mb-0">
+            {% for tip in topic.tips %}
+            <li class="mb-2">{{ tip }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Índice de secciones -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-list-ol"></i> En este tema</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for section in topic.sections %}
+            <a href="#section-{{ loop.index }}" class="list-group-item list-group-item-action">
+              <i class="fas fa-{{ 'info-circle' if section.type == 'explanation' else 'table' if section.type == 'table' else 'arrows-left-right' if section.type == 'comparison' else 'quote-left' if section.type == 'examples' else 'list' if section.type == 'list' else 'tags' if section.type == 'chips' else 'pencil-alt' }} me-2 text-muted"></i>
+              {{ section.title }}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Temas relacionados -->
+      {% if related %}
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-book"></i> Temas Relacionados</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            {% for r in related %}
+            <a href="{{ url_for('grammar.topic_detail', topic_key=r.key) }}" class="list-group-item list-group-item-action d-flex align-items-center">
+              <span class="me-2">{{ r.icon }}</span>
+              <span>{{ r.title }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Volver -->
+      <div class="d-grid">
+        <a href="{{ url_for('grammar.index') }}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left"></i> Todos los Temas
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Header del tema */
+.topic-header {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.topic-icon-large {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+/* Tablas de gramática */
+.grammar-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.grammar-table td {
+  vertical-align: middle;
+}
+
+.highlight-cell {
+  background: #e8f4fd !important;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.note-box {
+  background: #fffbeb;
+  border-left: 4px solid #fbbf24;
+  font-size: 0.95rem;
+}
+
+/* Comparaciones */
+.comparison-box {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  height: 100%;
+}
+
+.comparison-primary { background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left: 5px solid #2196f3; }
+.comparison-success { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left: 5px solid #4caf50; }
+.comparison-warning { background: linear-gradient(135deg, #fff8e1, #ffecb3); border-left: 5px solid #ff9800; }
+.comparison-danger { background: linear-gradient(135deg, #ffebee, #ffcdd2); border-left: 5px solid #f44336; }
+.comparison-secondary { background: linear-gradient(135deg, #eceff1, #cfd8dc); border-left: 5px solid #607d8b; }
+
+.comparison-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.comparison-desc {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.comparison-examples {
+  margin-bottom: 0;
+  padding-left: 1.2rem;
+}
+
+.comparison-examples li {
+  margin-bottom: 0.25rem;
+  font-family: 'Courier New', monospace;
+}
+
+/* Ejemplos */
+.example-number {
+  width: 30px;
+  height: 30px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.example-english {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.speak-btn {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.speak-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Chips de vocabulario */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.vocab-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.vocab-chip:hover {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-color: #2196f3;
+  transform: scale(1.05);
+}
+
+.chip-english {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.chip-spanish {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Ejercicios */
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.exercise-item {
+  display: flex;
+  gap: 1rem;
+}
+
+.exercise-number {
+  width: 35px;
+  height: 35px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.exercise-content {
+  flex-grow: 1;
+}
+
+.exercise-sentence {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.hint-text {
+  display: block;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.feedback-text.correct {
+  color: #28a745;
+}
+
+.feedback-text.incorrect {
+  color: #dc3545;
+}
+
+.exercise-input.correct {
+  border-color: #28a745;
+  background: #d4edda;
+}
+
+.exercise-input.incorrect {
+  border-color: #dc3545;
+  background: #f8d7da;
+}
+
+.score-circle {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+/* Errores comunes */
+.wrong-example {
+  color: #dc3545;
+  font-size: 1.05rem;
+}
+
+.correct-example {
+  color: #28a745;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+/* Tips */
+.tips-list li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.tips-list li::before {
+  content: '💡';
+  position: absolute;
+  left: 0;
+}
+
+/* Sticky sidebar */
+.sticky-sidebar {
+  position: sticky;
+  top: 1rem;
+}
+
+/* Animaciones */
+.content-section {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .topic-icon-large {
+    font-size: 3rem;
+  }
+  
+  .sticky-sidebar {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .topic-header {
+    padding: 1rem;
+  }
+  
+  .comparison-box {
+    padding: 1rem;
+  }
+}
+
+/* Dark mode */
+[data-theme="dark"] .topic-header {
+  background: linear-gradient(135deg, #2d3748, #1a202c);
+}
+
+[data-theme="dark"] .grammar-table th {
+  background: #2d3748;
+}
+
+/* Community section */
+.bg-gradient-community {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+}
+
+.community-sentence {
+  transition: all 0.3s;
+}
+
+.community-sentence:hover {
+  background: #e9ecef !important;
+}
+
+[data-bs-theme="dark"] .community-sentence {
+  background: #333 !important;
+}
+
+[data-bs-theme="dark"] .community-sentence:hover {
+  background: #444 !important;
+}
+
+[data-theme="dark"] .highlight-cell {
+  background: #2c5282 !important;
+  color: #90cdf4;
+}
+
+[data-theme="dark"] .note-box {
+  background: #44337a;
+  border-color: #9f7aea;
+}
+
+[data-theme="dark"] .vocab-chip {
+  background: linear-gradient(135deg, #2d3748, #1a202c);
+}
+
+[data-theme="dark"] .comparison-primary { background: linear-gradient(135deg, #2c5282, #2b6cb0); }
+[data-theme="dark"] .comparison-success { background: linear-gradient(135deg, #276749, #2f855a); }
+[data-theme="dark"] .comparison-warning { background: linear-gradient(135deg, #744210, #975a16); }
+[data-theme="dark"] .comparison-danger { background: linear-gradient(135deg, #742a2a, #9b2c2c); }
+
+/* Mini buscador de verbos */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.mini-search-container {
+  position: relative;
+}
+
+.mini-search-dropdown {
+  position: absolute;
+  top: calc(100% - 20px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1050;
+  display: none;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.mini-search-dropdown.show {
+  display: block;
+}
+
+.mini-dropdown-item {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mini-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.mini-dropdown-item:hover {
+  background: #f8f9fa;
+}
+
+.mini-dropdown-item .verb-name {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.mini-dropdown-item .verb-spanish {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.mini-dropdown-item .verb-forms {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+.mini-verb-card {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border-left: 4px solid #667eea;
+}
+
+.mini-verb-infinitive {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.mini-verb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.mini-verb-item {
+  background: white;
+  padding: 0.4rem;
+  border-radius: 0.25rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.mini-verb-label {
+  font-size: 0.65rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.mini-verb-value {
+  font-weight: 600;
+  color: #333;
+}
+
+.mini-verb-example {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+}
+
+/* Dark mode para mini buscador */
+[data-bs-theme="dark"] .mini-search-dropdown {
+  background: #2d2d2d;
+  border-color: #444;
+}
+
+[data-bs-theme="dark"] .mini-dropdown-item {
+  border-color: #444;
+}
+
+[data-bs-theme="dark"] .mini-dropdown-item:hover {
+  background: #383838;
+}
+
+[data-bs-theme="dark"] .mini-dropdown-item .verb-spanish,
+[data-bs-theme="dark"] .mini-dropdown-item .verb-forms {
+  color: #aaa;
+}
+
+[data-bs-theme="dark"] .mini-verb-card {
+  background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+}
+
+[data-bs-theme="dark"] .mini-verb-item {
+  background: #333;
+}
+
+[data-bs-theme="dark"] .mini-verb-value {
+  color: #eee;
+}
+
+[data-bs-theme="dark"] .mini-verb-example {
+  background: #333;
+}
+</style>
+
+<script>
+// Text-to-Speech
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+// Verificar respuestas de ejercicios
+let correctAnswers = 0;
+let totalAnswered = 0;
+
+function checkAnswer(input) {
+  const correctAnswer = input.dataset.answer.toLowerCase().trim();
+  const userAnswer = input.value.toLowerCase().trim();
+  const exerciseItem = input.closest('.exercise-item');
+  const feedbackEl = exerciseItem.querySelector('.feedback-text');
+  
+  // Evitar doble verificación
+  if (input.classList.contains('correct') || input.classList.contains('incorrect')) {
+    return;
+  }
+  
+  totalAnswered++;
+  
+  // Verificar respuestas con múltiples opciones
+  let isCorrect = false;
+  const alternatives = correctAnswer.split('/').map(a => a.trim());
+  
+  if (alternatives.includes(userAnswer)) {
+    isCorrect = true;
+  }
+  
+  // También verificar sin espacios alrededor de comas
+  if (!isCorrect && userAnswer.replace(/\s*,\s*/g, ', ') === correctAnswer.replace(/\s*,\s*/g, ', ')) {
+    isCorrect = true;
+  }
+  
+  if (isCorrect) {
+    correctAnswers++;
+    input.classList.add('correct');
+    feedbackEl.innerHTML = '<i class="fas fa-check-circle"></i> ¡Correcto!';
+    feedbackEl.className = 'feedback-text mt-2 correct';
+  } else {
+    input.classList.add('incorrect');
+    feedbackEl.innerHTML = `<i class="fas fa-times-circle"></i> Incorrecto. La respuesta es: <strong>${correctAnswer}</strong>`;
+    feedbackEl.className = 'feedback-text mt-2 incorrect';
+  }
+  
+  feedbackEl.style.display = 'block';
+  input.disabled = true;
+  
+  // Actualizar score
+  updateScore();
+}
+
+function updateScore() {
+  const scoreBox = document.querySelector('.exercise-score');
+  const totalQuestions = document.querySelectorAll('.exercise-item').length;
+  
+  document.getElementById('correctCount').textContent = correctAnswers;
+  document.getElementById('scorePercent').textContent = Math.round((correctAnswers / totalQuestions) * 100);
+  
+  if (totalAnswered === totalQuestions) {
+    scoreBox.style.display = 'block';
+    scoreBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// Smooth scroll para links del índice
+document.querySelectorAll('a[href^="#section-"]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// =========================================
+// ORACIONES DE LA COMUNIDAD
+// =========================================
+
+// Cargar oraciones aleatorias
+function loadRandomSentences() {
+  const container = document.getElementById('randomSentences');
+  
+  fetch('/grammar/random-sentence/{{ topic_key }}')
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const s = data.sentence;
+        container.innerHTML = `
+          <div class="community-sentence p-3 bg-light rounded mb-2">
+            <div class="d-flex align-items-start gap-2">
+              <i class="fas fa-volume-up speak-btn text-primary" onclick="speak('${s.text}')"></i>
+              <div>
+                <div class="fw-bold">${s.text}</div>
+                ${s.translation ? `<small class="text-muted">${s.translation}</small>` : ''}
+                <div class="mt-1"><small class="text-muted">— ${s.author}</small></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="text-center text-muted py-3">
+            <i class="fas fa-comment-slash"></i><br>
+            <small>Aún no hay oraciones. ¡Sé el primero!</small>
+          </div>
+        `;
+      }
+    })
+    .catch(() => {
+      container.innerHTML = `
+        <div class="text-center text-muted py-3">
+          <small>No hay oraciones disponibles</small>
+        </div>
+      `;
+    });
+}
+
+// Cargar al iniciar
+loadRandomSentences();
+
+// Botón cargar más
+document.getElementById('loadMoreSentences')?.addEventListener('click', loadRandomSentences);
+
+// Envío rápido de oración
+document.getElementById('submitQuickSentence')?.addEventListener('click', function() {
+  const sentence = document.getElementById('quickSentence').value.trim();
+  const resultDiv = document.getElementById('quickSubmitResult');
+  
+  if (!sentence) {
+    resultDiv.innerHTML = '<small class="text-warning">Escribe una oración</small>';
+    resultDiv.style.display = 'block';
+    return;
+  }
+  
+  this.disabled = true;
+  this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  fetch('/grammar/submit-sentence', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      topic: '{{ topic_key }}',
+      sentence: sentence,
+      translation: ''
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      resultDiv.innerHTML = '<small class="text-success"><i class="fas fa-check"></i> ¡Enviada!</small>';
+      document.getElementById('quickSentence').value = '';
+    } else {
+      resultDiv.innerHTML = `<small class="text-danger">${data.error}</small>`;
+    }
+    resultDiv.style.display = 'block';
+    this.disabled = false;
+    this.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar';
+  })
+  .catch(() => {
+    resultDiv.innerHTML = '<small class="text-danger">Error al enviar</small>';
+    resultDiv.style.display = 'block';
+    this.disabled = false;
+    this.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar';
+  });
+});
+
+// =========================================
+// MINI BUSCADOR DE VERBOS
+// =========================================
+(function() {
+  const searchInput = document.getElementById('miniVerbSearch');
+  const dropdown = document.getElementById('miniSearchDropdown');
+  const dropdownResults = document.getElementById('miniDropdownResults');
+  const clearBtn = document.getElementById('miniClearSearch');
+  const resultContainer = document.getElementById('miniVerbResult');
+  
+  if (!searchInput) return;
+  
+  let searchTimeout;
+  
+  function performMiniSearch() {
+    const query = searchInput.value.trim();
+    
+    clearBtn.style.display = query ? 'block' : 'none';
+    
+    if (!query || query.length < 2) {
+      dropdown.classList.remove('show');
+      return;
+    }
+    
+    fetch(`/grammar/verbs/search?q=${encodeURIComponent(query)}&limit=6`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.verbs.length > 0) {
+          dropdownResults.innerHTML = data.verbs.slice(0, 6).map(verb => `
+            <div class="mini-dropdown-item" data-verb='${JSON.stringify(verb).replace(/'/g, "&#39;")}'>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="verb-name">${verb.infinitive}</span>
+                ${verb.is_irregular ? '<span class="badge bg-danger badge-sm" style="font-size:0.65rem">Irreg</span>' : ''}
+              </div>
+              <div class="verb-spanish">${verb.spanish}</div>
+              <div class="verb-forms">${verb.past_simple} / ${verb.past_participle}</div>
+            </div>
+          `).join('');
+          
+          dropdown.classList.add('show');
+          
+          // Click en item
+          document.querySelectorAll('.mini-dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const verbData = JSON.parse(this.dataset.verb.replace(/&#39;/g, "'"));
+              showMiniVerbDetail(verbData);
+              searchInput.value = verbData.infinitive;
+              dropdown.classList.remove('show');
+            });
+          });
+        } else {
+          dropdownResults.innerHTML = `
+            <div class="p-3 text-center text-muted">
+              <i class="fas fa-search"></i> No encontrado
+            </div>
+          `;
+          dropdown.classList.add('show');
+        }
+      });
+  }
+  
+  function showMiniVerbDetail(verb) {
+    resultContainer.innerHTML = `
+      <div class="mini-verb-card">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <span class="mini-verb-infinitive">
+              <i class="fas fa-volume-up speak-btn me-1" style="font-size:0.9rem" onclick="speak('${verb.infinitive}')"></i>
+              ${verb.infinitive}
+            </span>
+            ${verb.is_irregular ? '<span class="badge bg-danger ms-2" style="font-size:0.7rem">Irregular</span>' : '<span class="badge bg-success ms-2" style="font-size:0.7rem">Regular</span>'}
+          </div>
+          <button class="btn btn-sm btn-link text-muted p-0" onclick="document.getElementById('miniVerbResult').style.display='none'">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="text-muted" style="font-size:0.9rem">${verb.spanish}</div>
+        
+        <div class="mini-verb-grid">
+          <div class="mini-verb-item">
+            <div class="mini-verb-label">Past</div>
+            <div class="mini-verb-value">${verb.past_simple}</div>
+          </div>
+          <div class="mini-verb-item">
+            <div class="mini-verb-label">Participle</div>
+            <div class="mini-verb-value">${verb.past_participle}</div>
+          </div>
+          <div class="mini-verb-item">
+            <div class="mini-verb-label">-ing</div>
+            <div class="mini-verb-value">${verb.present_participle}</div>
+          </div>
+          <div class="mini-verb-item">
+            <div class="mini-verb-label">3rd Person</div>
+            <div class="mini-verb-value">${verb.third_person || verb.infinitive + 's'}</div>
+          </div>
+        </div>
+        
+        ${verb.example ? `
+        <div class="mini-verb-example">
+          <i class="fas fa-volume-up speak-btn text-primary me-1" style="font-size:0.8rem" onclick="speak('${verb.example.replace(/'/g, "\\'")}')"></i>
+          <span class="text-primary">${verb.example}</span>
+          ${verb.example_translation ? `<br><small class="text-muted">${verb.example_translation}</small>` : ''}
+        </div>
+        ` : ''}
+      </div>
+    `;
+    resultContainer.style.display = 'block';
+  }
+  
+  // Eventos
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(performMiniSearch, 200);
+  });
+  
+  searchInput.addEventListener('focus', function() {
+    if (this.value.trim().length >= 2) {
+      performMiniSearch();
+    }
+  });
+  
+  // Cerrar dropdown al click fuera
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.mini-search-container')) {
+      dropdown.classList.remove('show');
+    }
+  });
+  
+  // Limpiar
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    dropdown.classList.remove('show');
+    resultContainer.style.display = 'none';
+    searchInput.focus();
+  });
+  
+  // Navegación con teclado
+  searchInput.addEventListener('keydown', function(e) {
+    const items = dropdown.querySelectorAll('.mini-dropdown-item');
+    const active = dropdown.querySelector('.mini-dropdown-item.active');
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!active && items.length > 0) {
+        items[0].classList.add('active');
+        items[0].style.background = '#e9ecef';
+      } else if (active) {
+        const next = active.nextElementSibling;
+        if (next && next.classList.contains('mini-dropdown-item')) {
+          active.classList.remove('active');
+          active.style.background = '';
+          next.classList.add('active');
+          next.style.background = '#e9ecef';
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (active) {
+        const prev = active.previousElementSibling;
+        if (prev && prev.classList.contains('mini-dropdown-item')) {
+          active.classList.remove('active');
+          active.style.background = '';
+          prev.classList.add('active');
+          prev.style.background = '#e9ecef';
+        }
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (active) {
+        active.click();
+      }
+    } else if (e.key === 'Escape') {
+      dropdown.classList.remove('show');
+    }
+  });
+})();
+</script>
+{% endblock %}

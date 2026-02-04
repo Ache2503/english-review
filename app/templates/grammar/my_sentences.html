@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Oraciones - Gramática{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('grammar.index') }}">Gramática</a></li>
+      <li class="breadcrumb-item active">Mis Oraciones</li>
+    </ol>
+  </nav>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="mb-2"><i class="fas fa-edit text-primary"></i> Mis Oraciones</h1>
+      <p class="text-muted">Oraciones que has compartido con la comunidad</p>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="row mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-primary text-white">
+        <div class="stat-icon"><i class="fas fa-pen"></i></div>
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-success text-white">
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-number">{{ stats.approved }}</div>
+        <div class="stat-label">Aprobadas</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-warning text-dark">
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
+        <div class="stat-number">{{ stats.featured }}</div>
+        <div class="stat-label">Destacadas</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card bg-danger text-white">
+        <div class="stat-icon"><i class="fas fa-heart"></i></div>
+        <div class="stat-number">{{ stats.total_likes }}</div>
+        <div class="stat-label">Likes Recibidos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de oraciones -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0"><i class="fas fa-list"></i> Todas mis oraciones</h5>
+    </div>
+    <div class="card-body">
+      {% if sentences %}
+        {% for sentence in sentences %}
+        <div class="sentence-item mb-4 p-3 border rounded {% if sentence.is_featured %}border-warning{% endif %}">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="d-flex gap-2 flex-wrap">
+              {% if sentence.is_approved %}
+              <span class="badge bg-success"><i class="fas fa-check"></i> Aprobada</span>
+              {% else %}
+              <span class="badge bg-secondary"><i class="fas fa-clock"></i> Pendiente</span>
+              {% endif %}
+              {% if sentence.is_featured %}
+              <span class="badge bg-warning text-dark"><i class="fas fa-star"></i> Destacada</span>
+              {% endif %}
+              {% if sentence.is_correct %}
+              <span class="badge bg-info"><i class="fas fa-spell-check"></i> Correcta</span>
+              {% endif %}
+              <span class="badge bg-light text-dark">{{ sentence.grammar_topic }}</span>
+            </div>
+            <small class="text-muted">{{ sentence.created_at.strftime('%d/%m/%Y') }}</small>
+          </div>
+          
+          <div class="sentence-content">
+            <div class="original-sentence mb-2">
+              <span class="text-muted small">Original:</span>
+              <div class="h5 mb-0">
+                <i class="fas fa-volume-up speak-btn me-2" onclick="speak('{{ sentence.original_sentence }}')"></i>
+                {{ sentence.original_sentence }}
+              </div>
+            </div>
+            
+            {% if sentence.corrected_sentence and sentence.corrected_sentence != sentence.original_sentence %}
+            <div class="corrected-sentence mb-2 p-2 bg-light rounded">
+              <span class="text-success small"><i class="fas fa-check"></i> Corregida:</span>
+              <div class="fw-bold text-success">{{ sentence.corrected_sentence }}</div>
+            </div>
+            {% endif %}
+            
+            {% if sentence.spanish_translation %}
+            <div class="translation text-muted">
+              <i class="fas fa-language me-2"></i>{{ sentence.spanish_translation }}
+            </div>
+            {% endif %}
+            
+            {% if sentence.correction_notes %}
+            <div class="correction-notes mt-2 p-2 bg-info bg-opacity-10 rounded">
+              <small><i class="fas fa-lightbulb text-info"></i> {{ sentence.correction_notes }}</small>
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="sentence-footer mt-3 d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-heart text-danger"></i> {{ sentence.likes_count }} likes
+              </span>
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-dumbbell text-primary"></i> Usada {{ sentence.used_in_exercises }} veces en ejercicios
+              </span>
+            </div>
+            <a href="{{ url_for('grammar.topic_sentences', topic_key=sentence.grammar_topic) }}" class="btn btn-sm btn-outline-primary">
+              Ver en comunidad
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-center py-5">
+          <div class="mb-3" style="font-size: 4rem;">📝</div>
+          <h5>¡Aún no has compartido oraciones!</h5>
+          <p class="text-muted mb-4">Ve a cualquier tema de gramática y comparte tu primera oración.</p>
+          <a href="{{ url_for('grammar.index') }}" class="btn btn-primary">
+            <i class="fas fa-book"></i> Ver Temas de Gramática
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.stat-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-icon {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.sentence-item {
+  transition: all 0.3s;
+}
+
+.sentence-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.sentence-item.border-warning {
+  border-width: 2px !important;
+  background: rgba(255, 193, 7, 0.05);
+}
+
+.speak-btn {
+  color: #667eea;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.speak-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .sentence-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+</style>
+
+<script>
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
+  }
+}
+</script>
+{% endblock %}

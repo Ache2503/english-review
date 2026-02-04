@@ -307,6 +307,64 @@ class UserFlashcardReview(db.Model):
         return f'<UserFlashcardReview User:{self.user_id} Flashcard:{self.flashcard_id}>'
 
 
+class UserFlashcardSRS(db.Model):
+    """
+    Sistema de Repetición Espaciada (SRS) para flashcards.
+    Almacena el estado del algoritmo SM-2 por usuario/flashcard.
+    """
+    __tablename__ = 'user_flashcard_srs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    flashcard_id = db.Column(db.Integer, db.ForeignKey('flashcards.id'), nullable=False, index=True)
+    
+    # Parámetros del algoritmo SM-2
+    ease_factor = db.Column(db.Float, default=2.5)  # Factor de facilidad (mínimo 1.3)
+    interval = db.Column(db.Integer, default=1)  # Intervalo actual en días
+    repetitions = db.Column(db.Integer, default=0)  # Repeticiones exitosas consecutivas
+    
+    # Fechas
+    next_review_date = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    last_reviewed_at = db.Column(db.DateTime)
+    
+    # Estadísticas
+    total_reviews = db.Column(db.Integer, default=0)
+    correct_reviews = db.Column(db.Integer, default=0)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref='flashcard_srs')
+    flashcard = db.relationship('Flashcard', backref='srs_records')
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'flashcard_id', name='unique_user_flashcard_srs'),
+        db.Index('idx_srs_next_review', 'user_id', 'next_review_date'),
+    )
+
+    @property
+    def retention_rate(self):
+        """Porcentaje de respuestas correctas"""
+        if self.total_reviews == 0:
+            return 0
+        return round((self.correct_reviews / self.total_reviews) * 100, 1)
+    
+    @property
+    def status(self):
+        """Estado de aprendizaje: new, learning, learned, mastered"""
+        if self.repetitions == 0:
+            return 'new'
+        elif self.repetitions < 3:
+            return 'learning'
+        elif self.repetitions < 6:
+            return 'learned'
+        else:
+            return 'mastered'
+
+    def __repr__(self):
+        return f'<UserFlashcardSRS User:{self.user_id} Card:{self.flashcard_id} Next:{self.next_review_date}>'
+
+
 class ErrorLog(db.Model):
     """Registro de errores gramaticales del usuario"""
     __tablename__ = 'error_logs'
@@ -527,3 +585,220 @@ user_badges = db.Table(
     db.Column('badge_id', db.Integer, db.ForeignKey('badges.id'), primary_key=True),
     db.Column('earned_at', db.DateTime, default=datetime.utcnow)
 )
+
+
+# Conversational Practice Models
+class Conversation(db.Model):
+    __tablename__ = 'conversations'
+    id = db.Column(db.Integer, primary_key=True)
+    scenario = db.Column(db.String(100), nullable=False, unique=True, index=True)  # Ej: 'tienda', 'saludos'
+    title = db.Column(db.String(200), nullable=False)  # Ej: 'En la tienda'
+    description = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    lines = db.relationship('ConversationLine', backref='conversation', lazy='dynamic', cascade='all, delete-orphan')
+
+class ConversationLine(db.Model):
+    __tablename__ = 'conversation_lines'
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversations.id'), nullable=False, index=True)
+    speaker = db.Column(db.String(100), nullable=False)  # Ej: 'Cliente', 'Vendedor'
+    text = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, default=0)  # Para el orden de las líneas
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ConversationPractice(db.Model):
+    """Historial de prácticas de conversación del usuario"""
+    __tablename__ = 'conversation_practices'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    scenario = db.Column(db.String(100), nullable=False)  # Ej: 'store', 'directions'
+    final_score = db.Column(db.Float, nullable=False)
+    total_responses = db.Column(db.Integer, nullable=False)
+    practice_data = db.Column(db.JSON)  # Historial detallado de respuestas
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('conversation_practices', lazy='dynamic'))
+
+
+class AlternativeResponse(db.Model):
+    """Respuestas alternativas aprendidas de los usuarios"""
+    __tablename__ = 'alternative_responses'
+    id = db.Column(db.Integer, primary_key=True)
+    scenario = db.Column(db.String(100), nullable=False, index=True)
+    step = db.Column(db.Integer, nullable=False)  # Paso de la conversación
+    original_expected = db.Column(db.Text, nullable=False)  # Respuesta esperada original
+    alternative_text = db.Column(db.Text, nullable=False)  # Respuesta alternativa del usuario
+    similarity_score = db.Column(db.Float)  # Similitud con la original
+    times_used = db.Column(db.Integer, default=1)  # Veces que se ha usado esta respuesta
+    approved = db.Column(db.Boolean, default=False)  # Si fue aprobada manualmente
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Índice compuesto para búsquedas eficientes
+    __table_args__ = (
+        db.Index('idx_scenario_step', 'scenario', 'step'),
+    )
+
+    def __repr__(self):
+        return f'<AlternativeResponse {self.scenario}:{self.step} "{self.alternative_text[:30]}...">'
+
+
+class ResponsePattern(db.Model):
+    """Patrones de respuesta detectados entre escenarios"""
+    __tablename__ = 'response_patterns'
+    id = db.Column(db.Integer, primary_key=True)
+    pattern_text = db.Column(db.Text, nullable=False)  # Texto del patrón
+    pattern_type = db.Column(db.String(50))  # Tipo: 'greeting', 'thanks', 'question', etc.
+    applicable_scenarios = db.Column(db.JSON)  # Lista de escenarios donde aplica
+    usage_count = db.Column(db.Integer, default=1)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_pattern_type', 'pattern_type'),
+    )
+
+
+# ==========================================
+# MODELOS PARA SISTEMA DE GRAMÁTICA
+# ==========================================
+
+class UserSentence(db.Model):
+    """Oraciones creadas por usuarios para práctica de gramática"""
+    __tablename__ = 'user_sentences'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    grammar_topic = db.Column(db.String(100), nullable=False, index=True)  # ej: 'verb-to-be', 'present-simple'
+    original_sentence = db.Column(db.Text, nullable=False)  # Oración original del usuario
+    corrected_sentence = db.Column(db.Text)  # Oración corregida (si aplica)
+    is_correct = db.Column(db.Boolean, default=False)  # Si la oración original era correcta
+    correction_notes = db.Column(db.Text)  # Notas de corrección/explicación
+    spanish_translation = db.Column(db.Text)  # Traducción al español
+    is_approved = db.Column(db.Boolean, default=False)  # Si está aprobada para mostrar a otros
+    is_featured = db.Column(db.Boolean, default=False)  # Destacada como buen ejemplo
+    likes_count = db.Column(db.Integer, default=0)  # Votos positivos
+    used_in_exercises = db.Column(db.Integer, default=0)  # Veces usada en ejercicios
+    difficulty = db.Column(db.String(20), default='beginner')  # beginner, intermediate, advanced
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relación con usuario
+    user = db.relationship('User', backref=db.backref('sentences', lazy='dynamic'))
+    
+    __table_args__ = (
+        db.Index('idx_sentence_topic_approved', 'grammar_topic', 'is_approved'),
+        db.Index('idx_sentence_featured', 'is_featured', 'grammar_topic'),
+    )
+    
+    def __repr__(self):
+        return f'<UserSentence {self.id}: "{self.original_sentence[:40]}...">'
+
+
+class SentenceLike(db.Model):
+    """Likes de usuarios a oraciones"""
+    __tablename__ = 'sentence_likes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    sentence_id = db.Column(db.Integer, db.ForeignKey('user_sentences.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'sentence_id', name='unique_user_sentence_like'),
+    )
+
+
+class Verb(db.Model):
+    """Tabla de verbos en inglés con conjugaciones"""
+    __tablename__ = 'verbs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    infinitive = db.Column(db.String(100), unique=True, nullable=False, index=True)  # Infinitivo (base form)
+    past_simple = db.Column(db.String(100), nullable=False)  # Pasado simple
+    past_participle = db.Column(db.String(100), nullable=False)  # Participio pasado
+    present_participle = db.Column(db.String(100), nullable=False)  # Gerundio (-ing)
+    third_person = db.Column(db.String(100), nullable=False)  # Tercera persona singular (he/she/it)
+    spanish_translation = db.Column(db.String(200), nullable=False)  # Traducción al español
+    pronunciation_ipa = db.Column(db.String(100))  # Pronunciación IPA
+    is_irregular = db.Column(db.Boolean, default=False)  # Si es irregular
+    is_modal = db.Column(db.Boolean, default=False)  # Si es modal (can, could, etc.)
+    is_auxiliary = db.Column(db.Boolean, default=False)  # Si es auxiliar (be, have, do)
+    frequency_rank = db.Column(db.Integer)  # Ranking de frecuencia de uso
+    difficulty = db.Column(db.String(20), default='beginner')  # beginner, intermediate, advanced
+    category = db.Column(db.String(50))  # Categoría: action, state, linking, etc.
+    example_sentence = db.Column(db.Text)  # Ejemplo de uso
+    example_translation = db.Column(db.Text)  # Traducción del ejemplo
+    notes = db.Column(db.Text)  # Notas adicionales sobre uso
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_verb_irregular', 'is_irregular'),
+        db.Index('idx_verb_frequency', 'frequency_rank'),
+        db.Index('idx_verb_category', 'category'),
+    )
+    
+    def get_conjugations(self):
+        """Retorna todas las conjugaciones del verbo"""
+        return {
+            'infinitive': self.infinitive,
+            'past_simple': self.past_simple,
+            'past_participle': self.past_participle,
+            'present_participle': self.present_participle,
+            'third_person': self.third_person,
+            'spanish': self.spanish_translation
+        }
+    
+    def __repr__(self):
+        return f'<Verb {self.infinitive} ({"irregular" if self.is_irregular else "regular"})>'
+
+
+class VerbTense(db.Model):
+    """Conjugaciones completas por tiempo verbal"""
+    __tablename__ = 'verb_tenses'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    verb_id = db.Column(db.Integer, db.ForeignKey('verbs.id'), nullable=False, index=True)
+    tense_name = db.Column(db.String(50), nullable=False)  # present_simple, past_simple, future, etc.
+    i_form = db.Column(db.String(100))  # I work
+    you_form = db.Column(db.String(100))  # You work
+    he_she_it_form = db.Column(db.String(100))  # He/She/It works
+    we_form = db.Column(db.String(100))  # We work
+    they_form = db.Column(db.String(100))  # They work
+    negative_form = db.Column(db.String(150))  # don't work / doesn't work
+    question_form = db.Column(db.String(150))  # Do you work? / Does he work?
+    example_affirmative = db.Column(db.Text)
+    example_negative = db.Column(db.Text)
+    example_question = db.Column(db.Text)
+    
+    verb = db.relationship('Verb', backref=db.backref('tenses', lazy='dynamic'))
+    
+    __table_args__ = (
+        db.UniqueConstraint('verb_id', 'tense_name', name='unique_verb_tense'),
+    )
+    
+    def __repr__(self):
+        return f'<VerbTense {self.verb.infinitive if self.verb else "?"} - {self.tense_name}>'
+
+
+class GrammarExerciseResult(db.Model):
+    """Resultados de ejercicios de gramática de usuarios"""
+    __tablename__ = 'grammar_exercise_results'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    grammar_topic = db.Column(db.String(100), nullable=False, index=True)
+    exercise_type = db.Column(db.String(50))  # fill_blank, multiple_choice, reorder, etc.
+    total_questions = db.Column(db.Integer, default=0)
+    correct_answers = db.Column(db.Integer, default=0)
+    score_percentage = db.Column(db.Float, default=0.0)
+    time_spent_seconds = db.Column(db.Integer)  # Tiempo en segundos
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref=db.backref('grammar_results', lazy='dynamic'))
+    
+    __table_args__ = (
+        db.Index('idx_grammar_result_user_topic', 'user_id', 'grammar_topic'),
+    )

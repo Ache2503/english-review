@@ -1,0 +1,722 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ topic.icon }} {{ topic.title }} - Estudio Intensivo{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb y navegación -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('study.study_home') }}">Estudio Intensivo</a></li>
+            <li class="breadcrumb-item active">{{ topic.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header del tema -->
+    <div class="card mb-4 border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body text-white text-center py-5">
+            <span class="display-1 mb-3 d-block">{{ topic.icon }}</span>
+            <h1 class="display-5 fw-bold mb-2">{{ topic.title }}</h1>
+            <p class="lead mb-3 opacity-75">{{ topic.description }}</p>
+            <div class="d-flex justify-content-center gap-3">
+                <span class="badge bg-white text-dark px-3 py-2">
+                    <i class="fas fa-signal me-1"></i>{{ topic.difficulty | capitalize }}
+                </span>
+                <span class="badge bg-white text-dark px-3 py-2">
+                    <i class="fas fa-clock me-1"></i>{{ topic.estimated_time }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs de navegación -->
+    <ul class="nav nav-pills nav-fill mb-4" id="studyTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="theory-tab" data-bs-toggle="pill" data-bs-target="#theory" type="button" role="tab">
+                <i class="fas fa-book me-2"></i>Teoría
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mistakes-tab" data-bs-toggle="pill" data-bs-target="#mistakes" type="button" role="tab">
+                <i class="fas fa-exclamation-triangle me-2"></i>Errores Comunes
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tips-tab" data-bs-toggle="pill" data-bs-target="#tips" type="button" role="tab">
+                <i class="fas fa-lightbulb me-2"></i>Tips
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="exercises-tab" data-bs-toggle="pill" data-bs-target="#exercises" type="button" role="tab">
+                <i class="fas fa-pencil-alt me-2"></i>Ejercicios
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="reference-tab" data-bs-toggle="pill" data-bs-target="#reference" type="button" role="tab">
+                <i class="fas fa-clipboard-list me-2"></i>Ref. Rápida
+            </button>
+        </li>
+    </ul>
+
+    <!-- Contenido de tabs -->
+    <div class="tab-content" id="studyTabsContent">
+        <!-- TAB: Teoría -->
+        <div class="tab-pane fade show active" id="theory" role="tabpanel">
+            <!-- Introducción -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Introducción</h5>
+                </div>
+                <div class="card-body">
+                    <div class="theory-content">
+                        {{ topic.theory.introduction | safe | replace('**', '<strong>') | replace('**', '</strong>') }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reglas -->
+            {% for rule in topic.theory.rules %}
+            <div class="card mb-4 rule-card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">{{ rule.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-3">
+                        <strong>Regla:</strong> {{ rule.rule }}
+                    </div>
+                    
+                    {% if rule.formula %}
+                    <div class="bg-dark text-white p-3 rounded mb-3 text-center">
+                        <code class="fs-5">{{ rule.formula }}</code>
+                    </div>
+                    {% endif %}
+
+                    <h6 class="mt-4 mb-3"><i class="fas fa-list me-2 text-primary"></i>Ejemplos:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                {% for ex in rule.examples %}
+                                <tr>
+                                    <td>
+                                        {% if ex.sentence %}
+                                            <span class="example-sentence">{{ ex.sentence | safe }}</span>
+                                            {% if ex.translation %}
+                                            <br><small class="text-muted">{{ ex.translation }}</small>
+                                            {% endif %}
+                                            {% if ex.now %}
+                                            <br><small class="text-success">{{ ex.now }}</small>
+                                            {% endif %}
+                                        {% elif ex.adj %}
+                                            <strong>{{ ex.adj }}</strong> → 
+                                            <span class="text-primary">{{ ex.comparative }}</span> → 
+                                            <span class="text-success">{{ ex.superlative }}</span>
+                                            {% if ex.sentence_comp %}
+                                            <br><small>{{ ex.sentence_comp | safe }}</small>
+                                            {% endif %}
+                                        {% elif ex.active and ex.passive %}
+                                            <strong>Active:</strong> {{ ex.active | safe }}<br>
+                                            <strong>Passive:</strong> {{ ex.passive | safe }}
+                                            {% if ex.note %}<br><small class="text-muted">{{ ex.note }}</small>{% endif %}
+                                        {% elif ex.wrong and ex.correct %}
+                                            <span class="text-danger"><i class="fas fa-times me-1"></i>{{ ex.wrong }}</span><br>
+                                            <span class="text-success"><i class="fas fa-check me-1"></i>{{ ex.correct }}</span>
+                                        {% elif ex.first and ex.second %}
+                                            <strong>First:</strong> {{ ex.first | safe }}<br>
+                                            <strong>Second:</strong> {{ ex.second | safe }}
+                                            {% if ex.explanation %}<br><small class="text-muted">{{ ex.explanation }}</small>{% endif %}
+                                        {% elif ex.article %}
+                                            <strong>{{ ex.article }}</strong> {{ ex.word }} 
+                                            <small class="text-muted">({{ ex.explanation }})</small>
+                                        {% elif ex.tense %}
+                                            <strong>{{ ex.tense }}:</strong> {{ ex.be_form }} + pp → {{ ex.example | safe }}
+                                        {% elif ex.simple and ex.continuous %}
+                                            <strong>Simple:</strong> {{ ex.simple | safe }}<br>
+                                            <strong>Continuous:</strong> {{ ex.continuous | safe }}
+                                            {% if ex.explanation %}<br><small class="text-muted">{{ ex.explanation }}</small>{% endif %}
+                                        {% else %}
+                                            {{ ex | safe }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if rule.spelling_rules %}
+                    <div class="alert alert-warning mt-3">
+                        <h6><i class="fas fa-spell-check me-2"></i>Reglas de Ortografía:</h6>
+                        <ul class="mb-0">
+                            {% for sr in rule.spelling_rules %}
+                            <li>{{ sr | safe }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if rule.uses %}
+                    <div class="alert alert-success mt-3">
+                        <h6><i class="fas fa-check-circle me-2"></i>Usos:</h6>
+                        <ul class="mb-0">
+                            {% for use in rule.uses %}
+                            <li>{{ use | safe }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if rule.stative_verbs %}
+                    <div class="alert alert-danger mt-3">
+                        <h6><i class="fas fa-ban me-2"></i>Stative Verbs (NO usan -ing):</h6>
+                        <ul class="mb-0">
+                            {% for sv in rule.stative_verbs %}
+                            <li>{{ sv | safe }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if rule.common_adjectives %}
+                    <div class="mt-3">
+                        <strong>Adjetivos comunes:</strong> 
+                        {% for adj in rule.common_adjectives %}
+                        <span class="badge bg-secondary me-1">{{ adj }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if rule.note %}
+                    <div class="alert alert-secondary mt-3 mb-0">
+                        <i class="fas fa-info-circle me-2"></i>{{ rule.note | safe }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Estructuras adicionales -->
+            {% if topic.theory.structures %}
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Estructuras Adicionales</h5>
+                </div>
+                <div class="card-body">
+                    {% for struct in topic.theory.structures %}
+                    <div class="mb-4 pb-3 border-bottom">
+                        <h6 class="text-primary">{{ struct.name }}</h6>
+                        {% if struct.structure %}
+                        <p class="mb-2"><strong>Estructura:</strong> {{ struct.structure }}</p>
+                        {% endif %}
+                        <div class="bg-light p-3 rounded">
+                            <pre class="mb-0" style="white-space: pre-wrap;">{{ struct.example | safe }}</pre>
+                        </div>
+                        {% if struct.note %}
+                        <small class="text-muted mt-2 d-block"><i class="fas fa-sticky-note me-1"></i>{{ struct.note }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- TAB: Errores Comunes -->
+        <div class="tab-pane fade" id="mistakes" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Errores Comunes a Evitar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>¡Importante!</strong> Estos son los errores más frecuentes que cometen los estudiantes. 
+                        Aprende a identificarlos para evitarlos en tu examen.
+                    </div>
+
+                    {% for mistake in topic.common_mistakes %}
+                    <div class="card mb-3 mistake-card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <span class="badge bg-danger me-2 mt-1">✗</span>
+                                        <div>
+                                            <strong class="text-danger">Incorrecto:</strong>
+                                            <p class="mb-0 text-decoration-line-through">{{ mistake.wrong }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <span class="badge bg-success me-2 mt-1">✓</span>
+                                        <div>
+                                            <strong class="text-success">Correcto:</strong>
+                                            <p class="mb-0">{{ mistake.correct }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mb-0 mt-3">
+                                <i class="fas fa-info-circle me-2"></i>{{ mistake.explanation }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Tips -->
+        <div class="tab-pane fade" id="tips" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Tips y Trucos para Recordar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        {% for tip in topic.tips %}
+                        <div class="col-md-6">
+                            <div class="card h-100 border-warning tip-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="fs-1 me-3">{{ tip.icon }}</span>
+                                        <h6 class="mb-0">{{ tip.title }}</h6>
+                                    </div>
+                                    <p class="mb-0">{{ tip.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Ejercicios -->
+        <div class="tab-pane fade" id="exercises" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-pencil-alt me-2"></i>Ejercicios Interactivos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-keyboard me-2"></i>
+                        Escribe tu respuesta y presiona <strong>Enter</strong> o haz clic en "Verificar" para comprobar.
+                    </div>
+
+                    {% for exercise in topic.exercises %}
+                    {% set exercise_idx = loop.index0 %}
+                    <div class="exercise-section mb-5" data-exercise-index="{{ exercise_idx }}">
+                        <h5 class="border-bottom pb-2 mb-4">
+                            {% if exercise.type == 'fill_blank' %}
+                            <i class="fas fa-edit me-2 text-primary"></i>
+                            {% elif exercise.type == 'multiple_choice' %}
+                            <i class="fas fa-list-ul me-2 text-success"></i>
+                            {% elif exercise.type == 'error_correction' %}
+                            <i class="fas fa-spell-check me-2 text-danger"></i>
+                            {% elif exercise.type == 'transformation' %}
+                            <i class="fas fa-exchange-alt me-2 text-warning"></i>
+                            {% endif %}
+                            {{ exercise.instruction }}
+                        </h5>
+
+                        {% for question in exercise.questions %}
+                        {% set question_idx = loop.index0 %}
+                        <div class="question-item mb-4 p-3 bg-light rounded" data-question-index="{{ question_idx }}">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-secondary me-3 mt-1">{{ loop.index }}</span>
+                                <div class="flex-grow-1">
+                                    {% if exercise.type == 'fill_blank' %}
+                                    <p class="mb-2">{{ question.prompt }}</p>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control answer-input" 
+                                               placeholder="Tu respuesta..." 
+                                               data-topic="{{ topic_id }}"
+                                               data-exercise="{{ exercise_idx }}"
+                                               data-question="{{ question_idx }}">
+                                        <button class="btn btn-primary check-answer-btn" type="button">
+                                            <i class="fas fa-check me-1"></i>Verificar
+                                        </button>
+                                    </div>
+                                    {% if question.hint %}
+                                    <small class="text-muted mt-1 d-block">
+                                        <i class="fas fa-lightbulb me-1"></i>Pista: {{ question.hint }}
+                                    </small>
+                                    {% endif %}
+
+                                    {% elif exercise.type == 'multiple_choice' %}
+                                    <p class="mb-3">{{ question.prompt }}</p>
+                                    <div class="options-list">
+                                        {% for option in question.options %}
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input mc-option" type="radio" 
+                                                   name="mc_{{ question_idx }}_{{ exercise_idx }}"
+                                                   id="mc_{{ question_idx }}_{{ exercise_idx }}_{{ loop.index0 }}"
+                                                   value="{{ option }}"
+                                                   data-topic="{{ topic_id }}"
+                                                   data-exercise="{{ exercise_idx }}"
+                                                   data-question="{{ question_idx }}"
+                                                   data-correct="{{ question.answer }}">
+                                            <label class="form-check-label" for="mc_{{ question_idx }}_{{ exercise_idx }}_{{ loop.index0 }}">
+                                                {{ option }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% elif exercise.type == 'error_correction' %}
+                                    <p class="mb-2"><span class="text-danger">{{ question.prompt }}</span></p>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control answer-input" 
+                                               placeholder="Escribe la oración corregida..."
+                                               data-topic="{{ topic_id }}"
+                                               data-exercise="{{ exercise_idx }}"
+                                               data-question="{{ question_idx }}">
+                                        <button class="btn btn-primary check-answer-btn" type="button">
+                                            <i class="fas fa-check me-1"></i>Verificar
+                                        </button>
+                                    </div>
+
+                                    {% elif exercise.type == 'transformation' %}
+                                    {% if question.active %}
+                                    <p class="mb-2"><strong>Active:</strong> {{ question.active }}</p>
+                                    <div class="input-group">
+                                        <span class="input-group-text">Passive:</span>
+                                        <input type="text" class="form-control answer-input" 
+                                               placeholder="Escribe la forma pasiva..."
+                                               data-topic="{{ topic_id }}"
+                                               data-exercise="{{ exercise_idx }}"
+                                               data-question="{{ question_idx }}">
+                                        <button class="btn btn-primary check-answer-btn" type="button">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                    {% elif question.prompt %}
+                                    <p class="mb-2">{{ question.prompt }}</p>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control answer-input" 
+                                               placeholder="Tu respuesta..."
+                                               data-topic="{{ topic_id }}"
+                                               data-exercise="{{ exercise_idx }}"
+                                               data-question="{{ question_idx }}">
+                                        <button class="btn btn-primary check-answer-btn" type="button">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                    {% elif question.sentence1 %}
+                                    <p class="mb-1"><strong>1:</strong> {{ question.sentence1 }}</p>
+                                    <p class="mb-2"><strong>2:</strong> {{ question.sentence2 }}</p>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control answer-input" 
+                                               placeholder="Combina usando infinitivo de propósito..."
+                                               data-topic="{{ topic_id }}"
+                                               data-exercise="{{ exercise_idx }}"
+                                               data-question="{{ question_idx }}">
+                                        <button class="btn btn-primary check-answer-btn" type="button">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                    {% endif %}
+
+                                    {% elif exercise.type == 'classification' %}
+                                    <p class="mb-3">{{ question.sentence }}</p>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-outline-primary classify-btn" 
+                                                data-answer="First" data-correct="{{ question.answer }}">First</button>
+                                        <button type="button" class="btn btn-outline-success classify-btn"
+                                                data-answer="Second" data-correct="{{ question.answer }}">Second</button>
+                                    </div>
+                                    {% if question.reason %}
+                                    <div class="reason-hint d-none mt-2">
+                                        <small class="text-muted">{{ question.reason }}</small>
+                                    </div>
+                                    {% endif %}
+                                    {% endif %}
+
+                                    <div class="feedback mt-2 d-none"></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Estadísticas de ejercicios -->
+                    <div class="card mt-4 bg-light">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h4 class="text-primary mb-0" id="correctCount">0</h4>
+                                    <small class="text-muted">Correctas</small>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-danger mb-0" id="incorrectCount">0</h4>
+                                    <small class="text-muted">Incorrectas</small>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-success mb-0" id="scorePercent">0%</h4>
+                                    <small class="text-muted">Puntuación</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Referencia Rápida -->
+        <div class="tab-pane fade" id="reference" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Referencia Rápida</h5>
+                    <button class="btn btn-sm btn-outline-light" onclick="window.print()">
+                        <i class="fas fa-print me-1"></i>Imprimir
+                    </button>
+                </div>
+                <div class="card-body quick-reference-content">
+                    {{ topic.quick_reference | safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación entre temas -->
+    <div class="d-flex justify-content-between mt-5 pt-4 border-top">
+        {% if prev_topic %}
+        <a href="{{ url_for('study.study_topic', topic_id=prev_topic.id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>{{ prev_topic.icon }} {{ prev_topic.title }}
+        </a>
+        {% else %}
+        <div></div>
+        {% endif %}
+
+        <a href="{{ url_for('study.study_home') }}" class="btn btn-secondary">
+            <i class="fas fa-th-large me-2"></i>Ver Todos los Temas
+        </a>
+
+        {% if next_topic %}
+        <a href="{{ url_for('study.study_topic', topic_id=next_topic.id) }}" class="btn btn-primary">
+            {{ next_topic.icon }} {{ next_topic.title }}<i class="fas fa-arrow-right ms-2"></i>
+        </a>
+        {% else %}
+        <div></div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.rule-card {
+    border-left: 4px solid var(--bs-primary);
+}
+
+.mistake-card {
+    border-left: 4px solid var(--bs-danger);
+}
+
+.tip-card {
+    border-left: 4px solid var(--bs-warning);
+    transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.example-sentence strong {
+    color: var(--bs-primary);
+}
+
+.question-item.correct {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-left: 4px solid var(--bs-success);
+}
+
+.question-item.incorrect {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-left: 4px solid var(--bs-danger);
+}
+
+.feedback.correct {
+    color: var(--bs-success);
+}
+
+.feedback.incorrect {
+    color: var(--bs-danger);
+}
+
+.quick-reference-content {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.quick-reference-content table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+.quick-reference-content th,
+.quick-reference-content td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.quick-reference-content th {
+    background-color: #f8f9fa;
+}
+
+.quick-reference-content h2 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--bs-primary);
+}
+
+.quick-reference-content h3 {
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.nav-pills .nav-link {
+    color: var(--bs-dark);
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--bs-primary);
+}
+
+@media print {
+    .nav-pills, .btn, .card-header button, nav, .breadcrumb {
+        display: none !important;
+    }
+    .tab-pane {
+        display: block !important;
+        opacity: 1 !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let correctCount = 0;
+    let incorrectCount = 0;
+
+    function updateStats() {
+        document.getElementById('correctCount').textContent = correctCount;
+        document.getElementById('incorrectCount').textContent = incorrectCount;
+        const total = correctCount + incorrectCount;
+        const percent = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+        document.getElementById('scorePercent').textContent = percent + '%';
+    }
+
+    function showFeedback(questionItem, isCorrect, correctAnswer, explanation) {
+        const feedback = questionItem.querySelector('.feedback');
+        feedback.classList.remove('d-none', 'correct', 'incorrect');
+        
+        if (isCorrect) {
+            feedback.classList.add('correct');
+            feedback.innerHTML = '<i class="fas fa-check-circle me-1"></i>¡Correcto!';
+            questionItem.classList.add('correct');
+            questionItem.classList.remove('incorrect');
+            correctCount++;
+        } else {
+            feedback.classList.add('incorrect');
+            feedback.innerHTML = '<i class="fas fa-times-circle me-1"></i>Incorrecto. ' +
+                'Respuesta correcta: <strong>' + correctAnswer + '</strong>' +
+                (explanation ? '<br><small>' + explanation + '</small>' : '');
+            questionItem.classList.add('incorrect');
+            questionItem.classList.remove('correct');
+            incorrectCount++;
+        }
+        
+        updateStats();
+    }
+
+    // Fill in the blank y error correction
+    document.querySelectorAll('.answer-input').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer(this);
+            }
+        });
+    });
+
+    document.querySelectorAll('.check-answer-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.answer-input');
+            checkAnswer(input);
+        });
+    });
+
+    function checkAnswer(input) {
+        if (input.disabled) return;
+        
+        const topicId = input.dataset.topic;
+        const exerciseIdx = parseInt(input.dataset.exercise);
+        const questionIdx = parseInt(input.dataset.question);
+        const userAnswer = input.value.trim();
+        
+        if (!userAnswer) return;
+
+        fetch('{{ url_for("study.check_answer") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                topic_id: topicId,
+                exercise_index: exerciseIdx,
+                question_index: questionIdx,
+                answer: userAnswer
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const questionItem = input.closest('.question-item');
+            showFeedback(questionItem, data.correct, data.correct_answer, data.explanation);
+            input.disabled = true;
+            input.parentElement.querySelector('.check-answer-btn').disabled = true;
+        });
+    }
+
+    // Multiple choice
+    document.querySelectorAll('.mc-option').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const questionItem = this.closest('.question-item');
+            const isCorrect = this.value === this.dataset.correct;
+            
+            // Deshabilitar todas las opciones del grupo
+            const groupName = this.name;
+            document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                r.disabled = true;
+            });
+            
+            showFeedback(questionItem, isCorrect, this.dataset.correct, '');
+        });
+    });
+
+    // Classification buttons
+    document.querySelectorAll('.classify-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const questionItem = this.closest('.question-item');
+            const isCorrect = this.dataset.answer === this.dataset.correct;
+            
+            // Deshabilitar botones
+            this.parentElement.querySelectorAll('.classify-btn').forEach(b => {
+                b.disabled = true;
+            });
+            
+            showFeedback(questionItem, isCorrect, this.dataset.correct, '');
+            
+            // Mostrar razón
+            const reasonHint = questionItem.querySelector('.reason-hint');
+            if (reasonHint) {
+                reasonHint.classList.remove('d-none');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

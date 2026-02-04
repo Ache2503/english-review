@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Repetición Espaciada (SRS) - English Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>
+                <i class="fas fa-brain"></i> Sistema de Repetición Espaciada
+            </h1>
+            <p class="text-muted">
+                Optimiza tu aprendizaje con el método científico de memorización. 
+                Las tarjetas se programan automáticamente según qué tan bien las recuerdas.
+            </p>
+        </div>
+    </div>
+
+    <!-- Estadísticas Generales -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <h2 class="mb-0">{{ stats.due_today }}</h2>
+                    <small>Pendientes hoy</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <h2 class="mb-0">{{ stats.learned }}</h2>
+                    <small>Aprendidas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body text-center">
+                    <h2 class="mb-0">{{ stats.learning }}</h2>
+                    <small>Aprendiendo</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body text-center">
+                    <h2 class="mb-0">{{ stats.new }}</h2>
+                    <small>Nuevas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón de Estudio -->
+    {% if stats.due_today > 0 or stats.new > 0 %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary border-0">
+                <div class="card-body d-flex align-items-center justify-content-between p-4" 
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px;">
+                    <div class="text-white">
+                        <h4 class="mb-1">
+                            <i class="fas fa-play-circle"></i> 
+                            ¡Comienza tu repaso diario!
+                        </h4>
+                        <p class="mb-0 opacity-75">
+                            Tienes {{ stats.due_today + stats.new }} tarjetas esperándote
+                        </p>
+                    </div>
+                    <a href="{{ url_for('flashcards.srs_study') }}" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-rocket"></i> Estudiar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> 
+                <strong>¡Excelente!</strong> No tienes tarjetas pendientes. ¡Vuelve mañana!
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Pronóstico de Repasos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Pronóstico de Repasos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-around text-center">
+                        {% for day in stats.forecast %}
+                        <div class="forecast-day">
+                            <div class="fw-bold">{{ day.date }}</div>
+                            <div class="badge {% if day.count > 10 %}bg-danger{% elif day.count > 5 %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ day.count }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tasa de Retención -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5><i class="fas fa-chart-pie"></i> Tasa de Retención</h5>
+                    <div class="display-3 text-primary">{{ stats.retention_rate }}%</div>
+                    <div class="progress mt-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" style="width: {{ stats.retention_rate }}%"></div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        Objetivo: Mantener sobre 90%
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5><i class="fas fa-layer-group"></i> Total de Flashcards</h5>
+                    <div class="display-3 text-info">{{ stats.total }}</div>
+                    <div class="row mt-3 text-center">
+                        <div class="col-4">
+                            <span class="badge bg-success">{{ stats.learned }}</span>
+                            <small class="d-block">Dominadas</small>
+                        </div>
+                        <div class="col-4">
+                            <span class="badge bg-warning">{{ stats.learning }}</span>
+                            <small class="d-block">En progreso</small>
+                        </div>
+                        <div class="col-4">
+                            <span class="badge bg-secondary">{{ stats.new }}</span>
+                            <small class="d-block">Por aprender</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Por Unidad -->
+    <div class="row">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-book"></i> Progreso por Unidad</h4>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for item in unit_stats %}
+        {% if item.stats.total > 0 %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>
+                        <span class="badge bg-primary">Unit {{ item.unit.unit_number }}</span>
+                        {{ item.unit.title | truncate(20) }}
+                    </span>
+                    {% if item.stats.due_today > 0 %}
+                    <span class="badge bg-danger">{{ item.stats.due_today }}</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <strong>{{ item.stats.learned }}</strong>
+                            <small class="d-block text-success">Dominadas</small>
+                        </div>
+                        <div class="col-4">
+                            <strong>{{ item.stats.learning }}</strong>
+                            <small class="d-block text-warning">Aprendiendo</small>
+                        </div>
+                        <div class="col-4">
+                            <strong>{{ item.stats.new }}</strong>
+                            <small class="d-block text-muted">Nuevas</small>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-success" 
+                             style="width: {{ (item.stats.learned / item.stats.total * 100) if item.stats.total > 0 else 0 }}%">
+                        </div>
+                        <div class="progress-bar bg-warning" 
+                             style="width: {{ (item.stats.learning / item.stats.total * 100) if item.stats.total > 0 else 0 }}%">
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('flashcards.srs_study', unit_id=item.unit.id) }}" 
+                       class="btn btn-outline-primary btn-sm w-100 {% if item.stats.due_today == 0 and item.stats.new == 0 %}disabled{% endif %}">
+                        {% if item.stats.due_today > 0 %}
+                            <i class="fas fa-play"></i> Repasar ({{ item.stats.due_today }})
+                        {% elif item.stats.new > 0 %}
+                            <i class="fas fa-plus"></i> Aprender nuevas
+                        {% else %}
+                            <i class="fas fa-check"></i> Completo
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Cómo funciona -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5><i class="fas fa-info-circle"></i> ¿Cómo funciona el SRS?</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Repetición Espaciada</strong> es un método científico que optimiza el aprendizaje:</p>
+                            <ul>
+                                <li>📅 Las tarjetas que recuerdas bien se muestran con menos frecuencia</li>
+                                <li>🔄 Las tarjetas difíciles se repiten más seguido</li>
+                                <li>🧠 Maximiza la retención a largo plazo</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Calificaciones:</strong></p>
+                            <ul>
+                                <li><span class="badge bg-success">Perfecto</span> - La sabías de inmediato</li>
+                                <li><span class="badge bg-primary">Bien</span> - La recordaste correctamente</li>
+                                <li><span class="badge bg-warning">Difícil</span> - La recordaste con esfuerzo</li>
+                                <li><span class="badge bg-danger">Olvidé</span> - No la recordabas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.forecast-day {
+    padding: 10px 15px;
+}
+.card.bg-gradient-primary {
+    transition: transform 0.3s;
+}
+.card.bg-gradient-primary:hover {
+    transform: translateY(-3px);
+}
+</style>
+{% endblock %}
