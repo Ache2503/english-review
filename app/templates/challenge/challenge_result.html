@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado del Desafío - {{ unit.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-icon {
+        font-size: 5rem;
+    }
+    .confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1000;
+    }
+    @keyframes celebrate {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .celebration {
+        animation: celebrate 0.5s ease-out;
+    }
+    .answer-card.correct {
+        border-left: 4px solid #198754;
+        background-color: rgba(25, 135, 84, 0.05);
+    }
+    .answer-card.incorrect {
+        border-left: 4px solid #dc3545;
+        background-color: rgba(220, 53, 69, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Resultado principal -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow text-center {% if passed %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10">
+                <div class="card-body py-5">
+                    {% if passed %}
+                    <div class="result-icon text-success celebration">
+                        🎉
+                    </div>
+                    <h1 class="display-4 text-success mb-3">¡Felicitaciones!</h1>
+                    <p class="lead mb-4">Has aprobado el desafío de {{ unit.title }}</p>
+                    {% else %}
+                    <div class="result-icon text-danger">
+                        😔
+                    </div>
+                    <h1 class="display-4 text-danger mb-3">Sigue Intentando</h1>
+                    <p class="lead mb-4">No has alcanzado el puntaje mínimo esta vez</p>
+                    {% endif %}
+                    
+                    <!-- Puntuación -->
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card bg-white shadow-sm">
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="display-5 {% if passed %}text-success{% else %}text-danger{% endif %}">
+                                                {{ result.score|int }}%
+                                            </div>
+                                            <small class="text-muted">Tu Puntaje</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="display-5 text-primary">
+                                                {{ result.earned_points }}/{{ result.total_points }}
+                                            </div>
+                                            <small class="text-muted">Puntos</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="display-5 text-secondary">
+                                                {% set minutes = (result.time_taken // 60)|int %}
+                                                {% set seconds = (result.time_taken % 60)|int %}
+                                                {{ minutes }}:{{ '%02d'|format(seconds) }}
+                                            </div>
+                                            <small class="text-muted">Tiempo</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Barra de progreso -->
+                                    <div class="progress mt-4" style="height: 20px;">
+                                        <div class="progress-bar {% if passed %}bg-success{% else %}bg-danger{% endif %}" 
+                                             style="width: {{ result.score }}%">
+                                        </div>
+                                        <!-- Marca del 70% -->
+                                        <div style="position: absolute; left: 70%; height: 20px; border-left: 3px solid #333;">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-1">
+                                        <small class="text-muted">0%</small>
+                                        <small class="text-muted"><strong>70% mínimo</strong></small>
+                                        <small class="text-muted">100%</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mensaje según resultado -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            {% if passed %}
+            <div class="alert alert-success">
+                <h5><i class="bi bi-unlock-fill"></i> ¡Siguiente Unidad Desbloqueada!</h5>
+                <p class="mb-0">Has demostrado dominio de esta unidad. Ahora puedes avanzar a la siguiente.</p>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <h5><i class="bi bi-lightbulb"></i> Consejos para Mejorar</h5>
+                <ul class="mb-0">
+                    <li>Repasa las respuestas incorrectas abajo</li>
+                    <li>Estudia nuevamente la gramática y vocabulario</li>
+                    <li>Practica con los ejercicios de la unidad</li>
+                    <li>Tienes más intentos disponibles</li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Revisión de respuestas -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h4 class="mb-3">
+                <i class="bi bi-clipboard-check"></i> Revisión de Respuestas
+            </h4>
+            
+            {% for item in result.results %}
+            <div class="card mb-3 answer-card {{ 'correct' if item.is_correct else 'incorrect' }}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="mb-0">Pregunta {{ loop.index }}</h6>
+                        {% if item.is_correct %}
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle"></i> Correcto (+{{ item.points }} pts)
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger">
+                            <i class="bi bi-x-circle"></i> Incorrecto
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="mb-3"><strong>{{ item.question_text }}</strong></p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">Tu respuesta:</small>
+                            <p class="mb-0 {% if not item.is_correct %}text-danger{% endif %}">
+                                {{ item.user_answer if item.user_answer else '(Sin respuesta)' }}
+                            </p>
+                        </div>
+                        {% if not item.is_correct %}
+                        <div class="col-md-6">
+                            <small class="text-muted">Respuesta correcta:</small>
+                            <p class="mb-0 text-success fw-bold">
+                                {{ item.correct_answer }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if item.explanation and not item.is_correct %}
+                    <div class="alert alert-light mt-3 mb-0 py-2">
+                        <small>
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Explicación:</strong> {{ item.explanation }}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Botones de acción -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    {% if passed %}
+                    <a href="{{ url_for('unit_challenge.units_overview') }}" class="btn btn-success btn-lg me-2">
+                        <i class="bi bi-arrow-right"></i> Ver Siguiente Unidad
+                    </a>
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-house"></i> Ir al Dashboard
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('unit_challenge.unit_requirements', unit_id=unit.id) }}" 
+                       class="btn btn-primary btn-lg me-2">
+                        <i class="bi bi-arrow-counterclockwise"></i> Intentar de Nuevo
+                    </a>
+                    <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" 
+                       class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-book"></i> Estudiar Más
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if passed %}
+<!-- Confetti para celebración -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    // Lanzar confetti
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+    
+    // Segundo lanzamiento
+    setTimeout(() => {
+        confetti({
+            particleCount: 100,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+        });
+        confetti({
+            particleCount: 100,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+        });
+    }, 500);
+</script>
+{% endif %}
+{% endblock %}

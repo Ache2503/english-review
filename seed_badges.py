@@ -197,9 +197,7 @@ def add_badges():
                     icon=badge_data["icon"],
                     color=badge_data["color"],
                     badge_type=badge_data["badge_type"],
-                    criteria=badge_data.get("criteria"),
-                    order=badge_data["order"],
-                    is_active=True
+                    criteria=badge_data.get("criteria")
                 )
                 db.session.add(badge)
                 print(f"✓ Badge agregado: {badge_data['name']} ({badge_data['icon']})")

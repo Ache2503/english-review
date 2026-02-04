@@ -279,6 +279,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('review.dashboard') }}">
+                                <i class="fas fa-sync-alt"></i> Repaso
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('stats.index') }}">
                                 <i class="fas fa-chart-bar"></i> Estadísticas
                             </a>
@@ -294,6 +299,17 @@
                                 <li><a class="dropdown-item" href="{{ url_for('stats.index') }}">
                                     <i class="fas fa-chart-pie"></i> Estadísticas
                                 </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('review.dashboard') }}">
+                                    <i class="fas fa-sync-alt text-primary"></i> Sistema de Repaso
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('writing.analyze_page') }}">
+                                    <i class="fas fa-spell-check text-success"></i> Analizador de Escritura
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('writing.practice') }}">
+                                    <i class="fas fa-keyboard text-info"></i> Práctica de Escritura
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('flashcards.srs_overview') }}">
                                     <i class="fas fa-brain"></i> Repetición Espaciada
                                 </a></li>

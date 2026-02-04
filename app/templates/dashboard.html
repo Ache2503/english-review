@@ -15,6 +15,30 @@
 <!-- Banner de Práctica Conversacional -->
 <div class="row mb-4">
     <div class="col-12">
+        <div class="card border-0 overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
+                <div class="banner-icon-exam">
+                    <span class="display-4">🏆</span>
+                </div>
+                <div class="flex-grow-1">
+                    <h4 class="mb-1 text-white fw-bold">🎯 Sistema de Unidades con Desafíos</h4>
+                    <p class="mb-0 text-white opacity-75">
+                        Completa gramática, vocabulario y ejercicios. ¡Pasa el desafío para desbloquear la siguiente unidad!
+                    </p>
+                </div>
+                <div>
+                    <a href="{{ url_for('unit_challenge.units_overview') }}" class="btn btn-warning btn-lg px-4 shadow fw-bold">
+                        <i class="fas fa-trophy"></i> Ver Unidades
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner de Modo Examen -->
+<div class="row mb-4">
+    <div class="col-12">
         <div class="exam-study-banner card border-0 overflow-hidden">
             <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
                 <div class="banner-icon-exam">
@@ -374,72 +398,151 @@
     </div>
 </div>
 
-<!-- Units List -->
-<div class="row">
+<!-- Units List - Acordeón por Nivel CEFR -->
+<div class="row mb-3">
     <div class="col-12">
-        <h2 class="mb-3">
-            <i class="fas fa-book"></i> Mis Unidades
-        </h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-book"></i> Mis Unidades
+            </h2>
+            <a href="{{ url_for('unit_challenge.units_overview') }}" class="btn btn-warning">
+                <i class="fas fa-trophy"></i> Ver Sistema de Desafíos
+            </a>
+        </div>
     </div>
 </div>
 
-<div class="row">
+{% set levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] %}
+{% set level_colors = {'A1': 'success', 'A2': 'info', 'B1': 'primary', 'B2': 'warning', 'C1': 'danger', 'C2': 'dark'} %}
+{% set level_names = {'A1': 'Beginner', 'A2': 'Elementary', 'B1': 'Intermediate', 'B2': 'Upper-Intermediate', 'C1': 'Advanced', 'C2': 'Mastery'} %}
+{% set level_icons = {'A1': 'seedling', 'A2': 'leaf', 'B1': 'tree', 'B2': 'mountain', 'C1': 'crown', 'C2': 'gem'} %}
+
+<div class="accordion mb-4" id="dashboardUnitsAccordion">
+    {% for level in levels %}
+    
+    {% set ns = namespace(completed=0, total=0) %}
     {% for item in units %}
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 unit-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div class="badge badge-unit bg-primary">Unit {{ item.unit.unit_number }}</div>
-                    {% if item.progress.completed %}
-                    <span class="badge bg-success">
-                        <i class="fas fa-check-circle"></i> Completada
-                    </span>
-                    {% endif %}
+        {% if level in item.unit.title %}
+            {% set ns.total = ns.total + 1 %}
+            {% if item.progress.completed %}
+                {% set ns.completed = ns.completed + 1 %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if ns.total > 0 %}
+    <div class="accordion-item border-0 shadow-sm mb-2">
+        <h2 class="accordion-header" id="dashHeading{{ level }}">
+            <button class="accordion-button {% if loop.index > 1 %}collapsed{% endif %} bg-{{ level_colors[level] }} {% if level != 'B2' %}text-white{% else %}text-dark{% endif %}" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#dashCollapse{{ level }}" 
+                    aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}" 
+                    aria-controls="dashCollapse{{ level }}">
+                <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                    <div>
+                        <i class="fas fa-{{ level_icons[level] }} me-2"></i>
+                        <strong>{{ level }}</strong> - {{ level_names[level] }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-light text-dark">{{ ns.total }} unidades</span>
+                        {% if ns.completed > 0 %}
+                        <span class="badge bg-dark">
+                            <i class="fas fa-check"></i> {{ ns.completed }}
+                        </span>
+                        {% endif %}
+                    </div>
                 </div>
-                
-                <h5 class="card-title">{{ item.unit.title }}</h5>
-                
-                <div class="mb-3">
-                    <small class="d-block text-muted mb-2">Progreso</small>
-                    <div class="progress" style="height: 20px;">
-                        <div class="progress-bar" role="progressbar" 
-                             style="width: {{ item.progress.progress_percentage }}%;" 
-                             aria-valuenow="{{ item.progress.progress_percentage }}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100">
-                            {{ "%.0f"|format(item.progress.progress_percentage) }}%
+            </button>
+        </h2>
+        <div id="dashCollapse{{ level }}" 
+             class="accordion-collapse collapse {% if loop.index == 1 %}show{% endif %}" 
+             aria-labelledby="dashHeading{{ level }}" 
+             data-bs-parent="#dashboardUnitsAccordion">
+            <div class="accordion-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for item in units %}
+                        {% if level in item.unit.title %}
+                        <div class="list-group-item list-group-item-action py-3 
+                            {% if item.progress.completed %}list-group-item-success{% endif %}">
+                            <div class="row align-items-center">
+                                <!-- Número de unidad -->
+                                <div class="col-auto">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center 
+                                        {% if item.progress.completed %}bg-success{% else %}bg-{{ level_colors[level] }}{% endif %} text-white" 
+                                        style="width: 40px; height: 40px; font-weight: bold; font-size: 0.9rem;">
+                                        {% if item.progress.completed %}
+                                            <i class="fas fa-check"></i>
+                                        {% else %}
+                                            {{ item.unit.unit_number }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Título -->
+                                <div class="col">
+                                    <h6 class="mb-1">
+                                        {{ item.unit.title.split(': ')[-1] if ': ' in item.unit.title else item.unit.title }}
+                                    </h6>
+                                    <div class="d-flex gap-3 text-muted small">
+                                        <span><i class="fas fa-bookmark"></i> {{ item.topics_count }} tópicos</span>
+                                        <span><i class="fas fa-pen-fancy"></i> {{ item.grammar_count }}</span>
+                                        <span><i class="fas fa-language"></i> {{ item.vocabulary_count }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Progreso -->
+                                <div class="col-auto d-none d-md-block" style="width: 120px;">
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-{{ level_colors[level] }}" 
+                                             role="progressbar" 
+                                             style="width: {{ item.progress.progress_percentage }}%">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ item.progress.progress_percentage|int }}%</small>
+                                </div>
+                                
+                                <!-- Acciones -->
+                                <div class="col-auto">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}" 
+                                           class="btn btn-outline-primary" title="Ver unidad">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('units.view_grammar', unit_id=item.unit.id) }}" 
+                                           class="btn btn-outline-info" title="Gramática">
+                                            <i class="fas fa-pen-fancy"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="row text-center mb-3">
-                    <div class="col-4">
-                        <small class="d-block text-muted">Tópicos</small>
-                        <strong>{{ item.topics_count }}</strong>
-                    </div>
-                    <div class="col-4">
-                        <small class="d-block text-muted">Gramática</small>
-                        <strong>{{ item.grammar_count }}</strong>
-                    </div>
-                    <div class="col-4">
-                        <small class="d-block text-muted">Vocabulario</small>
-                        <strong>{{ item.vocabulary_count }}</strong>
-                    </div>
-                </div>
-
-                <div class="btn-group w-100" role="group">
-                    <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}" 
-                       class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-eye"></i> Ver
-                    </a>
-                    <a href="{{ url_for('units.view_grammar', unit_id=item.unit.id) }}" 
-                       class="btn btn-sm btn-outline-info">
-                        <i class="fas fa-pen-fancy"></i> Gramática
-                    </a>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
     {% endfor %}
 </div>
+
+<style>
+/* Estilos para el acordeón del dashboard */
+#dashboardUnitsAccordion .accordion-button:not(.collapsed) {
+    box-shadow: none;
+}
+
+#dashboardUnitsAccordion .accordion-button.text-white::after {
+    filter: brightness(0) invert(1);
+}
+
+#dashboardUnitsAccordion .accordion-button:focus {
+    box-shadow: none;
+}
+
+#dashboardUnitsAccordion .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+</style>
 {% endblock %}

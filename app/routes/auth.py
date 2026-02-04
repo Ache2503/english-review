@@ -72,7 +72,7 @@ def login():
         if user and user.check_password(password):
             login_user(user, remember=request.form.get('remember'))
             next_page = request.args.get('next')
-            if not next_page or url_has_allowed_host_and_scheme(next_page):
+            if not next_page or not url_has_allowed_host_and_scheme(next_page):
                 next_page = url_for('dashboard.index')
             return redirect(next_page)
         else:

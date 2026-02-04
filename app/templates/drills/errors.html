@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}Análisis de Errores - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-exclamation-triangle text-danger me-2"></i>Análisis de Errores</h2>
+            <p class="text-muted">Identifica tus áreas de mejora y recibe sugerencias personalizadas</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <!-- Improvement Stats -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100 border-{{ 'success' if improvement and improvement > 0 else 'danger' if improvement and improvement < 0 else 'secondary' }}">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Progreso Semanal</h5>
+                    {% if improvement is not none %}
+                        <div class="display-4 text-{{ 'success' if improvement > 0 else 'danger' }}">
+                            {{ '+' if improvement > 0 else '' }}{{ "%.0f"|format(improvement) }}%
+                        </div>
+                        <p class="text-muted mt-2">
+                            {% if improvement > 0 %}
+                                ¡Estás cometiendo menos errores!
+                            {% elif improvement < 0 %}
+                                Necesitas más práctica
+                            {% else %}
+                                Mantén el ritmo
+                            {% endif %}
+                        </p>
+                    {% else %}
+                        <div class="text-muted">
+                            <i class="fas fa-chart-line fs-1 mb-3"></i>
+                            <p>No hay suficientes datos</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Errores esta semana</h5>
+                    <div class="display-4 text-warning">{{ errors_this_week }}</div>
+                    <p class="text-muted mt-2">
+                        Semana pasada: {{ errors_last_week }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">Categorías con errores</h5>
+                    <div class="display-4 text-primary">{{ error_by_category|length }}</div>
+                    <p class="text-muted mt-2">
+                        Total de patrones: {{ error_patterns|length }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Error Patterns -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Errores Más Frecuentes</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadSuggestions()">
+                        <i class="fas fa-lightbulb me-1"></i>Ver Sugerencias
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    {% if error_patterns %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tipo de Error</th>
+                                    <th>Categoría</th>
+                                    <th class="text-center">Veces</th>
+                                    <th>Último</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for error in error_patterns %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ error.error_type }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if error.error_category == 'grammar' else 'warning' if error.error_category == 'vocabulary' else 'info' }}">
+                                            {{ error.error_category }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary">{{ error.error_count }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ error.last_occurrence.strftime('%d/%m/%Y') if error.last_occurrence else '-' }}
+                                        </small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-check-circle fs-1 mb-3"></i>
+                        <h5>¡Excelente!</h5>
+                        <p>No se han detectado patrones de errores frecuentes.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Suggestions Modal Content -->
+            <div id="suggestions-container" class="card shadow-sm mt-4 d-none">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Sugerencias Personalizadas</h5>
+                </div>
+                <div class="card-body" id="suggestions-content">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Error by Category -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-pie-chart me-2"></i>Por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    {% if error_by_category %}
+                        {% for category, count in error_by_category.items() %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-capitalize">{{ category }}</span>
+                                <strong>{{ count }}</strong>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                {% set max_count = error_by_category.values()|max %}
+                                <div class="progress-bar bg-{{ 'danger' if category == 'grammar' else 'warning' if category == 'vocabulary' else 'info' }}" 
+                                     style="width: {{ (count / max_count * 100)|int }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center mb-0">Sin datos</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Errors -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Errores Recientes</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_errors %}
+                    <ul class="list-group list-group-flush">
+                        {% for error in recent_errors[:5] %}
+                        <li class="list-group-item">
+                            <small class="text-muted d-block">{{ error.created_at.strftime('%d/%m %H:%M') }}</small>
+                            <span class="text-truncate d-block" style="max-width: 250px;" title="{{ error.message }}">
+                                {{ error.message[:50] }}{{ '...' if error.message|length > 50 else '' }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="p-3 text-center text-muted">Sin errores recientes</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadSuggestions() {
+    const container = document.getElementById('suggestions-container');
+    container.classList.remove('d-none');
+    
+    try {
+        const response = await fetch('/drills/errors/suggestions');
+        const data = await response.json();
+        
+        let html = '';
+        
+        if (data.suggestions && data.suggestions.length > 0) {
+            data.suggestions.forEach(s => {
+                html += `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <span class="badge bg-danger me-2">${s.count} errores</span>
+                                ${s.error_type}
+                            </h6>
+                            <p class="card-text small text-muted">${s.error_category}</p>
+                            
+                            ${s.tips.length > 0 ? `
+                                <h6 class="mt-3"><i class="fas fa-lightbulb text-warning me-1"></i>Consejos:</h6>
+                                <ul class="small">
+                                    ${s.tips.map(t => `<li>${t}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                            
+                            ${s.recommended_drills.length > 0 ? `
+                                <h6 class="mt-3"><i class="fas fa-dumbbell text-primary me-1"></i>Drills recomendados:</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    ${s.recommended_drills.map(d => `
+                                        <a href="/drills/${d.id}" class="btn btn-sm btn-outline-primary">
+                                            ${d.title} (${d.level})
+                                        </a>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            html = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-check-circle fs-1 mb-3 text-success"></i>
+                    <h5>¡Excelente trabajo!</h5>
+                    <p>No hay sugerencias específicas. Sigue practicando para mantener tu nivel.</p>
+                </div>
+            `;
+        }
+        
+        document.getElementById('suggestions-content').innerHTML = html;
+    } catch (error) {
+        document.getElementById('suggestions-content').innerHTML = `
+            <div class="alert alert-danger">Error al cargar sugerencias</div>
+        `;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,449 @@
+"""
+Rutas para Mini Games - Juegos educativos
+"""
+from flask import Blueprint, render_template, request, jsonify
+from flask_login import login_required, current_user
+from app.extensions import db
+from app.models import MiniGame, MiniGameContent, UserGameScore, Idiom, PhrasalVerb
+from datetime import datetime
+from sqlalchemy import func
+from app.routes.challenges import add_points
+import random
+
+games_bp = Blueprint('games', __name__, url_prefix='/games')
+
+
+@games_bp.route('/')
+@login_required
+def game_list():
+    """Lista de mini juegos disponibles"""
+    games = MiniGame.query.filter_by(is_active=True).all()
+    
+    # Estadísticas del usuario
+    user_stats = {}
+    for game in games:
+        stats = db.session.query(
+            func.count(UserGameScore.id),
+            func.max(UserGameScore.score),
+            func.avg(UserGameScore.score)
+        ).filter(
+            UserGameScore.user_id == current_user.id,
+            UserGameScore.game_type == game.game_type
+        ).first()
+        
+        user_stats[game.game_type] = {
+            'games_played': stats[0] or 0,
+            'best_score': stats[1] or 0,
+            'avg_score': round(stats[2] or 0, 1)
+        }
+    
+    return render_template(
+        'games/list.html',
+        games=games,
+        user_stats=user_stats
+    )
+
+
+# ==========================================
+# WORD SCRAMBLE
+# ==========================================
+
+@games_bp.route('/word-scramble')
+@login_required
+def word_scramble():
+    """Juego de reordenar letras"""
+    level = request.args.get('level', 'A1')
+    
+    return render_template(
+        'games/word_scramble.html',
+        level=level
+    )
+
+
+@games_bp.route('/word-scramble/get-words')
+@login_required
+def get_scramble_words():
+    """Obtener palabras para el juego"""
+    level = request.args.get('level', 'A1')
+    count = int(request.args.get('count', 10))
+    
+    # Obtener contenido del juego
+    content = MiniGameContent.query.filter_by(
+        game_type='word_scramble',
+        level=level,
+        is_active=True
+    ).all()
+    
+    words = []
+    for c in content:
+        if c.content_data and 'words' in c.content_data:
+            words.extend(c.content_data['words'])
+    
+    # Si no hay contenido, usar palabras por defecto
+    if not words:
+        words = get_default_words(level)
+    
+    # Mezclar y limitar
+    random.shuffle(words)
+    selected = words[:count]
+    
+    # Scramble las palabras
+    result = []
+    for word_data in selected:
+        word = word_data['word'] if isinstance(word_data, dict) else word_data
+        hint = word_data.get('hint', '') if isinstance(word_data, dict) else ''
+        
+        letters = list(word)
+        random.shuffle(letters)
+        scrambled = ''.join(letters)
+        
+        # Evitar que quede igual
+        while scrambled == word and len(word) > 1:
+            random.shuffle(letters)
+            scrambled = ''.join(letters)
+        
+        result.append({
+            'scrambled': scrambled,
+            'answer': word,
+            'hint': hint
+        })
+    
+    return jsonify({'words': result})
+
+
+@games_bp.route('/word-scramble/submit', methods=['POST'])
+@login_required
+def submit_word_scramble():
+    """Guardar resultado de word scramble"""
+    data = request.get_json()
+    score = data.get('score', 0)
+    level = data.get('level', 'A1')
+    time_seconds = data.get('time_seconds', 0)
+    words_completed = data.get('words_completed', 0)
+    
+    # Guardar puntuación
+    game_score = UserGameScore(
+        user_id=current_user.id,
+        game_type='word_scramble',
+        level=level,
+        score=score,
+        time_seconds=time_seconds,
+        words_completed=words_completed
+    )
+    db.session.add(game_score)
+    
+    # Dar puntos
+    points = score // 10 + words_completed
+    add_points(current_user.id, points, 'game', f'Word Scramble - {level}')
+    
+    db.session.commit()
+    
+    return jsonify({'success': True, 'points_earned': points})
+
+
+# ==========================================
+# HANGMAN
+# ==========================================
+
+@games_bp.route('/hangman')
+@login_required
+def hangman():
+    """Juego del ahorcado"""
+    level = request.args.get('level', 'A1')
+    
+    return render_template(
+        'games/hangman.html',
+        level=level
+    )
+
+
+@games_bp.route('/hangman/get-word')
+@login_required
+def get_hangman_word():
+    """Obtener palabra para hangman"""
+    level = request.args.get('level', 'A1')
+    
+    content = MiniGameContent.query.filter_by(
+        game_type='hangman',
+        level=level,
+        is_active=True
+    ).all()
+    
+    words = []
+    for c in content:
+        if c.content_data and 'words' in c.content_data:
+            words.extend(c.content_data['words'])
+    
+    if not words:
+        words = get_default_words(level)
+    
+    word_data = random.choice(words)
+    word = word_data['word'] if isinstance(word_data, dict) else word_data
+    hint = word_data.get('hint', '') if isinstance(word_data, dict) else ''
+    
+    return jsonify({
+        'length': len(word),
+        'hint': hint,
+        'word_id': hash(word) % 10000  # ID simple para verificar
+    })
+
+
+@games_bp.route('/hangman/check-letter', methods=['POST'])
+@login_required
+def check_hangman_letter():
+    """Verificar letra en hangman"""
+    data = request.get_json()
+    letter = data.get('letter', '').lower()
+    word = data.get('word', '').lower()
+    
+    positions = [i for i, c in enumerate(word) if c == letter]
+    
+    return jsonify({
+        'found': len(positions) > 0,
+        'positions': positions
+    })
+
+
+# ==========================================
+# MEMORY MATCH
+# ==========================================
+
+@games_bp.route('/memory')
+@login_required
+def memory_game():
+    """Juego de memoria"""
+    level = request.args.get('level', 'A1')
+    
+    return render_template(
+        'games/memory.html',
+        level=level
+    )
+
+
+@games_bp.route('/memory/get-cards')
+@login_required
+def get_memory_cards():
+    """Obtener tarjetas para juego de memoria"""
+    level = request.args.get('level', 'A1')
+    pairs = int(request.args.get('pairs', 8))
+    
+    content = MiniGameContent.query.filter_by(
+        game_type='memory',
+        level=level,
+        is_active=True
+    ).all()
+    
+    word_pairs = []
+    for c in content:
+        if c.content_data and 'pairs' in c.content_data:
+            word_pairs.extend(c.content_data['pairs'])
+    
+    if not word_pairs:
+        word_pairs = get_default_pairs(level)
+    
+    random.shuffle(word_pairs)
+    selected = word_pairs[:pairs]
+    
+    # Crear tarjetas
+    cards = []
+    for i, pair in enumerate(selected):
+        cards.append({'id': i * 2, 'content': pair['english'], 'pair_id': i})
+        cards.append({'id': i * 2 + 1, 'content': pair['spanish'], 'pair_id': i})
+    
+    random.shuffle(cards)
+    
+    return jsonify({'cards': cards})
+
+
+@games_bp.route('/memory/submit', methods=['POST'])
+@login_required
+def submit_memory():
+    """Guardar resultado de memory"""
+    data = request.get_json()
+    score = data.get('score', 0)
+    level = data.get('level', 'A1')
+    time_seconds = data.get('time_seconds', 0)
+    
+    game_score = UserGameScore(
+        user_id=current_user.id,
+        game_type='memory',
+        level=level,
+        score=score,
+        time_seconds=time_seconds
+    )
+    db.session.add(game_score)
+    
+    points = score + max(0, (120 - time_seconds) // 10)
+    add_points(current_user.id, points, 'game', f'Memory Match - {level}')
+    
+    db.session.commit()
+    
+    return jsonify({'success': True, 'points_earned': points})
+
+
+# ==========================================
+# FILL THE GAPS
+# ==========================================
+
+@games_bp.route('/fill-gaps')
+@login_required
+def fill_gaps():
+    """Juego de completar espacios"""
+    level = request.args.get('level', 'A1')
+    
+    return render_template(
+        'games/fill_gaps.html',
+        level=level
+    )
+
+
+@games_bp.route('/fill-gaps/get-sentences')
+@login_required
+def get_fill_gaps_sentences():
+    """Obtener oraciones para completar"""
+    level = request.args.get('level', 'A1')
+    count = int(request.args.get('count', 10))
+    
+    content = MiniGameContent.query.filter_by(
+        game_type='fill_gaps',
+        level=level,
+        is_active=True
+    ).all()
+    
+    sentences = []
+    for c in content:
+        if c.content_data and 'sentences' in c.content_data:
+            sentences.extend(c.content_data['sentences'])
+    
+    if not sentences:
+        sentences = get_default_sentences(level)
+    
+    random.shuffle(sentences)
+    
+    return jsonify({'sentences': sentences[:count]})
+
+
+@games_bp.route('/fill-gaps/submit', methods=['POST'])
+@login_required
+def submit_fill_gaps():
+    """Guardar resultado de fill gaps"""
+    data = request.get_json()
+    score = data.get('score', 0)
+    level = data.get('level', 'A1')
+    correct = data.get('correct', 0)
+    total = data.get('total', 0)
+    
+    game_score = UserGameScore(
+        user_id=current_user.id,
+        game_type='fill_gaps',
+        level=level,
+        score=score,
+        words_completed=correct
+    )
+    db.session.add(game_score)
+    
+    points = correct * 5
+    add_points(current_user.id, points, 'game', f'Fill the Gaps - {level}')
+    
+    db.session.commit()
+    
+    return jsonify({'success': True, 'points_earned': points})
+
+
+# ==========================================
+# HELPER FUNCTIONS
+# ==========================================
+
+def get_default_words(level):
+    """Palabras por defecto si no hay contenido"""
+    words_by_level = {
+        'A1': [
+            {'word': 'hello', 'hint': 'Greeting'},
+            {'word': 'water', 'hint': 'Drink'},
+            {'word': 'house', 'hint': 'Building'},
+            {'word': 'table', 'hint': 'Furniture'},
+            {'word': 'apple', 'hint': 'Fruit'},
+            {'word': 'happy', 'hint': 'Emotion'},
+            {'word': 'green', 'hint': 'Color'},
+            {'word': 'friend', 'hint': 'Person'},
+            {'word': 'school', 'hint': 'Education'},
+            {'word': 'mother', 'hint': 'Family'}
+        ],
+        'A2': [
+            {'word': 'beautiful', 'hint': 'Appearance'},
+            {'word': 'important', 'hint': 'Significance'},
+            {'word': 'yesterday', 'hint': 'Time'},
+            {'word': 'different', 'hint': 'Not the same'},
+            {'word': 'together', 'hint': 'Unity'},
+            {'word': 'possible', 'hint': 'Can happen'},
+            {'word': 'remember', 'hint': 'Memory'},
+            {'word': 'question', 'hint': 'Inquiry'},
+            {'word': 'favorite', 'hint': 'Preferred'},
+            {'word': 'exercise', 'hint': 'Physical activity'}
+        ],
+        'B1': [
+            {'word': 'achievement', 'hint': 'Success'},
+            {'word': 'environment', 'hint': 'Nature'},
+            {'word': 'comfortable', 'hint': 'At ease'},
+            {'word': 'opportunity', 'hint': 'Chance'},
+            {'word': 'relationship', 'hint': 'Connection'},
+            {'word': 'experience', 'hint': 'Knowledge'},
+            {'word': 'communicate', 'hint': 'Talk'},
+            {'word': 'responsibility', 'hint': 'Duty'},
+            {'word': 'entertainment', 'hint': 'Fun'},
+            {'word': 'development', 'hint': 'Growth'}
+        ]
+    }
+    return words_by_level.get(level, words_by_level['A1'])
+
+
+def get_default_pairs(level):
+    """Pares por defecto para memory"""
+    pairs_by_level = {
+        'A1': [
+            {'english': 'Hello', 'spanish': 'Hola'},
+            {'english': 'Goodbye', 'spanish': 'Adiós'},
+            {'english': 'Thank you', 'spanish': 'Gracias'},
+            {'english': 'Water', 'spanish': 'Agua'},
+            {'english': 'Food', 'spanish': 'Comida'},
+            {'english': 'House', 'spanish': 'Casa'},
+            {'english': 'Family', 'spanish': 'Familia'},
+            {'english': 'Friend', 'spanish': 'Amigo'},
+            {'english': 'School', 'spanish': 'Escuela'},
+            {'english': 'Work', 'spanish': 'Trabajo'}
+        ],
+        'A2': [
+            {'english': 'Beautiful', 'spanish': 'Hermoso'},
+            {'english': 'Important', 'spanish': 'Importante'},
+            {'english': 'Difficult', 'spanish': 'Difícil'},
+            {'english': 'Interesting', 'spanish': 'Interesante'},
+            {'english': 'Favorite', 'spanish': 'Favorito'},
+            {'english': 'Tomorrow', 'spanish': 'Mañana'},
+            {'english': 'Yesterday', 'spanish': 'Ayer'},
+            {'english': 'Together', 'spanish': 'Juntos'},
+            {'english': 'Sometimes', 'spanish': 'A veces'},
+            {'english': 'Always', 'spanish': 'Siempre'}
+        ]
+    }
+    return pairs_by_level.get(level, pairs_by_level['A1'])
+
+
+def get_default_sentences(level):
+    """Oraciones por defecto para fill gaps"""
+    sentences_by_level = {
+        'A1': [
+            {'sentence': 'I ___ a student.', 'answer': 'am', 'options': ['am', 'is', 'are']},
+            {'sentence': 'She ___ to school every day.', 'answer': 'goes', 'options': ['go', 'goes', 'going']},
+            {'sentence': 'They ___ very happy.', 'answer': 'are', 'options': ['is', 'am', 'are']},
+            {'sentence': 'He ___ a car.', 'answer': 'has', 'options': ['have', 'has', 'having']},
+            {'sentence': 'We ___ English.', 'answer': 'speak', 'options': ['speak', 'speaks', 'speaking']}
+        ],
+        'A2': [
+            {'sentence': 'I ___ to the cinema yesterday.', 'answer': 'went', 'options': ['go', 'went', 'gone']},
+            {'sentence': 'She has ___ her homework.', 'answer': 'done', 'options': ['do', 'did', 'done']},
+            {'sentence': 'They are ___ for the bus.', 'answer': 'waiting', 'options': ['wait', 'waited', 'waiting']},
+            {'sentence': 'He ___ play tennis tomorrow.', 'answer': 'will', 'options': ['will', 'would', 'was']},
+            {'sentence': 'We have ___ here for two years.', 'answer': 'lived', 'options': ['live', 'living', 'lived']}
+        ]
+    }
+    return sentences_by_level.get(level, sentences_by_level['A1'])

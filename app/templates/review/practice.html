@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+
+{% block title %}Sesión de Repaso - English Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .review-card {
+        transition: transform 0.3s ease;
+    }
+    .review-card:hover {
+        transform: translateY(-3px);
+    }
+    .answer-input {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+    .feedback-correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+    }
+    .feedback-incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+    }
+    .hint-text {
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    .hint-text:hover {
+        opacity: 1;
+    }
+    .mastery-indicator {
+        width: 100%;
+        height: 4px;
+        background: #e9ecef;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .mastery-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #20c997);
+        transition: width 0.5s ease;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    .pulse {
+        animation: pulse 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Barra de progreso -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">
+                    Pregunta {{ current_index }} de {{ total_items }}
+                </span>
+                <div>
+                    <span class="badge bg-success me-1">
+                        <i class="fas fa-check"></i> {{ correct_count }}
+                    </span>
+                    <span class="badge bg-danger">
+                        <i class="fas fa-times"></i> {{ wrong_count }}
+                    </span>
+                </div>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" 
+                     style="width: {{ (current_index / total_items * 100)|int }}%"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tarjeta de repaso -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div id="reviewCard" class="card shadow-sm review-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="badge bg-{{ 'primary' if item.item_type == 'flashcard' else 'success' if item.item_type == 'vocabulary' else 'info' if item.item_type == 'idiom' else 'warning' }}">
+                        <i class="fas fa-{{ 'clone' if item.item_type == 'flashcard' else 'book' if item.item_type == 'vocabulary' else 'comment-dots' if item.item_type == 'idiom' else 'arrows-alt-h' }}"></i>
+                        {{ item.item_type|capitalize }}
+                    </span>
+                    <div class="mastery-indicator" title="Nivel de maestría">
+                        <div class="mastery-fill" style="width: {{ item.mastery_level * 20 }}%"></div>
+                    </div>
+                </div>
+                
+                <div class="card-body text-center py-5">
+                    <!-- Pregunta -->
+                    <div id="questionSection">
+                        <h3 class="mb-4" id="questionText">{{ item.question }}</h3>
+                        
+                        {% if item.hints %}
+                        <p class="hint-text text-muted mb-4" onclick="showHint()">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            <span id="hintToggle">Click para ver pista</span>
+                        </p>
+                        <div id="hintContent" class="text-info mb-3" style="display: none;">
+                            {{ item.hints[0] if item.hints else '' }}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Input de respuesta -->
+                        <div class="mb-4">
+                            <input type="text" 
+                                   id="answerInput" 
+                                   class="form-control form-control-lg answer-input" 
+                                   placeholder="Escribe tu respuesta..."
+                                   autocomplete="off"
+                                   autofocus>
+                        </div>
+                        
+                        <button id="submitBtn" class="btn btn-primary btn-lg px-5" onclick="submitAnswer()">
+                            <i class="fas fa-check me-2"></i>Verificar
+                        </button>
+                    </div>
+                    
+                    <!-- Feedback (oculto inicialmente) -->
+                    <div id="feedbackSection" style="display: none;">
+                        <div id="feedbackIcon" class="mb-3"></div>
+                        <h4 id="feedbackMessage" class="mb-3"></h4>
+                        <div id="correctAnswer" class="alert mb-3"></div>
+                        <div id="masteryUpdate" class="text-muted small mb-4"></div>
+                        
+                        <button id="nextBtn" class="btn btn-success btn-lg px-5" onclick="nextQuestion()">
+                            <i class="fas fa-arrow-right me-2"></i>Siguiente
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Información de sesión -->
+    <div class="row mt-4 justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center text-muted small">
+                <span>
+                    <i class="fas fa-tags me-1"></i>
+                    Enfoque: {{ focus_areas|join(', ') if focus_areas else 'Mixto' }}
+                </span>
+                <span>
+                    <i class="fas fa-keyboard me-1"></i>
+                    Presiona Enter para verificar
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables de estado
+let answered = false;
+
+// Mostrar pista
+function showHint() {
+    const hintContent = document.getElementById('hintContent');
+    const hintToggle = document.getElementById('hintToggle');
+    
+    if (hintContent.style.display === 'none') {
+        hintContent.style.display = 'block';
+        hintToggle.textContent = 'Pista mostrada';
+    } else {
+        hintContent.style.display = 'none';
+        hintToggle.textContent = 'Click para ver pista';
+    }
+}
+
+// Enviar respuesta
+async function submitAnswer() {
+    if (answered) return;
+    
+    const answer = document.getElementById('answerInput').value.trim();
+    
+    if (!answer) {
+        document.getElementById('answerInput').classList.add('is-invalid');
+        return;
+    }
+    
+    answered = true;
+    document.getElementById('submitBtn').disabled = true;
+    
+    try {
+        const response = await fetch('{{ url_for("review.submit_answer") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answer: answer })
+        });
+        
+        const result = await response.json();
+        showFeedback(result);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('submitBtn').disabled = false;
+        answered = false;
+    }
+}
+
+// Mostrar feedback
+function showFeedback(result) {
+    const card = document.getElementById('reviewCard');
+    const questionSection = document.getElementById('questionSection');
+    const feedbackSection = document.getElementById('feedbackSection');
+    const feedbackIcon = document.getElementById('feedbackIcon');
+    const feedbackMessage = document.getElementById('feedbackMessage');
+    const correctAnswer = document.getElementById('correctAnswer');
+    const masteryUpdate = document.getElementById('masteryUpdate');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    questionSection.style.display = 'none';
+    feedbackSection.style.display = 'block';
+    
+    if (result.is_correct) {
+        card.classList.add('feedback-correct');
+        feedbackIcon.innerHTML = '<i class="fas fa-check-circle fa-4x text-success pulse"></i>';
+        feedbackMessage.innerHTML = '¡Correcto!';
+        correctAnswer.className = 'alert alert-success';
+        correctAnswer.innerHTML = '<strong>Tu respuesta es correcta</strong>';
+    } else {
+        card.classList.add('feedback-incorrect');
+        feedbackIcon.innerHTML = '<i class="fas fa-times-circle fa-4x text-danger pulse"></i>';
+        feedbackMessage.innerHTML = 'Incorrecto';
+        correctAnswer.className = 'alert alert-warning';
+        correctAnswer.innerHTML = `<strong>Respuesta correcta:</strong> ${result.correct_answer}`;
+    }
+    
+    // Mostrar actualización de maestría
+    const masteryStars = '★'.repeat(result.new_mastery) + '☆'.repeat(5 - result.new_mastery);
+    masteryUpdate.innerHTML = `
+        Nivel de maestría: ${masteryStars}<br>
+        <small>Próximo repaso en ${result.next_review_days} día(s)</small>
+    `;
+    
+    // Actualizar texto del botón si es el último
+    if (!result.has_next) {
+        nextBtn.innerHTML = '<i class="fas fa-flag-checkered me-2"></i>Ver Resultados';
+        nextBtn.onclick = function() {
+            window.location.href = '{{ url_for("review.results") }}';
+        };
+    }
+    
+    // Actualizar contadores en la barra
+    const progressBar = document.querySelector('.progress-bar');
+    progressBar.style.width = `${(result.progress.current / result.progress.total) * 100}%`;
+    
+    document.querySelector('.badge.bg-success').innerHTML = 
+        `<i class="fas fa-check"></i> ${result.progress.correct}`;
+    document.querySelector('.badge.bg-danger').innerHTML = 
+        `<i class="fas fa-times"></i> ${result.progress.wrong}`;
+}
+
+// Siguiente pregunta
+function nextQuestion() {
+    window.location.href = '{{ url_for("review.practice") }}';
+}
+
+// Event listener para Enter
+document.getElementById('answerInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        if (!answered) {
+            submitAnswer();
+        } else {
+            nextQuestion();
+        }
+    }
+});
+
+// Enfocar input al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('answerInput').focus();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurar Sesión de Repaso - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('review.dashboard') }}">Repaso</a></li>
+                    <li class="breadcrumb-item active">Nueva Sesión</li>
+                </ol>
+            </nav>
+            <h2><i class="fas fa-cog text-primary me-2"></i>Configurar Sesión de Repaso</h2>
+            <p class="text-muted">Personaliza tu sesión de repaso según tus necesidades</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <form action="{{ url_for('review.start_session') }}" method="POST">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Opciones de Sesión</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Número de items -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Número de elementos a repasar</label>
+                            <div class="row g-2">
+                                <div class="col-auto">
+                                    <div class="btn-group" role="group">
+                                        <input type="radio" class="btn-check" name="item_count" id="count10" value="10">
+                                        <label class="btn btn-outline-primary" for="count10">10</label>
+                                        
+                                        <input type="radio" class="btn-check" name="item_count" id="count20" value="20" checked>
+                                        <label class="btn btn-outline-primary" for="count20">20</label>
+                                        
+                                        <input type="radio" class="btn-check" name="item_count" id="count30" value="30">
+                                        <label class="btn btn-outline-primary" for="count30">30</label>
+                                        
+                                        <input type="radio" class="btn-check" name="item_count" id="count50" value="50">
+                                        <label class="btn btn-outline-primary" for="count50">50</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-muted">Sesiones cortas pero frecuentes son más efectivas</small>
+                        </div>
+                        
+                        <!-- Tipos de contenido -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tipos de contenido (deja vacío para todos)</label>
+                            <div class="row g-3">
+                                <div class="col-md-4 col-6">
+                                    <div class="form-check card p-3">
+                                        <input class="form-check-input" type="checkbox" name="focus_types" value="flashcard" id="typeFlashcard">
+                                        <label class="form-check-label" for="typeFlashcard">
+                                            <i class="fas fa-clone text-primary me-2"></i>Flashcards
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class="form-check card p-3">
+                                        <input class="form-check-input" type="checkbox" name="focus_types" value="vocabulary" id="typeVocab">
+                                        <label class="form-check-label" for="typeVocab">
+                                            <i class="fas fa-book text-success me-2"></i>Vocabulario
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class="form-check card p-3">
+                                        <input class="form-check-input" type="checkbox" name="focus_types" value="idiom" id="typeIdiom">
+                                        <label class="form-check-label" for="typeIdiom">
+                                            <i class="fas fa-comment-dots text-info me-2"></i>Idioms
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class="form-check card p-3">
+                                        <input class="form-check-input" type="checkbox" name="focus_types" value="phrasal_verb" id="typePV">
+                                        <label class="form-check-label" for="typePV">
+                                            <i class="fas fa-arrows-alt-h text-warning me-2"></i>Phrasal Verbs
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class="form-check card p-3">
+                                        <input class="form-check-input" type="checkbox" name="focus_types" value="grammar" id="typeGrammar">
+                                        <label class="form-check-label" for="typeGrammar">
+                                            <i class="fas fa-spell-check text-danger me-2"></i>Gramática
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Unidad específica -->
+                        <div class="mb-4">
+                            <label for="focusUnit" class="form-label fw-bold">Enfocarse en una unidad (opcional)</label>
+                            <select class="form-select" name="focus_unit" id="focusUnit">
+                                <option value="">Todas las unidades</option>
+                                {% for unit in units %}
+                                <option value="{{ unit.id }}">Unit {{ unit.unit_number }}: {{ unit.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Incluir nuevos -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="include_new" id="includeNew" value="true" checked>
+                                <label class="form-check-label" for="includeNew">
+                                    Incluir material nuevo (no revisado antes)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play me-2"></i>Iniciar Sesión
+                    </button>
+                    <a href="{{ url_for('review.dashboard') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Resumen de disponibilidad -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Disponible para Repaso</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Pendientes hoy</span>
+                            <strong class="text-danger">{{ stats.due_today }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Flashcards pendientes</span>
+                            <strong>{{ stats.flashcards.due }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total disponible</span>
+                            <strong class="text-primary">{{ stats.flashcards.total + stats.vocabulary.total }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Consejos -->
+            <div class="card shadow-sm bg-light">
+                <div class="card-body">
+                    <h6><i class="fas fa-lightbulb text-warning me-2"></i>Consejos para un repaso efectivo</h6>
+                    <ul class="small mb-0">
+                        <li>Repasa a diario para mejores resultados</li>
+                        <li>Sesiones de 10-20 minutos son ideales</li>
+                        <li>Enfócate en áreas débiles</li>
+                        <li>No te preocupes por errores, son parte del aprendizaje</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

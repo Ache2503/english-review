@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ idiom.phrase }} - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('idioms.idioms_list') }}">Idioms</a></li>
+            <li class="breadcrumb-item active">{{ idiom.phrase }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-comment-dots me-2"></i>{{ idiom.phrase }}
+                        </h4>
+                        <span class="badge bg-light text-dark">{{ idiom.level }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-2">Significado</h5>
+                        <p class="lead">{{ idiom.meaning }}</p>
+                    </div>
+                    
+                    {% if idiom.spanish_equivalent %}
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-2">Equivalente en Español</h5>
+                        <p class="fst-italic text-secondary">{{ idiom.spanish_equivalent }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if idiom.origin %}
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-2">Origen</h5>
+                        <p>{{ idiom.origin }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-2">Ejemplo de Uso</h5>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0">
+                                <i class="fas fa-quote-left text-info me-2"></i>
+                                {{ idiom.example_sentence }}
+                                <i class="fas fa-quote-right text-info ms-2"></i>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if similar_idioms %}
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-2">Expresiones Similares</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for similar in similar_idioms %}
+                            <a href="{{ url_for('idioms.idiom_detail', idiom_id=similar.id) }}" 
+                               class="badge bg-secondary text-decoration-none">
+                                {{ similar.phrase }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-brain me-2"></i>Tips para Recordar</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            Intenta visualizar la imagen literal para recordar el significado
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-pen text-primary me-2"></i>
+                            Escribe 3 oraciones propias usando este idiom
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-comments text-success me-2"></i>
+                            Intenta usarlo en una conversación esta semana
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Tu Progreso</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if progress %}
+                    <div class="mb-3">
+                        <div class="display-4 text-info">{{ progress.mastery_level }}/5</div>
+                        <small class="text-muted">Nivel de Maestría</small>
+                    </div>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-info" style="width: {{ progress.mastery_level * 20 }}%"></div>
+                    </div>
+                    <div class="row text-center small mb-3">
+                        <div class="col">
+                            <strong class="text-success">{{ progress.correct_count }}</strong>
+                            <br><span class="text-muted">Correctas</span>
+                        </div>
+                        <div class="col">
+                            <strong class="text-danger">{{ progress.incorrect_count }}</strong>
+                            <br><span class="text-muted">Incorrectas</span>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Última práctica: {{ progress.last_practiced.strftime('%d/%m/%Y') if progress.last_practiced else 'Nunca' }}
+                    </small>
+                    {% else %}
+                    <div class="py-4">
+                        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aún no has practicado este idiom</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong>Nivel:</strong> 
+                            <span class="badge bg-{{ 'success' if idiom.level in ['A1', 'A2'] else 'warning' if idiom.level in ['B1', 'B2'] else 'danger' }}">
+                                {{ idiom.level }}
+                            </span>
+                        </li>
+                        {% if idiom.category %}
+                        <li class="mb-2">
+                            <strong>Categoría:</strong> {{ idiom.category|capitalize }}
+                        </li>
+                        {% endif %}
+                        {% if idiom.difficulty %}
+                        <li class="mb-2">
+                            <strong>Dificultad:</strong> 
+                            {% for i in range(idiom.difficulty) %}
+                            <i class="fas fa-star text-warning"></i>
+                            {% endfor %}
+                            {% for i in range(5 - idiom.difficulty) %}
+                            <i class="far fa-star text-muted"></i>
+                            {% endfor %}
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('idioms.practice_idioms') }}" class="btn btn-primary">
+                    <i class="fas fa-dumbbell me-2"></i>Practicar
+                </a>
+                <a href="{{ url_for('idioms.idioms_list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a la lista
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

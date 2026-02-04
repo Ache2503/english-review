@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Requisitos - {{ requirements.unit.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('unit_challenge.units_overview') }}">Unidades</a></li>
+            <li class="breadcrumb-item active">Unit {{ requirements.unit.unit_number }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Encabezado de la unidad -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="display-6 text-primary me-3">
+                            <i class="bi bi-book-half"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-1">{{ requirements.unit.title }}</h2>
+                            <p class="text-muted mb-0">{{ requirements.unit.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Requisitos para desbloquear -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check"></i> Pasos para Completar esta Unidad
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Completa cada sección para desbloquear el desafío final. Necesitas aprobar el desafío 
+                        con al menos <strong>70%</strong> para desbloquear la siguiente unidad.
+                    </p>
+                    
+                    <!-- Paso 1: Gramática -->
+                    <div class="d-flex align-items-start mb-4 p-3 rounded 
+                        {% if requirements.grammar.completed %}bg-success bg-opacity-10 border border-success{% else %}bg-light{% endif %}">
+                        <div class="flex-shrink-0 me-3">
+                            {% if requirements.grammar.completed %}
+                                <span class="badge bg-success rounded-circle p-2">
+                                    <i class="bi bi-check-lg"></i>
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-circle p-2">1</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                <i class="bi bi-book me-2"></i> Estudiar Gramática
+                            </h5>
+                            <p class="text-muted mb-2">
+                                Revisa las {{ requirements.grammar.total }} reglas gramaticales de esta unidad.
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('units.view_grammar', unit_id=requirements.unit.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver Gramática
+                                </a>
+                                {% if not requirements.grammar.completed %}
+                                <a href="{{ url_for('unit_challenge.mark_section_complete', unit_id=requirements.unit.id, section='grammar') }}" 
+                                   class="btn btn-sm btn-success">
+                                    <i class="bi bi-check"></i> Marcar como Completado
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 2: Vocabulario -->
+                    <div class="d-flex align-items-start mb-4 p-3 rounded 
+                        {% if requirements.vocabulary.completed %}bg-success bg-opacity-10 border border-success{% else %}bg-light{% endif %}">
+                        <div class="flex-shrink-0 me-3">
+                            {% if requirements.vocabulary.completed %}
+                                <span class="badge bg-success rounded-circle p-2">
+                                    <i class="bi bi-check-lg"></i>
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-circle p-2">2</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                <i class="bi bi-translate me-2"></i> Aprender Vocabulario
+                            </h5>
+                            <p class="text-muted mb-2">
+                                Domina las {{ requirements.vocabulary.total }} categorías de vocabulario.
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('units.view_vocabulary', unit_id=requirements.unit.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver Vocabulario
+                                </a>
+                                {% if not requirements.vocabulary.completed %}
+                                <a href="{{ url_for('unit_challenge.mark_section_complete', unit_id=requirements.unit.id, section='vocabulary') }}" 
+                                   class="btn btn-sm btn-success">
+                                    <i class="bi bi-check"></i> Marcar como Completado
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 3: Ejercicios -->
+                    <div class="d-flex align-items-start mb-4 p-3 rounded 
+                        {% if requirements.exercises.completed %}bg-success bg-opacity-10 border border-success{% else %}bg-light{% endif %}">
+                        <div class="flex-shrink-0 me-3">
+                            {% if requirements.exercises.completed %}
+                                <span class="badge bg-success rounded-circle p-2">
+                                    <i class="bi bi-check-lg"></i>
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-circle p-2">3</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                <i class="bi bi-pencil-square me-2"></i> Practicar con Ejercicios
+                            </h5>
+                            <p class="text-muted mb-2">
+                                Completa los ejercicios de práctica para reforzar tu aprendizaje.
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('units.view_writing_practices', unit_id=requirements.unit.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Ir a Ejercicios
+                                </a>
+                                {% if not requirements.exercises.completed %}
+                                <a href="{{ url_for('unit_challenge.mark_section_complete', unit_id=requirements.unit.id, section='exercises') }}" 
+                                   class="btn btn-sm btn-success">
+                                    <i class="bi bi-check"></i> Marcar como Completado
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 4: Desafío Final -->
+                    <div class="d-flex align-items-start p-3 rounded 
+                        {% if requirements.challenge.completed %}bg-success bg-opacity-10 border border-success
+                        {% elif requirements.challenge.can_attempt %}bg-warning bg-opacity-10 border border-warning
+                        {% else %}bg-light{% endif %}">
+                        <div class="flex-shrink-0 me-3">
+                            {% if requirements.challenge.completed %}
+                                <span class="badge bg-success rounded-circle p-2">
+                                    <i class="bi bi-trophy-fill"></i>
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-circle p-2">
+                                    <i class="bi bi-trophy"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                <i class="bi bi-trophy me-2"></i> Desafío Final
+                            </h5>
+                            <p class="text-muted mb-2">
+                                {% if requirements.challenge.completed %}
+                                    ¡Desafío aprobado con <strong>{{ requirements.challenge.score|int }}%</strong>! 🎉
+                                {% elif requirements.challenge.can_attempt %}
+                                    Demuestra lo que aprendiste. Necesitas al menos 70% para aprobar.
+                                {% else %}
+                                    Completa los pasos anteriores para desbloquear el desafío.
+                                {% endif %}
+                            </p>
+                            
+                            {% if requirements.challenge.attempts > 0 %}
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-arrow-repeat"></i> Intentos realizados: {{ requirements.challenge.attempts }}
+                            </p>
+                            {% endif %}
+                            
+                            {% if requirements.challenge.can_attempt and not requirements.challenge.completed %}
+                            <div class="alert alert-info py-2 mb-2">
+                                <small><i class="bi bi-info-circle"></i> {{ challenge_message }}</small>
+                            </div>
+                            {% endif %}
+                            
+                            {% if can_challenge and challenge and not requirements.challenge.completed %}
+                            <a href="{{ url_for('unit_challenge.start_challenge', unit_id=requirements.unit.id) }}" 
+                               class="btn btn-warning">
+                                <i class="bi bi-play-fill"></i> Comenzar Desafío
+                            </a>
+                            {% elif not requirements.challenge.can_attempt and not requirements.challenge.completed %}
+                            <button class="btn btn-secondary" disabled>
+                                <i class="bi bi-lock"></i> Completa los pasos anteriores
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Progreso de la unidad -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h6 class="mb-0"><i class="bi bi-pie-chart"></i> Tu Progreso</h6>
+                </div>
+                <div class="card-body text-center">
+                    {% set progress_pct = 0 %}
+                    {% if requirements.grammar.completed %}{% set progress_pct = progress_pct + 25 %}{% endif %}
+                    {% if requirements.vocabulary.completed %}{% set progress_pct = progress_pct + 25 %}{% endif %}
+                    {% if requirements.exercises.completed %}{% set progress_pct = progress_pct + 25 %}{% endif %}
+                    {% if requirements.challenge.completed %}{% set progress_pct = progress_pct + 25 %}{% endif %}
+                    
+                    <div class="display-4 mb-2 
+                        {% if progress_pct == 100 %}text-success
+                        {% elif progress_pct > 50 %}text-primary
+                        {% else %}text-secondary{% endif %}">
+                        {{ progress_pct }}%
+                    </div>
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width: {{ progress_pct }}%"></div>
+                    </div>
+                    <small class="text-muted">
+                        {% if progress_pct == 100 %}
+                            ¡Unidad completada! 🎉
+                        {% elif progress_pct >= 75 %}
+                            ¡Casi listo para el desafío!
+                        {% elif progress_pct >= 50 %}
+                            Buen progreso, sigue así.
+                        {% else %}
+                            Completa las secciones para avanzar.
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Tips -->
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-lightbulb text-warning"></i> Tips para el Desafío
+                    </h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2">
+                            <i class="bi bi-check2 text-success"></i> 
+                            Repasa las reglas gramaticales antes del desafío
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check2 text-success"></i> 
+                            Practica el vocabulario con flashcards
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check2 text-success"></i> 
+                            Lee las explicaciones de cada error
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check2 text-success"></i> 
+                            Tienes hasta 3 intentos por día
+                        </li>
+                        <li>
+                            <i class="bi bi-check2 text-success"></i> 
+                            Necesitas 70% para aprobar
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

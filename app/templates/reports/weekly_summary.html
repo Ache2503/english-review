@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block title %}Resumen Semanal - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('reports.dashboard') }}">Reportes</a></li>
+            <li class="breadcrumb-item active">Resumen Semanal</li>
+        </ol>
+    </nav>
+    
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-calendar-week text-success me-2"></i>Resumen Semanal</h2>
+            <p class="text-muted">{{ week_range or 'Esta semana' }}</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Actividad Diaria</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="dailyChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4 h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-fire me-2"></i>Resumen</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="display-4 text-success">{{ weekly_stats.days_active or 0 }}/7</div>
+                        <small class="text-muted">Días activo</small>
+                    </div>
+                    <hr>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex justify-content-between py-2">
+                            <span><i class="fas fa-clock text-primary me-2"></i>Tiempo total</span>
+                            <strong>{{ weekly_stats.total_time or 0 }} min</strong>
+                        </li>
+                        <li class="d-flex justify-content-between py-2">
+                            <span><i class="fas fa-star text-warning me-2"></i>Puntos ganados</span>
+                            <strong>+{{ weekly_stats.points_earned or 0 }}</strong>
+                        </li>
+                        <li class="d-flex justify-content-between py-2">
+                            <span><i class="fas fa-tasks text-info me-2"></i>Actividades</span>
+                            <strong>{{ weekly_stats.activities_completed or 0 }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card border-primary h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-2x text-primary mb-2"></i>
+                    <h4 class="mb-0">{{ weekly_stats.lessons or 0 }}</h4>
+                    <small class="text-muted">Lecciones</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-success h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-question-circle fa-2x text-success mb-2"></i>
+                    <h4 class="mb-0">{{ weekly_stats.quizzes or 0 }}</h4>
+                    <small class="text-muted">Quizzes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-info h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-gamepad fa-2x text-info mb-2"></i>
+                    <h4 class="mb-0">{{ weekly_stats.games or 0 }}</h4>
+                    <small class="text-muted">Juegos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-warning h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-dumbbell fa-2x text-warning mb-2"></i>
+                    <h4 class="mb-0">{{ weekly_stats.drills or 0 }}</h4>
+                    <small class="text-muted">Ejercicios</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Logros de la Semana</h5>
+                </div>
+                <div class="card-body">
+                    {% if weekly_achievements %}
+                    <ul class="list-group list-group-flush">
+                        {% for achievement in weekly_achievements %}
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="badge-icon me-3" style="font-size: 1.5rem;">{{ achievement.icon or '🏆' }}</span>
+                            <div>
+                                <strong>{{ achievement.title }}</strong>
+                                <br><small class="text-muted">{{ achievement.description }}</small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-medal fa-3x mb-2"></i>
+                        <p>Sin logros nuevos esta semana</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Distribución del Tiempo</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="distributionChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Actividades Detalladas</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Actividad</th>
+                            <th>Tipo</th>
+                            <th class="text-center">Puntuación</th>
+                            <th class="text-center">Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                        <tr>
+                            <td>
+                                <small class="text-muted">{{ activity.date }}</small>
+                            </td>
+                            <td>{{ activity.name }}</td>
+                            <td>
+                                <span class="badge bg-{{ activity.type_color or 'secondary' }}">
+                                    {{ activity.type }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                {% if activity.score is not none %}
+                                <span class="text-{{ 'success' if activity.score >= 70 else 'warning' if activity.score >= 50 else 'danger' }}">
+                                    {{ activity.score }}%
+                                </span>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <span class="text-success">+{{ activity.points or 0 }}</span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No hay actividades registradas esta semana
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-target me-2"></i>Metas para la Próxima Semana</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                {% for goal in next_week_goals %}
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                        <i class="fas {{ goal.icon or 'fa-bullseye' }} fa-2x text-info me-3"></i>
+                        <div>
+                            <strong>{{ goal.title }}</strong>
+                            <br><small class="text-muted">{{ goal.description }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12">
+                    <p class="text-muted text-center mb-0">Las metas se generarán basándose en tu actividad</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <a href="{{ url_for('reports.dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Daily Activity Chart
+    const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+    const dailyData = {{ daily_data|tojson|safe if daily_data else '[0,0,0,0,0,0,0]' }};
+    
+    new Chart(dailyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+            datasets: [{
+                label: 'Minutos',
+                data: dailyData,
+                backgroundColor: 'rgba(25, 135, 84, 0.6)',
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Minutos'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Distribution Chart
+    const distCtx = document.getElementById('distributionChart').getContext('2d');
+    const distData = {{ distribution_data|tojson|safe if distribution_data else '{"lessons": 25, "quizzes": 25, "games": 25, "drills": 25}' }};
+    
+    new Chart(distCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Lecciones', 'Quizzes', 'Juegos', 'Ejercicios'],
+            datasets: [{
+                data: [distData.lessons || 0, distData.quizzes || 0, distData.games || 0, distData.drills || 0],
+                backgroundColor: [
+                    'rgba(13, 110, 253, 0.8)',
+                    'rgba(25, 135, 84, 0.8)',
+                    'rgba(13, 202, 240, 0.8)',
+                    'rgba(255, 193, 7, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

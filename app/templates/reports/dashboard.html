@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes de Progreso - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-chart-pie text-primary me-2"></i>Reportes de Progreso</h2>
+            <p class="text-muted">Visualiza tu avance en el aprendizaje del inglés</p>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card bg-primary text-white shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.total_study_time or 0 }}</h3>
+                    <small>Horas de Estudio</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-success text-white shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-fire fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.current_streak or 0 }}</h3>
+                    <small>Días Consecutivos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-info text-white shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.total_points or 0 }}</h3>
+                    <small>Puntos Totales</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-warning text-dark shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-trophy fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.badges_earned or 0 }}</h3>
+                    <small>Insignias</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Actividad Semanal</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="weeklyChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bullseye me-2"></i>Nivel Actual</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-3 text-primary mb-2">{{ stats.current_level or 'A1' }}</div>
+                    <p class="text-muted">{{ level_description or 'Principiante' }}</p>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" style="width: {{ stats.level_progress or 0 }}%">
+                            {{ stats.level_progress or 0 }}%
+                        </div>
+                    </div>
+                    <small class="text-muted">Progreso hacia el siguiente nivel</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-book me-2"></i>Progreso por Área</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Gramática</span>
+                            <span>{{ stats.grammar_progress or 0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width: {{ stats.grammar_progress or 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Vocabulario</span>
+                            <span>{{ stats.vocabulary_progress or 0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: {{ stats.vocabulary_progress or 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Lectura</span>
+                            <span>{{ stats.reading_progress or 0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width: {{ stats.reading_progress or 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Escritura</span>
+                            <span>{{ stats.writing_progress or 0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: {{ stats.writing_progress or 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Práctica</span>
+                            <span>{{ stats.practice_progress or 0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" style="width: {{ stats.practice_progress or 0 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Actividades Recientes</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for activity in recent_activities %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas {{ activity.icon or 'fa-circle' }} text-{{ activity.color or 'primary' }} me-2"></i>
+                                {{ activity.description }}
+                            </div>
+                            <small class="text-muted">{{ activity.date }}</small>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item text-center text-muted">
+                            No hay actividades recientes
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('reports.detailed_report') }}" class="card shadow-sm text-decoration-none h-100 hover-card">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                    <h5>Reporte Detallado</h5>
+                    <p class="text-muted small mb-0">Análisis completo de tu progreso</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('reports.achievements') }}" class="card shadow-sm text-decoration-none h-100 hover-card">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-medal fa-3x text-warning mb-3"></i>
+                    <h5>Logros</h5>
+                    <p class="text-muted small mb-0">Tus insignias y reconocimientos</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('reports.weekly_summary') }}" class="card shadow-sm text-decoration-none h-100 hover-card">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-calendar-week fa-3x text-success mb-3"></i>
+                    <h5>Resumen Semanal</h5>
+                    <p class="text-muted small mb-0">Tu actividad de esta semana</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('weeklyChart').getContext('2d');
+    
+    const weeklyData = {{ weekly_data|tojson|safe if weekly_data else '[0,0,0,0,0,0,0]' }};
+    const labels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Actividades',
+                data: weeklyData,
+                backgroundColor: 'rgba(13, 110, 253, 0.6)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

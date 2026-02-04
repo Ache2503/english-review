@@ -5,15 +5,77 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
-        <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary mb-3">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="{{ url_for('unit_challenge.units_overview') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Unidades
+            </a>
+            <a href="{{ url_for('unit_challenge.unit_requirements', unit_id=unit.id) }}" class="btn btn-sm btn-warning">
+                <i class="fas fa-trophy"></i> Ver Progreso / Desafío
+            </a>
+        </div>
         <h1>
             <span class="badge bg-primary">Unit {{ unit.unit_number }}</span>
             {{ unit.title }}
         </h1>
     </div>
 </div>
+
+<!-- Progress towards Challenge -->
+{% if unit_status %}
+<div class="card mb-4 border-warning">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fas fa-trophy"></i> Progreso para Desbloquear Siguiente Unidad</h5>
+    </div>
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="p-2 {% if unit_status.grammar.completed %}bg-success text-white{% else %}bg-light{% endif %} rounded">
+                    <i class="fas fa-{% if unit_status.grammar.completed %}check-circle{% else %}circle{% endif %} fa-2x mb-2"></i>
+                    <p class="mb-0 fw-bold">Gramática</p>
+                    <small>{% if unit_status.grammar.completed %}✓ Completado{% else %}Pendiente{% endif %}</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-2 {% if unit_status.vocabulary.completed %}bg-success text-white{% else %}bg-light{% endif %} rounded">
+                    <i class="fas fa-{% if unit_status.vocabulary.completed %}check-circle{% else %}circle{% endif %} fa-2x mb-2"></i>
+                    <p class="mb-0 fw-bold">Vocabulario</p>
+                    <small>{% if unit_status.vocabulary.completed %}✓ Completado{% else %}Pendiente{% endif %}</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-2 {% if unit_status.exercises.completed %}bg-success text-white{% else %}bg-light{% endif %} rounded">
+                    <i class="fas fa-{% if unit_status.exercises.completed %}check-circle{% else %}circle{% endif %} fa-2x mb-2"></i>
+                    <p class="mb-0 fw-bold">Ejercicios</p>
+                    <small>{% if unit_status.exercises.completed %}✓ Completado{% else %}Pendiente{% endif %}</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-2 {% if unit_status.challenge.completed %}bg-success text-white{% elif unit_status.challenge.can_attempt %}bg-primary text-white{% else %}bg-secondary text-white{% endif %} rounded">
+                    <i class="fas fa-{% if unit_status.challenge.completed %}trophy{% elif unit_status.challenge.can_attempt %}unlock{% else %}lock{% endif %} fa-2x mb-2"></i>
+                    <p class="mb-0 fw-bold">Desafío</p>
+                    <small>
+                        {% if unit_status.challenge.completed %}
+                            ✓ Pasado ({{ unit_status.challenge.score }}%)
+                        {% elif unit_status.challenge.can_attempt %}
+                            ¡Listo para intentar!
+                        {% else %}
+                            Completa las secciones
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        {% if unit_status.challenge.can_attempt and not unit_status.challenge.completed %}
+        <div class="text-center mt-3">
+            <a href="{{ url_for('unit_challenge.start_challenge', unit_id=unit.id) }}" class="btn btn-lg btn-success">
+                <i class="fas fa-play"></i> ¡Tomar Desafío Ahora!
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 
 <!-- Tabs Navigation -->
 <ul class="nav nav-tabs mb-4" role="tablist">

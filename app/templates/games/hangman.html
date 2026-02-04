@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block title %}Hangman - Mini Juegos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-secret me-2"></i>Hangman
+                    </h4>
+                    <span class="badge bg-light text-danger">{{ level }}</span>
+                </div>
+                <div class="card-body">
+                    <div id="game-intro" class="text-center py-4">
+                        <div class="display-4 mb-3">🎯</div>
+                        <h3>Hangman</h3>
+                        <p class="text-muted">Adivina la palabra letra por letra</p>
+                        <button id="start-btn" class="btn btn-danger btn-lg">
+                            <i class="fas fa-play me-2"></i>Comenzar
+                        </button>
+                    </div>
+                    
+                    <div id="game-area" class="d-none">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div id="hangman-drawing" class="mb-3">
+                                    <pre id="hangman-ascii" class="text-danger fs-5"></pre>
+                                </div>
+                                <div class="badge bg-danger fs-6">
+                                    Intentos: <span id="attempts-left">6</span>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="text-center mb-4">
+                                    <p id="hint" class="text-muted"></p>
+                                    <div id="word-display" class="display-5 letter-spacing-3 mb-4"></div>
+                                </div>
+                                
+                                <div id="keyboard" class="text-center"></div>
+                                
+                                <div id="feedback" class="alert mt-4 d-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="game-results" class="d-none text-center py-4">
+                        <div id="result-emoji" class="display-1 mb-3"></div>
+                        <h2 id="result-title"></h2>
+                        <p id="result-word" class="fs-4"></p>
+                        <div class="mt-4">
+                            <button onclick="location.reload()" class="btn btn-danger me-2">
+                                <i class="fas fa-redo me-1"></i>Jugar de nuevo
+                            </button>
+                            <a href="{{ url_for('games.game_list') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-th me-1"></i>Otros juegos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.letter-spacing-3 { letter-spacing: 1rem; }
+.letter-btn { width: 40px; height: 40px; margin: 3px; font-weight: bold; }
+.letter-btn:disabled { opacity: 0.4; }
+</style>
+
+<script>
+const level = '{{ level }}';
+const hangmanStages = [
+    `
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========`,
+    `
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========`,
+    `
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========`,
+    `
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========`,
+    `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+=========`,
+    `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+=========`,
+    `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+=========`
+];
+
+let word = '';
+let guessedLetters = [];
+let wrongGuesses = 0;
+let gameOver = false;
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+async function startGame() {
+    const response = await fetch(`/games/hangman/get-word?level=${level}`);
+    const data = await response.json();
+    
+    // Get word from default words since we need the actual word for client-side
+    const wordsResponse = await fetch(`/games/word-scramble/get-words?level=${level}&count=1`);
+    const wordsData = await wordsResponse.json();
+    word = wordsData.words[0].answer.toLowerCase();
+    
+    document.getElementById('game-intro').classList.add('d-none');
+    document.getElementById('game-area').classList.remove('d-none');
+    
+    document.getElementById('hint').textContent = data.hint ? `Pista: ${data.hint}` : '';
+    
+    renderHangman();
+    renderWord();
+    renderKeyboard();
+}
+
+function renderHangman() {
+    document.getElementById('hangman-ascii').textContent = hangmanStages[wrongGuesses];
+    document.getElementById('attempts-left').textContent = 6 - wrongGuesses;
+}
+
+function renderWord() {
+    let display = '';
+    for (const letter of word) {
+        if (guessedLetters.includes(letter)) {
+            display += letter.toUpperCase() + ' ';
+        } else {
+            display += '_ ';
+        }
+    }
+    document.getElementById('word-display').textContent = display.trim();
+}
+
+function renderKeyboard() {
+    const keyboard = document.getElementById('keyboard');
+    keyboard.innerHTML = '';
+    
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (const letter of letters) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-outline-dark letter-btn';
+        btn.textContent = letter;
+        btn.onclick = () => guessLetter(letter.toLowerCase());
+        keyboard.appendChild(btn);
+    }
+}
+
+function guessLetter(letter) {
+    if (gameOver) return;
+    if (guessedLetters.includes(letter)) return;
+    
+    guessedLetters.push(letter);
+    
+    // Disable button
+    const buttons = document.querySelectorAll('.letter-btn');
+    buttons.forEach(btn => {
+        if (btn.textContent.toLowerCase() === letter) {
+            btn.disabled = true;
+            if (word.includes(letter)) {
+                btn.classList.remove('btn-outline-dark');
+                btn.classList.add('btn-success');
+            } else {
+                btn.classList.remove('btn-outline-dark');
+                btn.classList.add('btn-danger');
+            }
+        }
+    });
+    
+    if (word.includes(letter)) {
+        // Correct guess
+        renderWord();
+        checkWin();
+    } else {
+        // Wrong guess
+        wrongGuesses++;
+        renderHangman();
+        checkLose();
+    }
+}
+
+function checkWin() {
+    const allGuessed = word.split('').every(letter => guessedLetters.includes(letter));
+    if (allGuessed) {
+        gameOver = true;
+        showResult(true);
+    }
+}
+
+function checkLose() {
+    if (wrongGuesses >= 6) {
+        gameOver = true;
+        showResult(false);
+    }
+}
+
+function showResult(won) {
+    document.getElementById('game-area').classList.add('d-none');
+    document.getElementById('game-results').classList.remove('d-none');
+    
+    if (won) {
+        document.getElementById('result-emoji').textContent = '🎉';
+        document.getElementById('result-title').textContent = '¡Ganaste!';
+    } else {
+        document.getElementById('result-emoji').textContent = '😔';
+        document.getElementById('result-title').textContent = 'Game Over';
+    }
+    
+    document.getElementById('result-word').textContent = `La palabra era: ${word.toUpperCase()}`;
+}
+</script>
+{% endblock %}

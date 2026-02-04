@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Fill the Gaps - Mini Juegos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Fill the Gaps
+                    </h4>
+                    <span class="badge bg-dark">{{ level }}</span>
+                </div>
+                <div class="card-body">
+                    <div id="game-intro" class="text-center py-4">
+                        <div class="display-4 mb-3">📝</div>
+                        <h3>Fill the Gaps</h3>
+                        <p class="text-muted">Completa las oraciones con la palabra correcta</p>
+                        <button id="start-btn" class="btn btn-warning btn-lg">
+                            <i class="fas fa-play me-2"></i>Comenzar
+                        </button>
+                    </div>
+                    
+                    <div id="game-area" class="d-none">
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="badge bg-success fs-6">Correctas: <span id="correct-count">0</span></span>
+                            <span class="badge bg-secondary fs-6">Pregunta <span id="current-q">1</span>/<span id="total-q">10</span></span>
+                        </div>
+                        
+                        <div class="progress mb-4" style="height: 10px;">
+                            <div id="progress-bar" class="progress-bar bg-warning" style="width: 0%"></div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 id="sentence-display" class="card-title fs-4 text-center mb-4"></h5>
+                                
+                                <div id="options-container" class="d-flex flex-wrap justify-content-center gap-2"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="feedback" class="alert d-none"></div>
+                    </div>
+                    
+                    <div id="game-results" class="d-none text-center py-4">
+                        <div id="result-emoji" class="display-1 mb-3">🎉</div>
+                        <h2 id="result-title">¡Bien hecho!</h2>
+                        <p class="text-muted">Has completado el juego</p>
+                        
+                        <div class="row justify-content-center g-3 my-4">
+                            <div class="col-auto">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center px-4">
+                                        <h3 class="mb-0" id="final-correct">0</h3>
+                                        <small>Correctas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body text-center px-4">
+                                        <h3 class="mb-0" id="final-wrong">0</h3>
+                                        <small>Incorrectas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center px-4">
+                                        <h3 class="mb-0" id="final-score">0%</h3>
+                                        <small>Puntuación</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button onclick="location.reload()" class="btn btn-warning me-2">
+                                <i class="fas fa-redo me-1"></i>Jugar de nuevo
+                            </button>
+                            <a href="{{ url_for('games.game_list') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-th me-1"></i>Otros juegos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const level = '{{ level }}';
+let sentences = [];
+let currentIndex = 0;
+let correctCount = 0;
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+async function startGame() {
+    const response = await fetch(`/games/fill-gaps/get-sentences?level=${level}&count=10`);
+    const data = await response.json();
+    sentences = data.sentences;
+    
+    document.getElementById('game-intro').classList.add('d-none');
+    document.getElementById('game-area').classList.remove('d-none');
+    document.getElementById('total-q').textContent = sentences.length;
+    
+    showSentence();
+}
+
+function showSentence() {
+    if (currentIndex >= sentences.length) {
+        endGame();
+        return;
+    }
+    
+    const sentence = sentences[currentIndex];
+    document.getElementById('sentence-display').innerHTML = sentence.sentence.replace('___', '<span class="text-warning fw-bold">_____</span>');
+    document.getElementById('current-q').textContent = currentIndex + 1;
+    document.getElementById('progress-bar').style.width = `${((currentIndex) / sentences.length) * 100}%`;
+    
+    // Render options
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+    
+    const shuffledOptions = [...sentence.options].sort(() => Math.random() - 0.5);
+    
+    shuffledOptions.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-outline-dark btn-lg px-4';
+        btn.textContent = option;
+        btn.onclick = () => selectOption(option, sentence.answer, btn);
+        container.appendChild(btn);
+    });
+    
+    document.getElementById('feedback').classList.add('d-none');
+}
+
+function selectOption(selected, correct, button) {
+    const buttons = document.querySelectorAll('#options-container button');
+    buttons.forEach(btn => btn.disabled = true);
+    
+    const feedback = document.getElementById('feedback');
+    
+    if (selected === correct) {
+        correctCount++;
+        document.getElementById('correct-count').textContent = correctCount;
+        button.classList.remove('btn-outline-dark');
+        button.classList.add('btn-success');
+        feedback.className = 'alert alert-success';
+        feedback.innerHTML = '<i class="fas fa-check-circle me-2"></i>¡Correcto!';
+    } else {
+        button.classList.remove('btn-outline-dark');
+        button.classList.add('btn-danger');
+        
+        // Highlight correct answer
+        buttons.forEach(btn => {
+            if (btn.textContent === correct) {
+                btn.classList.remove('btn-outline-dark');
+                btn.classList.add('btn-success');
+            }
+        });
+        
+        feedback.className = 'alert alert-danger';
+        feedback.innerHTML = `<i class="fas fa-times-circle me-2"></i>Incorrecto. La respuesta correcta es: <strong>${correct}</strong>`;
+    }
+    
+    feedback.classList.remove('d-none');
+    
+    setTimeout(() => {
+        currentIndex++;
+        showSentence();
+    }, 1500);
+}
+
+async function endGame() {
+    const score = Math.round((correctCount / sentences.length) * 100);
+    
+    // Save score
+    await fetch('/games/fill-gaps/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            score: score,
+            level: level,
+            correct: correctCount,
+            total: sentences.length
+        })
+    });
+    
+    // Show results
+    document.getElementById('game-area').classList.add('d-none');
+    document.getElementById('game-results').classList.remove('d-none');
+    
+    document.getElementById('final-correct').textContent = correctCount;
+    document.getElementById('final-wrong').textContent = sentences.length - correctCount;
+    document.getElementById('final-score').textContent = `${score}%`;
+    
+    if (score >= 80) {
+        document.getElementById('result-emoji').textContent = '🏆';
+        document.getElementById('result-title').textContent = '¡Excelente!';
+    } else if (score >= 60) {
+        document.getElementById('result-emoji').textContent = '👍';
+        document.getElementById('result-title').textContent = '¡Bien hecho!';
+    } else {
+        document.getElementById('result-emoji').textContent = '💪';
+        document.getElementById('result-title').textContent = 'Sigue practicando';
+    }
+}
+</script>
+{% endblock %}

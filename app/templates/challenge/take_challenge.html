@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Desafío - {{ unit.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .question-card {
+        transition: all 0.3s ease;
+    }
+    .question-card:hover {
+        transform: translateY(-2px);
+    }
+    .option-label {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .option-label:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    input[type="radio"]:checked + .option-label {
+        background-color: rgba(13, 110, 253, 0.2);
+        border-color: #0d6efd !important;
+    }
+    .timer {
+        font-family: monospace;
+        font-size: 1.5rem;
+    }
+    .timer.warning {
+        color: #ffc107;
+    }
+    .timer.danger {
+        color: #dc3545;
+        animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header con Timer -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-1">
+                <i class="bi bi-trophy-fill text-warning"></i> Desafío: {{ unit.title }}
+            </h2>
+            <p class="text-muted">{{ challenge.description }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="card bg-dark text-white">
+                <div class="card-body py-2 text-center">
+                    <small class="text-muted">Tiempo restante</small>
+                    <div class="timer" id="timer">{{ challenge.time_limit }}:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulario de Desafío -->
+    <form id="challengeForm" action="{{ url_for('unit_challenge.submit_challenge', attempt_id=attempt_id) }}" method="POST">
+        <input type="hidden" name="attempt_id" value="{{ attempt_id }}">
+        
+        {% for question in questions %}
+        <div class="card border-0 shadow-sm mb-4 question-card" id="question-{{ question.id }}">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <span class="badge bg-primary">Pregunta {{ loop.index }} de {{ questions|length }}</span>
+                <span class="badge bg-{{ 'success' if question.difficulty == 'easy' else 'warning' if question.difficulty == 'medium' else 'danger' }}">
+                    {{ question.points }} pts - {{ question.difficulty|capitalize }}
+                </span>
+            </div>
+            <div class="card-body">
+                <!-- Skill tested -->
+                <div class="mb-2">
+                    <span class="badge bg-light text-dark">
+                        <i class="bi bi-tag"></i> {{ question.skill_tested|capitalize if question.skill_tested else 'General' }}
+                    </span>
+                </div>
+                
+                <!-- Question Text -->
+                <h5 class="card-title mb-4">{{ question.question_text }}</h5>
+                
+                {% if question.question_type == 'multiple_choice' %}
+                <!-- Opción Múltiple -->
+                <div class="row">
+                    {% for option in question.options %}
+                    <div class="col-md-6 mb-2">
+                        <input type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="q{{ question.id }}_{{ loop.index }}"
+                               value="{{ option }}"
+                               class="btn-check" 
+                               required>
+                        <label class="option-label d-block p-3 border rounded" 
+                               for="q{{ question.id }}_{{ loop.index }}">
+                            <span class="badge bg-secondary me-2">{{ ['A', 'B', 'C', 'D'][loop.index0] }}</span>
+                            {{ option }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% elif question.question_type == 'fill_blank' %}
+                <!-- Completar espacios -->
+                <div class="form-floating">
+                    <input type="text" 
+                           class="form-control" 
+                           id="question_{{ question.id }}"
+                           name="question_{{ question.id }}"
+                           placeholder="Tu respuesta"
+                           required>
+                    <label for="question_{{ question.id }}">Escribe tu respuesta</label>
+                </div>
+                
+                {% elif question.question_type == 'translation' %}
+                <!-- Traducción -->
+                <div class="form-floating">
+                    <textarea class="form-control" 
+                              id="question_{{ question.id }}"
+                              name="question_{{ question.id }}"
+                              placeholder="Tu traducción"
+                              style="height: 100px"
+                              required></textarea>
+                    <label for="question_{{ question.id }}">Traduce al inglés</label>
+                </div>
+                
+                {% elif question.question_type == 'writing' %}
+                <!-- Escritura -->
+                <div class="form-floating">
+                    <textarea class="form-control" 
+                              id="question_{{ question.id }}"
+                              name="question_{{ question.id }}"
+                              placeholder="Tu respuesta"
+                              style="height: 150px"
+                              required></textarea>
+                    <label for="question_{{ question.id }}">Escribe tu respuesta</label>
+                </div>
+                <small class="text-muted">Mínimo 20 palabras</small>
+                
+                {% else %}
+                <!-- Por defecto: texto -->
+                <div class="form-floating">
+                    <input type="text" 
+                           class="form-control" 
+                           id="question_{{ question.id }}"
+                           name="question_{{ question.id }}"
+                           placeholder="Tu respuesta"
+                           required>
+                    <label for="question_{{ question.id }}">Tu respuesta</label>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Botones de acción -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            Revisa tus respuestas antes de enviar
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                onclick="confirmExit()">
+                            <i class="bi bi-x-lg"></i> Abandonar
+                        </button>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-send-fill"></i> Enviar Respuestas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal de confirmación de salida -->
+<div class="modal fade" id="exitModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Abandonar el desafío?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Si abandonas, perderás este intento y contará como fallido.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Continuar Desafío
+                </button>
+                <a href="{{ url_for('unit_challenge.unit_requirements', unit_id=unit.id) }}" 
+                   class="btn btn-danger">
+                    Sí, Abandonar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Timer
+    let timeLimit = {{ challenge.time_limit }} * 60; // en segundos
+    const timerElement = document.getElementById('timer');
+    
+    function updateTimer() {
+        const minutes = Math.floor(timeLimit / 60);
+        const seconds = timeLimit % 60;
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Cambiar color según tiempo restante
+        if (timeLimit <= 60) {
+            timerElement.classList.add('danger');
+            timerElement.classList.remove('warning');
+        } else if (timeLimit <= 300) {
+            timerElement.classList.add('warning');
+        }
+        
+        if (timeLimit <= 0) {
+            // Tiempo agotado, enviar automáticamente
+            document.getElementById('challengeForm').submit();
+        } else {
+            timeLimit--;
+            setTimeout(updateTimer, 1000);
+        }
+    }
+    
+    updateTimer();
+    
+    // Confirmación de salida
+    function confirmExit() {
+        const modal = new bootstrap.Modal(document.getElementById('exitModal'));
+        modal.show();
+    }
+    
+    // Prevenir salida accidental
+    window.onbeforeunload = function() {
+        return "¿Estás seguro de que quieres abandonar el desafío?";
+    };
+    
+    // Quitar advertencia al enviar el formulario
+    document.getElementById('challengeForm').addEventListener('submit', function() {
+        window.onbeforeunload = null;
+    });
+</script>
+{% endblock %}

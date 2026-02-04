@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+
+{% block title %}Practicar Phrasal Verbs - English Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .pv-card {
+        transition: transform 0.3s ease;
+    }
+    .pv-card:hover {
+        transform: translateY(-5px);
+    }
+    .option-btn {
+        transition: all 0.2s ease;
+    }
+    .option-btn.correct {
+        background-color: var(--bs-success) !important;
+        color: white !important;
+        border-color: var(--bs-success) !important;
+    }
+    .option-btn.incorrect {
+        background-color: var(--bs-danger) !important;
+        color: white !important;
+        border-color: var(--bs-danger) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-dumbbell text-success me-2"></i>Practicar Phrasal Verbs</h2>
+            <p class="text-muted">Completa las oraciones con el phrasal verb correcto</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-primary text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="score" class="mb-0">0</h4>
+                    <small>Puntos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-success text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="streak" class="mb-0">0</h4>
+                    <small>Racha</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-info text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="correct" class="mb-0">0</h4>
+                    <small>Correctas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-danger text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="incorrect" class="mb-0">0</h4>
+                    <small>Incorrectas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div id="quizContainer" class="card shadow-sm pv-card">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-arrows-alt-h me-2"></i>
+                            <span id="questionNumber">Pregunta 1</span>
+                        </h5>
+                        <span id="levelBadge" class="badge bg-light text-dark">-</span>
+                    </div>
+                </div>
+                <div class="card-body py-5">
+                    <div id="questionType" class="text-center mb-4">
+                        <span class="badge bg-secondary" id="typeBadge">Significado</span>
+                    </div>
+                    
+                    <div id="questionText" class="text-center mb-4">
+                        <p class="lead" id="mainQuestion">Cargando...</p>
+                        <p class="text-muted" id="subQuestion"></p>
+                    </div>
+                    
+                    <div id="optionsContainer" class="row g-3 justify-content-center">
+                        <!-- Options will be loaded here -->
+                    </div>
+                    
+                    <div id="feedback" class="mt-4 text-center" style="display: none;">
+                        <div id="feedbackMessage" class="alert"></div>
+                        <div id="explanationBox" class="bg-light p-3 rounded mb-3" style="display: none;">
+                            <strong>Phrasal Verb:</strong> <span id="pvAnswer"></span>
+                            <br><small class="text-muted" id="pvMeaning"></small>
+                        </div>
+                        <button id="nextBtn" class="btn btn-success" onclick="loadNextQuestion()">
+                            <i class="fas fa-arrow-right me-2"></i>Siguiente
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="resultsContainer" class="card shadow-sm" style="display: none;">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-trophy fa-5x text-warning mb-4"></i>
+                    <h3 class="mb-4">¡Práctica Completada!</h3>
+                    
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-4 col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 id="finalScore" class="text-success mb-0">0</h4>
+                                <small class="text-muted">Puntos Totales</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 id="finalAccuracy" class="text-primary mb-0">0%</h4>
+                                <small class="text-muted">Precisión</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 id="finalStreak" class="text-warning mb-0">0</h4>
+                                <small class="text-muted">Mejor Racha</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-success" onclick="restartQuiz()">
+                            <i class="fas fa-redo me-2"></i>Practicar de Nuevo
+                        </button>
+                        <a href="{{ url_for('idioms.phrasal_verbs_list') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>Ver Todos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let phrasalVerbs = {{ phrasal_verbs|tojson|safe if phrasal_verbs else '[]' }};
+let currentIndex = 0;
+let score = 0;
+let streak = 0;
+let correct = 0;
+let incorrect = 0;
+let maxStreak = 0;
+let questionType = 'meaning'; // 'meaning', 'fill', 'reverse'
+
+const questionTypes = ['meaning', 'fill', 'reverse'];
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function loadQuestion() {
+    if (currentIndex >= phrasalVerbs.length || phrasalVerbs.length === 0) {
+        showResults();
+        return;
+    }
+    
+    const pv = phrasalVerbs[currentIndex];
+    questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+    
+    document.getElementById('questionNumber').textContent = `Pregunta ${currentIndex + 1} de ${phrasalVerbs.length}`;
+    document.getElementById('levelBadge').textContent = pv.level || 'B1';
+    
+    let question = '';
+    let subQuestion = '';
+    let correctAnswer = '';
+    let options = [];
+    
+    const meaning = pv.meaning || 'Significado no disponible';
+    const examples = pv.example_sentences || [];
+    
+    if (questionType === 'meaning') {
+        document.getElementById('typeBadge').textContent = '¿Qué significa?';
+        question = `"${pv.full_form}"`;
+        subQuestion = 'Selecciona el significado correcto';
+        correctAnswer = meaning;
+        
+        options = [correctAnswer];
+        const otherPVs = phrasalVerbs.filter((_, i) => i !== currentIndex);
+        shuffleArray(otherPVs);
+        for (let i = 0; i < Math.min(3, otherPVs.length); i++) {
+            if (otherPVs[i].meaning) {
+                options.push(otherPVs[i].meaning);
+            }
+        }
+    } else if (questionType === 'reverse') {
+        document.getElementById('typeBadge').textContent = '¿Cuál es el phrasal verb?';
+        question = meaning;
+        subQuestion = 'Selecciona el phrasal verb correcto';
+        correctAnswer = pv.full_form;
+        
+        options = [correctAnswer];
+        const otherPVs = phrasalVerbs.filter((_, i) => i !== currentIndex);
+        shuffleArray(otherPVs);
+        for (let i = 0; i < Math.min(3, otherPVs.length); i++) {
+            options.push(otherPVs[i].full_form);
+        }
+    } else {
+        document.getElementById('typeBadge').textContent = 'Completa la oración';
+        if (examples.length > 0) {
+            const example = examples[0];
+            question = example.replace(new RegExp(pv.full_form, 'gi'), '_____');
+            if (question === example) {
+                question = `_____ significa: ${meaning}`;
+            }
+        } else {
+            question = `_____ significa: ${meaning}`;
+        }
+        subQuestion = 'Selecciona el phrasal verb que completa la oración';
+        correctAnswer = pv.full_form;
+        
+        options = [correctAnswer];
+        const otherPVs = phrasalVerbs.filter((_, i) => i !== currentIndex);
+        shuffleArray(otherPVs);
+        for (let i = 0; i < Math.min(3, otherPVs.length); i++) {
+            options.push(otherPVs[i].full_form);
+        }
+    }
+    
+    document.getElementById('mainQuestion').textContent = question;
+    document.getElementById('subQuestion').textContent = subQuestion;
+    
+    shuffleArray(options);
+    
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    options.forEach((option) => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6';
+        
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-outline-success w-100 py-3 option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(option, correctAnswer, pv);
+        
+        col.appendChild(btn);
+        container.appendChild(col);
+    });
+    
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('explanationBox').style.display = 'none';
+    document.getElementById('quizContainer').style.display = 'block';
+    document.getElementById('resultsContainer').style.display = 'none';
+}
+
+function selectAnswer(selected, correctAnswer, pv) {
+    const buttons = document.querySelectorAll('.option-btn');
+    const isCorrect = selected === correctAnswer;
+    
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correctAnswer) {
+            btn.classList.add('correct');
+        } else if (btn.textContent === selected && !isCorrect) {
+            btn.classList.add('incorrect');
+        }
+    });
+    
+    if (isCorrect) {
+        streak++;
+        correct++;
+        score += 10 + (streak > 1 ? streak * 2 : 0);
+        if (streak > maxStreak) maxStreak = streak;
+        
+        document.getElementById('feedbackMessage').className = 'alert alert-success';
+        document.getElementById('feedbackMessage').innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>¡Correcto! +${10 + (streak > 1 ? streak * 2 : 0)} puntos
+        `;
+    } else {
+        streak = 0;
+        incorrect++;
+        
+        document.getElementById('feedbackMessage').className = 'alert alert-danger';
+        document.getElementById('feedbackMessage').innerHTML = `
+            <i class="fas fa-times-circle me-2"></i>Incorrecto
+        `;
+        
+        document.getElementById('pvAnswer').textContent = pv.full_form;
+        document.getElementById('pvMeaning').textContent = pv.meaning || '';
+        document.getElementById('explanationBox').style.display = 'block';
+    }
+    
+    // Update stats
+    document.getElementById('score').textContent = score;
+    document.getElementById('streak').textContent = streak;
+    document.getElementById('correct').textContent = correct;
+    document.getElementById('incorrect').textContent = incorrect;
+    
+    document.getElementById('feedback').style.display = 'block';
+    
+    // Record progress
+    fetch(`/idioms/phrasal-verbs/quiz/${pv.id}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({correct: isCorrect})
+    });
+}
+
+function loadNextQuestion() {
+    currentIndex++;
+    loadQuestion();
+}
+
+function showResults() {
+    document.getElementById('quizContainer').style.display = 'none';
+    document.getElementById('resultsContainer').style.display = 'block';
+    
+    const total = correct + incorrect;
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+    
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('finalAccuracy').textContent = accuracy + '%';
+    document.getElementById('finalStreak').textContent = maxStreak;
+}
+
+function restartQuiz() {
+    currentIndex = 0;
+    score = 0;
+    streak = 0;
+    correct = 0;
+    incorrect = 0;
+    maxStreak = 0;
+    
+    shuffleArray(phrasalVerbs);
+    
+    document.getElementById('score').textContent = '0';
+    document.getElementById('streak').textContent = '0';
+    document.getElementById('correct').textContent = '0';
+    document.getElementById('incorrect').textContent = '0';
+    
+    loadQuestion();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (phrasalVerbs.length > 0) {
+        shuffleArray(phrasalVerbs);
+        loadQuestion();
+    } else {
+        document.getElementById('mainQuestion').textContent = 'No hay phrasal verbs disponibles';
+    }
+});
+</script>
+{% endblock %}

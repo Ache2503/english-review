@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Unidades - Progresión{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-2">
+                <i class="fas fa-trophy text-warning"></i> Mi Progreso de Aprendizaje
+            </h1>
+            <p class="lead text-muted">
+                Completa cada unidad para desbloquear la siguiente. ¡Demuestra tu conocimiento!
+            </p>
+        </div>
+    </div>
+    
+    <!-- Leyenda -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body py-2">
+                    <div class="d-flex flex-wrap gap-3 align-items-center justify-content-center">
+                        <span class="badge bg-success"><i class="fas fa-unlock"></i> Desbloqueada</span>
+                        <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> En Progreso</span>
+                        <span class="badge bg-secondary"><i class="fas fa-lock"></i> Bloqueada</span>
+                        <span class="badge bg-primary"><i class="fas fa-check-circle"></i> Completada</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menú Acordeón por Nivel CEFR -->
+    {% set levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] %}
+    {% set level_colors = {'A1': 'success', 'A2': 'info', 'B1': 'primary', 'B2': 'warning', 'C1': 'danger', 'C2': 'dark'} %}
+    {% set level_names = {'A1': 'Beginner (Principiante)', 'A2': 'Elementary (Elemental)', 'B1': 'Intermediate (Intermedio)', 'B2': 'Upper-Intermediate (Intermedio Alto)', 'C1': 'Advanced (Avanzado)', 'C2': 'Mastery (Maestría)'} %}
+    {% set level_icons = {'A1': 'seedling', 'A2': 'leaf', 'B1': 'tree', 'B2': 'mountain', 'C1': 'crown', 'C2': 'gem'} %}
+    
+    <div class="accordion" id="unitsAccordion">
+        {% for level in levels %}
+        
+        {% set ns = namespace(completed=0, unlocked=0, total=0) %}
+        {% for item in units_status %}
+            {% if level in item.unit.title %}
+                {% set ns.total = ns.total + 1 %}
+                {% if item.challenge_passed %}
+                    {% set ns.completed = ns.completed + 1 %}
+                {% endif %}
+                {% if item.unlocked %}
+                    {% set ns.unlocked = ns.unlocked + 1 %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        <div class="accordion-item border-0 shadow-sm mb-3">
+            <h2 class="accordion-header" id="heading{{ level }}">
+                <button class="accordion-button {% if loop.index > 1 %}collapsed{% endif %} bg-{{ level_colors[level] }} {% if level != 'B2' %}text-white{% else %}text-dark{% endif %}" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ level }}" 
+                        aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}" 
+                        aria-controls="collapse{{ level }}">
+                    <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                        <div>
+                            <i class="fas fa-{{ level_icons[level] }} me-2"></i>
+                            <strong>{{ level }}</strong> - {{ level_names[level] }}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-light text-dark">
+                                {{ ns.total }} unidades
+                            </span>
+                            {% if ns.completed > 0 %}
+                            <span class="badge bg-dark">
+                                <i class="fas fa-check"></i> {{ ns.completed }} completadas
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </button>
+            </h2>
+            <div id="collapse{{ level }}" 
+                 class="accordion-collapse collapse {% if loop.index == 1 %}show{% endif %}" 
+                 aria-labelledby="heading{{ level }}" 
+                 data-bs-parent="#unitsAccordion">
+                <div class="accordion-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for item in units_status %}
+                            {% if level in item.unit.title %}
+                            <div class="list-group-item list-group-item-action py-3 
+                                {% if item.challenge_passed %}list-group-item-success{% endif %}
+                                {% if not item.unlocked %}bg-light{% endif %}">
+                                <div class="row align-items-center">
+                                    <!-- Número de unidad -->
+                                    <div class="col-auto">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center 
+                                            {% if item.challenge_passed %}bg-success{% elif item.unlocked %}bg-{{ level_colors[level] }}{% else %}bg-secondary{% endif %} text-white" 
+                                            style="width: 45px; height: 45px; font-weight: bold;">
+                                            {% if item.challenge_passed %}
+                                                <i class="fas fa-check"></i>
+                                            {% elif not item.unlocked %}
+                                                <i class="fas fa-lock"></i>
+                                            {% else %}
+                                                {{ item.unit.unit_number }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Título y descripción -->
+                                    <div class="col">
+                                        <h6 class="mb-1 {% if not item.unlocked %}text-muted{% endif %}">
+                                            {{ item.unit.title.split(': ')[-1] if ': ' in item.unit.title else item.unit.title }}
+                                        </h6>
+                                        <small class="text-muted d-none d-md-block">
+                                            {{ item.unit.description[:80] }}{% if item.unit.description|length > 80 %}...{% endif %}
+                                        </small>
+                                    </div>
+                                    
+                                    <!-- Indicadores de progreso -->
+                                    <div class="col-auto d-none d-md-block">
+                                        {% if item.unlocked %}
+                                        <div class="d-flex gap-1">
+                                            <span class="badge {% if item.progress.grammar_completed %}bg-success{% else %}bg-light text-muted{% endif %}" 
+                                                  title="Gramática" data-bs-toggle="tooltip">
+                                                <i class="fas fa-book"></i>
+                                            </span>
+                                            <span class="badge {% if item.progress.vocabulary_completed %}bg-success{% else %}bg-light text-muted{% endif %}"
+                                                  title="Vocabulario" data-bs-toggle="tooltip">
+                                                <i class="fas fa-language"></i>
+                                            </span>
+                                            <span class="badge {% if item.progress.exercises_completed %}bg-success{% else %}bg-light text-muted{% endif %}"
+                                                  title="Ejercicios" data-bs-toggle="tooltip">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </span>
+                                            <span class="badge {% if item.challenge_passed %}bg-success{% else %}bg-light text-muted{% endif %}"
+                                                  title="Desafío" data-bs-toggle="tooltip">
+                                                <i class="fas fa-trophy"></i>
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Estado y Acciones -->
+                                    <div class="col-auto">
+                                        {% if item.unlocked %}
+                                            {% if item.challenge_passed %}
+                                                <span class="badge bg-success me-2 d-none d-sm-inline">
+                                                    <i class="fas fa-star"></i> {{ item.progress.challenge_score|int }}%
+                                                </span>
+                                                <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}" 
+                                                   class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-eye"></i> <span class="d-none d-sm-inline">Ver</span>
+                                                </a>
+                                            {% elif item.can_take_challenge %}
+                                                <a href="{{ url_for('unit_challenge.start_challenge', unit_id=item.unit.id) }}" 
+                                                   class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-trophy"></i> <span class="d-none d-sm-inline">Desafío</span>
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}" 
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-play"></i> <span class="d-none d-sm-inline">Estudiar</span>
+                                                </a>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-lock"></i> Bloqueada
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Barra de progreso (si está desbloqueada y no completada) -->
+                                {% if item.unlocked and not item.challenge_passed %}
+                                <div class="mt-2">
+                                    <div class="progress" style="height: 4px;">
+                                        <div class="progress-bar bg-{{ level_colors[level] }}" 
+                                             role="progressbar" 
+                                             style="width: {{ item.progress_percentage }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Estadísticas generales -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-chart-bar text-primary"></i> Resumen de Progreso
+                    </h5>
+                    <div class="row text-center">
+                        {% set total_units = units_status|length %}
+                        {% set completed_units = units_status|selectattr('challenge_passed')|list|length %}
+                        {% set unlocked_units = units_status|selectattr('unlocked')|list|length %}
+                        
+                        <div class="col-3">
+                            <div class="h2 text-primary mb-0">{{ total_units }}</div>
+                            <small class="text-muted">Total</small>
+                        </div>
+                        <div class="col-3">
+                            <div class="h2 text-success mb-0">{{ completed_units }}</div>
+                            <small class="text-muted">Completadas</small>
+                        </div>
+                        <div class="col-3">
+                            <div class="h2 text-warning mb-0">{{ unlocked_units - completed_units }}</div>
+                            <small class="text-muted">En Progreso</small>
+                        </div>
+                        <div class="col-3">
+                            <div class="h2 text-secondary mb-0">{{ total_units - unlocked_units }}</div>
+                            <small class="text-muted">Bloqueadas</small>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mt-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" 
+                             role="progressbar" 
+                             style="width: {{ (completed_units / total_units * 100)|round(1) }}%"
+                             title="Completadas">
+                            {% if completed_units > 0 %}{{ (completed_units / total_units * 100)|round(0)|int }}%{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.accordion-button:not(.collapsed) {
+    box-shadow: none;
+}
+
+.accordion-button.text-white::after {
+    filter: brightness(0) invert(1);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.list-group-item:hover:not(.bg-light) {
+    background-color: #f8f9fa;
+}
+
+.badge {
+    font-weight: 500;
+}
+</style>
+
+<script>
+// Inicializar tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

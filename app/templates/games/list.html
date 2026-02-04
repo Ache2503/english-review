@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Mini Juegos - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-0">
+                <i class="fas fa-gamepad text-info me-2"></i>Mini Juegos
+            </h2>
+            <p class="text-muted">Aprende inglés jugando</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Word Scramble -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <div class="display-4 text-primary mb-3">🔤</div>
+                    <h5 class="card-title">Word Scramble</h5>
+                    <p class="card-text text-muted small">Reordena las letras para formar palabras correctas</p>
+                    
+                    {% if user_stats.get('word_scramble') %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Mejor puntuación</small>
+                        <strong class="text-primary">{{ user_stats['word_scramble'].best_score }}</strong>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Jugar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('games.word_scramble', level='A1') }}">A1 - Beginner</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.word_scramble', level='A2') }}">A2 - Elementary</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.word_scramble', level='B1') }}">B1 - Intermediate</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.word_scramble', level='B2') }}">B2 - Upper Int.</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-play me-1"></i>{{ user_stats.get('word_scramble', {}).get('games_played', 0) }} partidas
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hangman -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <div class="display-4 text-danger mb-3">🎯</div>
+                    <h5 class="card-title">Hangman</h5>
+                    <p class="card-text text-muted small">Adivina la palabra letra por letra antes de que termine</p>
+                    
+                    {% if user_stats.get('hangman') %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Mejor puntuación</small>
+                        <strong class="text-danger">{{ user_stats['hangman'].best_score }}</strong>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Jugar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('games.hangman', level='A1') }}">A1 - Beginner</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.hangman', level='A2') }}">A2 - Elementary</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.hangman', level='B1') }}">B1 - Intermediate</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.hangman', level='B2') }}">B2 - Upper Int.</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-play me-1"></i>{{ user_stats.get('hangman', {}).get('games_played', 0) }} partidas
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Memory Match -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <div class="display-4 text-success mb-3">🧠</div>
+                    <h5 class="card-title">Memory Match</h5>
+                    <p class="card-text text-muted small">Encuentra los pares de palabras inglés-español</p>
+                    
+                    {% if user_stats.get('memory') %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Mejor puntuación</small>
+                        <strong class="text-success">{{ user_stats['memory'].best_score }}</strong>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Jugar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('games.memory_game', level='A1') }}">A1 - Beginner</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.memory_game', level='A2') }}">A2 - Elementary</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.memory_game', level='B1') }}">B1 - Intermediate</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.memory_game', level='B2') }}">B2 - Upper Int.</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-play me-1"></i>{{ user_stats.get('memory', {}).get('games_played', 0) }} partidas
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fill the Gaps -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center">
+                    <div class="display-4 text-warning mb-3">📝</div>
+                    <h5 class="card-title">Fill the Gaps</h5>
+                    <p class="card-text text-muted small">Completa las oraciones con la palabra correcta</p>
+                    
+                    {% if user_stats.get('fill_gaps') %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Mejor puntuación</small>
+                        <strong class="text-warning">{{ user_stats['fill_gaps'].best_score }}</strong>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Jugar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('games.fill_gaps', level='A1') }}">A1 - Beginner</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.fill_gaps', level='A2') }}">A2 - Elementary</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.fill_gaps', level='B1') }}">B1 - Intermediate</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.fill_gaps', level='B2') }}">B2 - Upper Int.</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-play me-1"></i>{{ user_stats.get('fill_gaps', {}).get('games_played', 0) }} partidas
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Summary -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Tus Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="display-6 text-primary">
+                                {{ user_stats.values()|selectattr('games_played')|map(attribute='games_played')|sum }}
+                            </div>
+                            <small class="text-muted">Partidas jugadas</small>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="display-6 text-success">
+                                {{ user_stats.values()|selectattr('best_score')|map(attribute='best_score')|max|default(0) }}
+                            </div>
+                            <small class="text-muted">Mejor puntuación</small>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="display-6 text-warning">
+                                {{ "%.0f"|format(user_stats.values()|selectattr('avg_score')|map(attribute='avg_score')|list|sum / (user_stats.values()|selectattr('avg_score')|list|length or 1)) }}
+                            </div>
+                            <small class="text-muted">Promedio</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6 text-info">
+                                {{ games|length }}
+                            </div>
+                            <small class="text-muted">Juegos disponibles</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ exam.title }} - Examen en Progreso{% endblock %}
+
+{% block extra_head %}
+<style>
+    .question-nav .btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        line-height: 40px;
+    }
+    .question-nav .answered {
+        background-color: var(--bs-success);
+        color: white;
+    }
+    .question-nav .current {
+        background-color: var(--bs-primary);
+        color: white;
+    }
+    .sticky-top-exam {
+        position: sticky;
+        top: 80px;
+    }
+    .timer-warning {
+        animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-9">
+            <form id="examForm" method="POST" action="{{ url_for('exams.submit_exam', exam_id=exam.id) }}">
+                <input type="hidden" name="attempt_id" value="{{ attempt.id }}">
+                
+                {% for section in sections %}
+                <div class="section-container mb-4" data-section="{{ section.id }}">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <span class="badge bg-light text-dark me-2">Sección {{ section.order_num }}</span>
+                                    {{ section.section_type|capitalize }}
+                                </h5>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-clock me-1"></i>
+                                    <span class="section-time" data-minutes="{{ section.time_limit_minutes }}">
+                                        {{ section.time_limit_minutes }}:00
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if section.instructions %}
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>{{ section.instructions }}
+                            </div>
+                            {% endif %}
+                            
+                            {% for question in section.questions %}
+                            <div class="question-item mb-4 p-3 border rounded" 
+                                 id="question-{{ question.id }}"
+                                 data-question="{{ question.id }}">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h6 class="mb-0">
+                                        <span class="badge bg-secondary me-2">{{ loop.index }}</span>
+                                        Pregunta
+                                    </h6>
+                                    <span class="badge bg-light text-dark">{{ question.points }} pts</span>
+                                </div>
+                                
+                                <p class="mb-3">{{ question.question_text }}</p>
+                                
+                                {% if question.question_type == 'multiple_choice' %}
+                                <div class="options">
+                                    {% for option in question.options %}
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" 
+                                               name="answer_{{ question.id }}" 
+                                               value="{{ option }}"
+                                               id="option_{{ question.id }}_{{ loop.index }}">
+                                        <label class="form-check-label" for="option_{{ question.id }}_{{ loop.index }}">
+                                            {{ option }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% elif question.question_type == 'true_false' %}
+                                <div class="options">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" 
+                                               name="answer_{{ question.id }}" 
+                                               value="true"
+                                               id="option_{{ question.id }}_true">
+                                        <label class="form-check-label" for="option_{{ question.id }}_true">
+                                            True
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" 
+                                               name="answer_{{ question.id }}" 
+                                               value="false"
+                                               id="option_{{ question.id }}_false">
+                                        <label class="form-check-label" for="option_{{ question.id }}_false">
+                                            False
+                                        </label>
+                                    </div>
+                                </div>
+                                {% elif question.question_type == 'fill_blank' %}
+                                <input type="text" class="form-control" 
+                                       name="answer_{{ question.id }}"
+                                       placeholder="Escribe tu respuesta...">
+                                {% elif question.question_type == 'essay' %}
+                                <textarea class="form-control" name="answer_{{ question.id }}" 
+                                          rows="5" placeholder="Escribe tu respuesta..."></textarea>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="text-center mb-4">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="confirmSubmit()">
+                        <i class="fas fa-paper-plane me-2"></i>Enviar Examen
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-lg-3">
+            <div class="sticky-top-exam">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Tiempo Total</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div id="totalTimer" class="display-5 fw-bold text-primary">
+                            {{ exam.total_time_minutes }}:00
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-list-ol me-2"></i>Navegación</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="questionNav" class="question-nav d-flex flex-wrap gap-2">
+                            {% set q_num = namespace(value=1) %}
+                            {% for section in sections %}
+                                {% for question in section.questions %}
+                                <button type="button" class="btn btn-outline-secondary" 
+                                        onclick="scrollToQuestion('{{ question.id }}')"
+                                        data-question="{{ question.id }}">
+                                    {{ q_num.value }}
+                                </button>
+                                {% set q_num.value = q_num.value + 1 %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between text-muted small mb-2">
+                            <span>Respondidas</span>
+                            <span id="answeredCount">0 / {{ total_questions }}</span>
+                        </div>
+                        <div class="progress">
+                            <div id="progressBar" class="progress-bar bg-success" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Envío</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas enviar el examen?</p>
+                <p class="text-muted" id="submitStatus"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continuar</button>
+                <button type="button" class="btn btn-primary" onclick="submitExam()">
+                    <i class="fas fa-paper-plane me-1"></i>Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const totalMinutes = {{ exam.total_time_minutes }};
+const totalQuestions = {{ total_questions }};
+let timeRemaining = totalMinutes * 60;
+let timerInterval;
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        document.getElementById('totalTimer').textContent = display;
+        
+        if (timeRemaining <= 300) {
+            document.getElementById('totalTimer').classList.add('text-danger', 'timer-warning');
+        }
+        
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert('¡Se acabó el tiempo! El examen se enviará automáticamente.');
+            submitExam();
+        }
+    }, 1000);
+}
+
+function scrollToQuestion(questionId) {
+    const element = document.getElementById('question-' + questionId);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function updateProgress() {
+    let answered = 0;
+    const navButtons = document.querySelectorAll('#questionNav button');
+    
+    navButtons.forEach(button => {
+        const questionId = button.dataset.question;
+        const inputs = document.querySelectorAll(`[name="answer_${questionId}"]`);
+        let isAnswered = false;
+        
+        inputs.forEach(input => {
+            if (input.type === 'radio' || input.type === 'checkbox') {
+                if (input.checked) isAnswered = true;
+            } else {
+                if (input.value.trim()) isAnswered = true;
+            }
+        });
+        
+        if (isAnswered) {
+            answered++;
+            button.classList.add('answered');
+            button.classList.remove('btn-outline-secondary');
+        } else {
+            button.classList.remove('answered');
+            button.classList.add('btn-outline-secondary');
+        }
+    });
+    
+    document.getElementById('answeredCount').textContent = `${answered} / ${totalQuestions}`;
+    document.getElementById('progressBar').style.width = `${(answered / totalQuestions) * 100}%`;
+}
+
+function confirmSubmit() {
+    const answered = document.querySelectorAll('#questionNav button.answered').length;
+    const remaining = totalQuestions - answered;
+    
+    let message = `Has respondido ${answered} de ${totalQuestions} preguntas.`;
+    if (remaining > 0) {
+        message += ` Tienes ${remaining} pregunta${remaining > 1 ? 's' : ''} sin responder.`;
+    }
+    
+    document.getElementById('submitStatus').textContent = message;
+    new bootstrap.Modal(document.getElementById('confirmModal')).show();
+}
+
+function submitExam() {
+    clearInterval(timerInterval);
+    document.getElementById('examForm').submit();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    startTimer();
+    
+    document.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('change', updateProgress);
+        input.addEventListener('input', updateProgress);
+    });
+    
+    updateProgress();
+});
+
+window.addEventListener('beforeunload', function(e) {
+    e.preventDefault();
+    e.returnValue = '';
+});
+</script>
+{% endblock %}

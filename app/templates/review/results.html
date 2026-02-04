@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultados del Repaso - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Resultado principal -->
+            <div class="card shadow-sm text-center mb-4">
+                <div class="card-body py-5">
+                    {% if results.accuracy >= 80 %}
+                    <i class="fas fa-trophy fa-5x text-warning mb-4"></i>
+                    <h2 class="text-success">¡Excelente trabajo!</h2>
+                    {% elif results.accuracy >= 60 %}
+                    <i class="fas fa-star fa-5x text-primary mb-4"></i>
+                    <h2 class="text-primary">¡Buen trabajo!</h2>
+                    {% else %}
+                    <i class="fas fa-book-reader fa-5x text-info mb-4"></i>
+                    <h2 class="text-info">¡Sigue practicando!</h2>
+                    {% endif %}
+                    
+                    <p class="lead text-muted mb-4">Sesión de repaso completada</p>
+                    
+                    <!-- Estadísticas de la sesión -->
+                    <div class="row g-4 justify-content-center mb-4">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h3 class="mb-0 text-primary">{{ results.accuracy }}%</h3>
+                                <small class="text-muted">Precisión</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h3 class="mb-0 text-success">{{ results.correct_count }}</h3>
+                                <small class="text-muted">Correctas</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h3 class="mb-0 text-danger">{{ results.wrong_count }}</h3>
+                                <small class="text-muted">Incorrectas</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h3 class="mb-0 text-info">{{ results.duration_minutes }}</h3>
+                                <small class="text-muted">Minutos</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Barra de progreso visual -->
+                    <div class="progress mb-4" style="height: 25px;">
+                        <div class="progress-bar bg-success" 
+                             style="width: {{ (results.correct_count / results.total_items * 100)|int }}%">
+                            {{ results.correct_count }} correctas
+                        </div>
+                        <div class="progress-bar bg-danger" 
+                             style="width: {{ (results.wrong_count / results.total_items * 100)|int }}%">
+                            {{ results.wrong_count }} incorrectas
+                        </div>
+                    </div>
+                    
+                    <!-- Áreas de enfoque -->
+                    {% if results.focus_areas %}
+                    <div class="mb-4">
+                        <small class="text-muted">Áreas practicadas:</small>
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            {% for area in results.focus_areas %}
+                            <span class="badge bg-secondary">{{ area }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Acciones -->
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ url_for('review.start_session') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-redo me-2"></i>Nueva Sesión
+                        </a>
+                        <a href="{{ url_for('review.dashboard') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-chart-bar me-2"></i>Ver Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estadísticas actualizadas -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Tu Progreso Actualizado</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Flashcards</span>
+                                <span>{{ stats.flashcards.progress }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" style="width: {{ stats.flashcards.progress }}%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Vocabulario</span>
+                                <span>{{ stats.vocabulary.progress }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: {{ stats.vocabulary.progress }}%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Idioms</span>
+                                <span>{{ stats.idioms.progress }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: {{ stats.idioms.progress }}%"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Phrasal Verbs</span>
+                                <span>{{ stats.phrasal_verbs.progress }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: {{ stats.phrasal_verbs.progress }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recomendaciones -->
+            {% if recommendations %}
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Siguiente Paso Recomendado</h5>
+                </div>
+                <div class="card-body">
+                    {% set rec = recommendations[0] %}
+                    <div class="d-flex align-items-start">
+                        <span class="badge bg-{{ 'danger' if rec.priority == 'high' else 'warning' if rec.priority == 'medium' else 'secondary' }} me-3 p-2">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <div>
+                            <h6 class="mb-1">{{ rec.title }}</h6>
+                            <p class="text-muted mb-2">{{ rec.description }}</p>
+                            {% if rec.action_url %}
+                            <a href="{{ rec.action_url }}" class="btn btn-sm btn-outline-primary">
+                                {{ rec.action }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+
+{% block title %}Analizador de Escritura - English Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .writing-area {
+        min-height: 300px;
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    .feedback-panel {
+        position: sticky;
+        top: 20px;
+    }
+    .error-highlight {
+        background-color: #fff3cd;
+        border-bottom: 2px wavy #ffc107;
+        cursor: pointer;
+    }
+    .error-highlight.grammar {
+        background-color: #f8d7da;
+        border-bottom-color: #dc3545;
+    }
+    .error-highlight.spelling {
+        background-color: #cce5ff;
+        border-bottom-color: #0d6efd;
+    }
+    .error-highlight.style {
+        background-color: #d4edda;
+        border-bottom-color: #28a745;
+    }
+    .live-stats {
+        font-size: 0.9rem;
+    }
+    .score-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+    .error-list-item {
+        border-left: 3px solid;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background: #f8f9fa;
+    }
+    .error-list-item.high { border-left-color: #dc3545; }
+    .error-list-item.medium { border-left-color: #ffc107; }
+    .error-list-item.low { border-left-color: #28a745; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-spell-check text-primary me-2"></i>Analizador de Escritura</h2>
+            <p class="text-muted">Escribe en inglés y recibe correcciones automáticas en tiempo real</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Área de escritura -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-pencil-alt me-2"></i>Tu Texto</h5>
+                    <div class="live-stats text-muted">
+                        <span id="wordCount">0</span> palabras |
+                        <span id="charCount">0</span> caracteres
+                    </div>
+                </div>
+                <div class="card-body">
+                    <textarea id="writingArea" 
+                              class="form-control writing-area" 
+                              placeholder="Comienza a escribir tu texto en inglés aquí..."
+                              oninput="handleInput()"></textarea>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <div>
+                        <select id="unitSelect" class="form-select form-select-sm d-inline-block w-auto me-2">
+                            <option value="">Sin contexto de unidad</option>
+                            {% for i in range(7, 13) %}
+                            <option value="{{ i }}">Unit {{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">(Opcional: análisis por gramática de unidad)</small>
+                    </div>
+                    <button id="analyzeBtn" class="btn btn-primary" onclick="analyzeText()">
+                        <i class="fas fa-search me-2"></i>Analizar Ahora
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Sugerencias de mejora -->
+            <div id="improvementsPanel" class="card shadow-sm" style="display: none;">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Sugerencias de Mejora</h5>
+                </div>
+                <div class="card-body">
+                    <div id="improvementsList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de feedback -->
+        <div class="col-lg-5">
+            <div class="feedback-panel">
+                <!-- Puntuación -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center py-4">
+                        <div id="scoreContainer" style="display: none;">
+                            <div id="scoreCircle" class="score-circle mb-3">
+                                <span id="scoreValue">--</span>
+                            </div>
+                            <h5 id="gradeText">Escribe algo para comenzar</h5>
+                            <p class="text-muted small mb-0" id="summaryText"></p>
+                        </div>
+                        <div id="placeholderText">
+                            <i class="fas fa-keyboard fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Escribe al menos 10 caracteres para recibir análisis</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de errores -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-exclamation-circle me-2"></i>Correcciones</h5>
+                        <span id="errorCount" class="badge bg-secondary">0</span>
+                    </div>
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                        <div id="errorsList">
+                            <p class="text-muted text-center">Los errores aparecerán aquí</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fortalezas -->
+                <div id="strengthsPanel" class="card shadow-sm mb-4" style="display: none;">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Fortalezas</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="strengthsList" class="list-unstyled mb-0"></ul>
+                    </div>
+                </div>
+                
+                <!-- Estadísticas detalladas -->
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Estadísticas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center small">
+                            <div class="col-4">
+                                <strong id="sentenceCount">0</strong>
+                                <br><span class="text-muted">Oraciones</span>
+                            </div>
+                            <div class="col-4">
+                                <strong id="uniqueWords">0</strong>
+                                <br><span class="text-muted">Palabras únicas</span>
+                            </div>
+                            <div class="col-4">
+                                <strong id="avgLength">0</strong>
+                                <br><span class="text-muted">Long. promedio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let analysisTimeout = null;
+let lastAnalyzedText = '';
+
+// Manejar input con debounce
+function handleInput() {
+    const text = document.getElementById('writingArea').value;
+    
+    // Actualizar contadores en tiempo real
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    document.getElementById('wordCount').textContent = words.length;
+    document.getElementById('charCount').textContent = text.length;
+    
+    // Debounce para análisis automático
+    clearTimeout(analysisTimeout);
+    
+    if (text.length >= 20 && text !== lastAnalyzedText) {
+        analysisTimeout = setTimeout(() => {
+            quickAnalyze(text);
+        }, 1500); // Analizar después de 1.5 segundos de inactividad
+    }
+}
+
+// Análisis rápido (mientras escribe)
+async function quickAnalyze(text) {
+    try {
+        const response = await fetch('{{ url_for("writing.quick_check") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text })
+        });
+        
+        const result = await response.json();
+        updateQuickFeedback(result);
+        
+    } catch (error) {
+        console.error('Error en análisis rápido:', error);
+    }
+}
+
+// Actualizar feedback rápido
+function updateQuickFeedback(result) {
+    document.getElementById('placeholderText').style.display = 'none';
+    document.getElementById('scoreContainer').style.display = 'block';
+    
+    const scoreValue = document.getElementById('scoreValue');
+    const scoreCircle = document.getElementById('scoreCircle');
+    const gradeText = document.getElementById('gradeText');
+    const errorCount = document.getElementById('errorCount');
+    
+    scoreValue.textContent = result.score;
+    errorCount.textContent = result.error_count;
+    
+    // Color del círculo según puntuación
+    if (result.score >= 80) {
+        scoreCircle.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+        scoreCircle.style.color = 'white';
+        gradeText.textContent = result.grade + ' - ¡Excelente!';
+    } else if (result.score >= 60) {
+        scoreCircle.style.background = 'linear-gradient(135deg, #ffc107, #fd7e14)';
+        scoreCircle.style.color = 'white';
+        gradeText.textContent = result.grade + ' - Buen trabajo';
+    } else {
+        scoreCircle.style.background = 'linear-gradient(135deg, #dc3545, #e83e8c)';
+        scoreCircle.style.color = 'white';
+        gradeText.textContent = result.grade + ' - Necesita mejorar';
+    }
+    
+    // Mostrar errores rápidos
+    if (result.errors && result.errors.length > 0) {
+        const errorsList = document.getElementById('errorsList');
+        errorsList.innerHTML = result.errors.map(e => `
+            <div class="error-list-item medium">
+                <small>${e}</small>
+            </div>
+        `).join('');
+    }
+}
+
+// Análisis completo
+async function analyzeText() {
+    const text = document.getElementById('writingArea').value;
+    const unitNumber = document.getElementById('unitSelect').value;
+    
+    if (text.length < 10) {
+        alert('Por favor escribe al menos 10 caracteres');
+        return;
+    }
+    
+    const btn = document.getElementById('analyzeBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analizando...';
+    
+    try {
+        const response = await fetch('{{ url_for("writing.analyze_text") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                text: text, 
+                unit_number: unitNumber || null,
+                format: 'json'
+            })
+        });
+        
+        const result = await response.json();
+        lastAnalyzedText = text;
+        updateFullFeedback(result);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al analizar el texto');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-search me-2"></i>Analizar Ahora';
+    }
+}
+
+// Actualizar feedback completo
+function updateFullFeedback(result) {
+    // Actualizar puntuación
+    document.getElementById('placeholderText').style.display = 'none';
+    document.getElementById('scoreContainer').style.display = 'block';
+    
+    const scoreValue = document.getElementById('scoreValue');
+    const scoreCircle = document.getElementById('scoreCircle');
+    const gradeText = document.getElementById('gradeText');
+    const summaryText = document.getElementById('summaryText');
+    const errorCount = document.getElementById('errorCount');
+    
+    scoreValue.textContent = result.score;
+    errorCount.textContent = result.summary.total_errors;
+    
+    // Color según puntuación
+    if (result.score >= 80) {
+        scoreCircle.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+        scoreCircle.style.color = 'white';
+        gradeText.textContent = result.grade + ' - ¡Excelente!';
+    } else if (result.score >= 60) {
+        scoreCircle.style.background = 'linear-gradient(135deg, #ffc107, #fd7e14)';
+        scoreCircle.style.color = 'white';
+        gradeText.textContent = result.grade + ' - Buen trabajo';
+    } else {
+        scoreCircle.style.background = 'linear-gradient(135deg, #dc3545, #e83e8c)';
+        scoreCircle.style.color = 'white';
+        gradeText.textContent = result.grade + ' - Necesita mejorar';
+    }
+    
+    summaryText.textContent = `${result.summary.word_count} palabras, ${result.summary.sentence_count} oraciones, ${result.summary.grammar_errors} errores gramaticales`;
+    
+    // Lista de errores
+    const errorsList = document.getElementById('errorsList');
+    if (result.errors && result.errors.length > 0) {
+        errorsList.innerHTML = result.errors.map(e => `
+            <div class="error-list-item ${e.severity}">
+                <div class="d-flex justify-content-between">
+                    <strong class="text-${e.type === 'grammar' ? 'danger' : e.type === 'spelling' ? 'primary' : 'success'}">
+                        ${e.type}
+                    </strong>
+                    ${e.original ? `<code>${e.original}</code>` : ''}
+                </div>
+                <small>${e.message}</small>
+                ${e.suggestions && e.suggestions.length > 0 ? `
+                    <div class="mt-1">
+                        <small class="text-success">→ ${e.suggestions.join(', ')}</small>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    } else {
+        errorsList.innerHTML = '<p class="text-success text-center"><i class="fas fa-check-circle me-2"></i>¡Sin errores detectados!</p>';
+    }
+    
+    // Fortalezas
+    const strengthsPanel = document.getElementById('strengthsPanel');
+    const strengthsList = document.getElementById('strengthsList');
+    if (result.strengths && result.strengths.length > 0) {
+        strengthsPanel.style.display = 'block';
+        strengthsList.innerHTML = result.strengths.map(s => `
+            <li class="mb-1"><i class="fas fa-check text-success me-2"></i>${s}</li>
+        `).join('');
+    } else {
+        strengthsPanel.style.display = 'none';
+    }
+    
+    // Mejoras
+    const improvementsPanel = document.getElementById('improvementsPanel');
+    const improvementsList = document.getElementById('improvementsList');
+    if (result.improvements && result.improvements.length > 0) {
+        improvementsPanel.style.display = 'block';
+        improvementsList.innerHTML = result.improvements.map(i => `
+            <div class="alert alert-info py-2 mb-2">
+                <i class="fas fa-lightbulb me-2"></i>${i}
+            </div>
+        `).join('');
+    } else {
+        improvementsPanel.style.display = 'none';
+    }
+    
+    // Estadísticas
+    document.getElementById('sentenceCount').textContent = result.statistics.sentence_count;
+    document.getElementById('uniqueWords').textContent = result.statistics.unique_words;
+    document.getElementById('avgLength').textContent = result.statistics.avg_sentence_length;
+}
+</script>
+{% endblock %}

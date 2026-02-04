@@ -166,133 +166,265 @@ UNIT_EXPLANATIONS = {
     }
 }
 
-# Explicaciones de temas específicos
+# Explicaciones de temas específicos - Actualizados para coincidir con la BD
 TOPIC_EXPLANATIONS = {
-    "Felicidad": {
+    # === A1 TOPICS ===
+    "Clothes": {
         "sections": [
             {
-                "title": "¿Qué es la Felicidad?",
-                "content": "La felicidad (happiness) es uno de los sentimientos más buscados en la vida. En diferentes culturas tiene diferentes significados: para algunos es logro material, para otros es paz interior, para otros es conexión social. En esta sección exploramos cómo el inglés nos ayuda a hablar sobre este concepto universal."
+                "title": "Vocabulario de Ropa",
+                "content": "Shirt (camisa), pants/trousers (pantalones), dress (vestido), skirt (falda), shoes (zapatos), jacket (chaqueta), coat (abrigo), hat (sombrero), socks (calcetines), underwear (ropa interior). Este vocabulario básico te permite hablar sobre lo que llevas puesto."
             },
             {
-                "title": "Vocabulario de Emociones",
-                "content": "Happy (feliz), content (satisfecho), joyful (gozoso), cheerful (alegre), blissful (dichoso), delighted (encantado). Cada palabra tiene matices diferentes que permiten expresar niveles distintos de felicidad."
+                "title": "Describiendo Ropa",
+                "content": "Big/small, long/short, tight/loose, comfortable, stylish, casual, formal. Usa estos adjetivos para describir cómo te queda la ropa: 'This shirt is too tight' o 'These shoes are very comfortable'."
             },
             {
-                "title": "Factores de la Felicidad",
-                "content": "Relaciones (relationships), logros (achievements), salud (health), propósito (purpose), gratitud (gratitude). Al hablar sobre qué nos hace felices, usamos este vocabulario para expresar qué es importante para nosotros."
+                "title": "Comprando Ropa",
+                "content": "Can I try this on? / What size is this? / Do you have this in blue? / How much does it cost? Frases esenciales para ir de compras en países de habla inglesa."
             }
         ]
     },
-    "Internet y el cerebro": {
+    "Weather": {
         "sections": [
             {
-                "title": "Cómo Internet Afecta el Cerebro",
-                "content": "Research (investigación) ha mostrado que internet cambia cómo pensamos, recordamos y nos concentramos. Términos como dopamine, attention span, digital addiction son cruciales para esta conversación."
+                "title": "Condiciones Climáticas",
+                "content": "Sunny (soleado), cloudy (nublado), rainy (lluvioso), windy (ventoso), snowy (nevado), foggy (neblinoso), stormy (tormentoso). Vocabulario esencial para hablar sobre el clima."
             },
             {
-                "title": "Vocabulario Técnico",
-                "content": "Neural pathways (caminos neurales), screen time (tiempo de pantalla), cognitive load (carga cognitiva), digital distraction (distracción digital). Estos términos permiten análisis profundos sobre impacto de tecnología."
+                "title": "Expresiones del Clima",
+                "content": "It's hot/cold/warm/cool. It's raining/snowing. The sun is shining. It's pouring (llueve a cántaros). There's a storm coming. Aprende a describir el tiempo atmosférico."
             },
             {
-                "title": "Impacto Social",
-                "content": "Debatir sobre si internet nos vuelve más inteligentes o menos atentos, cómo afecta a jóvenes, y cómo mantener equilibrio saludable con la tecnología."
+                "title": "Conversación sobre el Clima",
+                "content": "En inglés, hablar del clima es muy común para iniciar conversaciones: 'Nice weather, isn't it?' / 'Terrible day, right?' Es una forma educada de romper el hielo."
             }
         ]
     },
-    "Inteligencia": {
+    "Hobbies": {
         "sections": [
             {
-                "title": "Tipos de Inteligencia",
-                "content": "Intelligence (inteligencia) no es solo IQ. Howard Gardner describió múltiples tipos: linguistic, logical-mathematical, spatial, musical, bodily-kinesthetic, interpersonal, intrapersonal, naturalistic."
+                "title": "Pasatiempos Comunes",
+                "content": "Reading (leer), swimming (nadar), playing sports (hacer deportes), cooking (cocinar), gardening (jardinería), painting (pintar), playing music (tocar música), watching movies (ver películas)."
             },
             {
-                "title": "Midiendo Inteligencia",
-                "content": "IQ test, problem-solving, creativity, adaptability. Diferentes culturas valoran diferentes aspectos de la inteligencia."
+                "title": "Hablando de Gustos",
+                "content": "I like/love/enjoy + gerund: 'I love reading books' / 'I enjoy playing tennis'. Para negativos: 'I don't like cooking' / 'I hate waking up early'."
             },
             {
-                "title": "Inteligencia Emocional",
-                "content": "Emotional intelligence (IE) es cada vez más valorada en el mundo laboral moderno. Incluye self-awareness, empathy, social skills, self-regulation."
+                "title": "Preguntas sobre Hobbies",
+                "content": "What do you like to do in your free time? / Do you have any hobbies? / What are you into? / How often do you...? Preguntas útiles para conocer a alguien."
             }
         ]
     },
-    "Gustos musicales": {
+    "Body Parts": {
         "sections": [
             {
-                "title": "Géneros Musicales",
-                "content": "Rock, pop, jazz, classical, hip-hop, country, electronic, indie, folk, reggae. Cada género tiene características distintas y culturas asociadas."
+                "title": "Partes del Cuerpo",
+                "content": "Head (cabeza), face (cara), eyes (ojos), nose (nariz), mouth (boca), ears (orejas), arms (brazos), hands (manos), fingers (dedos), legs (piernas), feet (pies), back (espalda)."
             },
             {
-                "title": "Describiendo Música",
-                "content": "Melody (melodía), rhythm (ritmo), harmony (armonía), beat (pulso), tempo (tempo). Estos términos te permiten describir qué te gusta sobre la música de forma técnica."
+                "title": "Describiendo Personas",
+                "content": "She has blue eyes. He has long hair. They are tall/short. She has a beautiful smile. Usa 'have/has' para describir características físicas."
             },
             {
-                "title": "Argumentando Gustos",
-                "content": "I prefer rock because... / I'm not into pop because... / I appreciate classical music for its complexity. Expresar por qué te gusta algo es más interesante que solo decir que te gusta."
+                "title": "En el Médico",
+                "content": "My head hurts. I have a stomachache. My arm is broken. I feel dizzy. Vocabulario esencial para describir problemas de salud y visitar al doctor."
             }
         ]
     },
-    "Gastos": {
+    # === A2-B1 TOPICS ===
+    "Sports": {
         "sections": [
             {
-                "title": "Categorías de Gastos",
-                "content": "Housing (vivienda), food (comida), transportation (transporte), entertainment (entretenimiento), utilities (servicios), education (educación). Entender estas categorías es esencial para hablar sobre dinero."
+                "title": "Deportes Populares",
+                "content": "Football/Soccer, basketball, tennis, swimming, running, cycling, volleyball, golf, baseball, rugby. Cada deporte tiene su propio vocabulario específico."
             },
             {
-                "title": "Verbos de Dinero",
-                "content": "Spend (gastar), cost (costar), afford (poder permitirse), save (ahorrar), invest (invertir), budget (presupuestar). Estos verbos te permiten hablar sobre acciones financieras."
+                "title": "Vocabulario Deportivo",
+                "content": "Match/game (partido), team (equipo), player (jugador), coach (entrenador), score (puntuación), win/lose/draw (ganar/perder/empatar), championship (campeonato)."
             },
             {
-                "title": "Prudencia Financiera",
-                "content": "Unnecessary spending (gasto innecesario), impulse purchase (compra impulsiva), financial planning (planificación financiera). Aprender a hablar sobre finanzas inteligentes."
+                "title": "Hablando de Deportes",
+                "content": "I play tennis. I go swimming. I do yoga. Nota: usamos 'play' para deportes de equipo, 'go' para actividades terminadas en -ing, y 'do' para artes marciales y yoga."
             }
         ]
     },
-    "Dispositivos": {
+    "Conservation": {
         "sections": [
             {
-                "title": "Tecnología Cotidiana",
-                "content": "Smartphone, laptop, tablet, smartwatch, headphones, camera. Estos dispositivos están en nuestras vidas diarias y necesitamos vocabulario para hablar sobre ellos."
+                "title": "Vocabulario Ambiental",
+                "content": "Environment (medio ambiente), pollution (contaminación), recycling (reciclaje), climate change (cambio climático), renewable energy (energía renovable), endangered species (especies en peligro)."
             },
             {
-                "title": "Características y Funciones",
-                "content": "Display, processor, battery, memory, storage, camera quality. Al describir dispositivos, necesitas vocabulario técnico pero accesible."
+                "title": "Acciones Ecológicas",
+                "content": "Reduce, reuse, recycle. Save water/energy. Use public transport. Plant trees. Avoid plastic. Frases para hablar sobre cómo cuidar el planeta."
             },
             {
-                "title": "Impacto en Nuestras Vidas",
-                "content": "Connectivity (conectividad), convenience (conveniencia), distraction (distracción), dependence (dependencia). Estos conceptos permiten reflexionar sobre nuestra relación con la tecnología."
+                "title": "Problemas Ambientales",
+                "content": "Deforestation (deforestación), global warming (calentamiento global), ocean pollution (contaminación oceánica), extinction (extinción). Vocabulario para discutir problemas ecológicos."
             }
         ]
     },
-    "Maravillas naturales": {
+    "Artificial Intelligence": {
         "sections": [
             {
-                "title": "Paisajes Espectaculares",
-                "content": "Mountains (montañas), waterfalls (cascadas), forests (bosques), beaches (playas), deserts (desiertos), canyons (cañones). El mundo natural ofrece una variedad inmensa de paisajes."
+                "title": "Conceptos Básicos de IA",
+                "content": "Artificial Intelligence (IA), machine learning (aprendizaje automático), algorithm (algoritmo), data (datos), neural network (red neuronal), automation (automatización)."
             },
             {
-                "title": "Describiendo la Naturaleza",
-                "content": "Breathtaking (impresionante), majestic (majestuoso), pristine (prístino), rugged (accidentado), serene (sereno), lush (exuberante). Estos adjetivos enriquecen tu descripción de la naturaleza."
+                "title": "Aplicaciones de IA",
+                "content": "Virtual assistants (asistentes virtuales), self-driving cars (coches autónomos), facial recognition (reconocimiento facial), chatbots, recommendation systems (sistemas de recomendación)."
             },
             {
-                "title": "Conservación",
-                "content": "Muchas maravillas naturales están amenazadas. Términos como endangered, protected status, conservation effort son cruciales en conversaciones modernas."
+                "title": "Debate sobre IA",
+                "content": "Will AI replace jobs? Is AI dangerous? Can machines think? Vocabulario y estructuras para debatir sobre el impacto de la inteligencia artificial en la sociedad."
             }
         ]
     },
-    "Noticias online": {
+    "Climate Change": {
         "sections": [
             {
-                "title": "Fuentes de Noticias",
-                "content": "News outlet (medio de comunicación), journalist (periodista), editor, publisher (editorial). Entender la estructura de las organizaciones de medios ayuda a analizar noticias críticamente."
+                "title": "Causas del Cambio Climático",
+                "content": "Greenhouse gases (gases de efecto invernadero), carbon emissions (emisiones de carbono), fossil fuels (combustibles fósiles), deforestation (deforestación)."
             },
             {
-                "title": "Tipos de Noticias",
-                "content": "Breaking news (noticias de última hora), feature story (reportaje), opinion piece (artículo de opinión), investigative journalism (periodismo investigativo), bias (sesgo)."
+                "title": "Efectos del Cambio Climático",
+                "content": "Rising sea levels (aumento del nivel del mar), extreme weather (clima extremo), droughts (sequías), floods (inundaciones), melting ice caps (derretimiento de glaciares)."
             },
             {
-                "title": "Lectura Crítica",
-                "content": "Source credibility (credibilidad de fuente), fact-checking (verificación de hechos), misinformation (desinformación), fake news. Estas habilidades son vitales hoy."
+                "title": "Soluciones",
+                "content": "Renewable energy, carbon neutrality, sustainable development, international agreements. Vocabulario para discutir soluciones al cambio climático."
+            }
+        ]
+    },
+    # === B2-C1 TOPICS ===
+    "Advertising": {
+        "sections": [
+            {
+                "title": "Vocabulario Publicitario",
+                "content": "Advertisement/ad (anuncio), commercial (comercial de TV), billboard (valla publicitaria), brand (marca), slogan, target audience (público objetivo), campaign (campaña)."
+            },
+            {
+                "title": "Técnicas Publicitarias",
+                "content": "Emotional appeal, celebrity endorsement, product placement, social media marketing, influencer marketing. Técnicas que las marcas usan para venderte productos."
+            },
+            {
+                "title": "Análisis Crítico",
+                "content": "What message is this ad sending? Who is the target audience? What techniques are being used? Preguntas para analizar publicidad críticamente."
+            }
+        ]
+    },
+    "Critical Analysis": {
+        "sections": [
+            {
+                "title": "Pensamiento Crítico",
+                "content": "Analyze (analizar), evaluate (evaluar), interpret (interpretar), argue (argumentar), conclude (concluir). Verbos esenciales para el análisis crítico."
+            },
+            {
+                "title": "Estructuras de Análisis",
+                "content": "The author argues that... / This suggests... / However, one could argue... / In conclusion... Frases académicas para presentar análisis."
+            },
+            {
+                "title": "Evaluando Fuentes",
+                "content": "Is this source reliable? What is the author's bias? Is the evidence sufficient? Preguntas clave para evaluar información críticamente."
+            }
+        ]
+    },
+    "Creativity": {
+        "sections": [
+            {
+                "title": "¿Qué es la Creatividad?",
+                "content": "Creativity (creatividad), imagination (imaginación), innovation (innovación), originality (originalidad), inspiration (inspiración). Vocabulario para hablar sobre el proceso creativo."
+            },
+            {
+                "title": "Expresión Creativa",
+                "content": "Art, music, writing, design, photography, dance. Diferentes formas de expresar creatividad y el vocabulario asociado a cada una."
+            },
+            {
+                "title": "Fomentando la Creatividad",
+                "content": "Think outside the box. Brainstorm ideas. Take risks. Learn from failure. Expresiones para hablar sobre cómo desarrollar la creatividad."
+            }
+        ]
+    },
+    "Banking": {
+        "sections": [
+            {
+                "title": "Vocabulario Bancario",
+                "content": "Account (cuenta), savings (ahorros), checking account (cuenta corriente), loan (préstamo), interest (interés), mortgage (hipoteca), credit card (tarjeta de crédito)."
+            },
+            {
+                "title": "Transacciones",
+                "content": "Deposit (depositar), withdraw (retirar), transfer (transferir), pay (pagar), balance (saldo). Verbos esenciales para operaciones bancarias."
+            },
+            {
+                "title": "En el Banco",
+                "content": "I'd like to open an account. / Can I withdraw $100? / What's my balance? / I need to apply for a loan. Frases útiles para visitar un banco."
+            }
+        ]
+    },
+    # === C1-C2 TOPICS ===
+    "Cognitive Psychology": {
+        "sections": [
+            {
+                "title": "Procesos Cognitivos",
+                "content": "Memory (memoria), attention (atención), perception (percepción), reasoning (razonamiento), decision-making (toma de decisiones). Procesos mentales fundamentales."
+            },
+            {
+                "title": "Teorías Cognitivas",
+                "content": "Information processing, schema theory, cognitive load theory. Teorías que explican cómo pensamos y aprendemos."
+            },
+            {
+                "title": "Aplicaciones",
+                "content": "Learning strategies, memory techniques, mindfulness, cognitive behavioral therapy. Aplicaciones prácticas de la psicología cognitiva."
+            }
+        ]
+    },
+    "Bioethics": {
+        "sections": [
+            {
+                "title": "Dilemas Bioéticos",
+                "content": "Euthanasia, genetic engineering, cloning, organ donation, stem cell research. Temas controvertidos que requieren vocabulario especializado."
+            },
+            {
+                "title": "Argumentación Ética",
+                "content": "It's morally acceptable because... / The ethical implications are... / From a utilitarian perspective... Estructuras para debatir temas éticos."
+            },
+            {
+                "title": "Perspectivas",
+                "content": "Medical ethics, religious views, legal considerations, patient rights. Diferentes perspectivas para analizar dilemas bioéticos."
+            }
+        ]
+    },
+    "Art Movements": {
+        "sections": [
+            {
+                "title": "Movimientos Artísticos",
+                "content": "Renaissance, Baroque, Impressionism, Expressionism, Cubism, Surrealism, Pop Art, Contemporary Art. Historia del arte a través de sus movimientos."
+            },
+            {
+                "title": "Características",
+                "content": "Style (estilo), technique (técnica), composition (composición), color palette (paleta de colores), subject matter (temática). Vocabulario para describir arte."
+            },
+            {
+                "title": "Análisis Artístico",
+                "content": "This painting represents... / The artist conveys... / The use of light suggests... Frases para analizar obras de arte."
+            }
+        ]
+    },
+    "Academic Conventions": {
+        "sections": [
+            {
+                "title": "Escritura Académica",
+                "content": "Thesis statement (tesis), argument (argumento), evidence (evidencia), citation (cita), bibliography (bibliografía). Elementos esenciales de escritura académica."
+            },
+            {
+                "title": "Registro Formal",
+                "content": "It is argued that... / Research indicates... / According to... / In conclusion... Lenguaje formal para contextos académicos."
+            },
+            {
+                "title": "Estructuras",
+                "content": "Introduction, body paragraphs, conclusion. Topic sentence, supporting details, transition words. Estructura de ensayos académicos."
             }
         ]
     }

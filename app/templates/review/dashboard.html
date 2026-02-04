@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+
+{% block title %}Sistema de Repaso - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-brain text-primary me-2"></i>Sistema de Repaso Inteligente</h2>
+            <p class="text-muted">Repaso espaciado personalizado para maximizar tu aprendizaje</p>
+        </div>
+    </div>
+    
+    <!-- Estadísticas principales -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card bg-primary text-white shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.due_today or 0 }}</h3>
+                    <small>Pendientes Hoy</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-success text-white shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-graduation-cap fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.overall_progress }}%</h3>
+                    <small>Progreso General</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-info text-white shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-layer-group fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.flashcards.learned + stats.vocabulary.learned }}</h3>
+                    <small>Items Aprendidos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card bg-warning text-dark shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ stats.flashcards.progress }}%</h3>
+                    <small>Retención</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <!-- Iniciar Repaso -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-play-circle me-2"></i>Iniciar Sesión de Repaso</h5>
+                </div>
+                <div class="card-body text-center py-5">
+                    {% if stats.due_today > 0 %}
+                    <i class="fas fa-clock fa-4x text-warning mb-3"></i>
+                    <h4>Tienes {{ stats.due_today }} items pendientes</h4>
+                    <p class="text-muted mb-4">El repaso regular mejora tu retención a largo plazo</p>
+                    <a href="{{ url_for('review.start_session') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play me-2"></i>Empezar Repaso
+                    </a>
+                    {% else %}
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4>¡Todo al día!</h4>
+                    <p class="text-muted mb-4">No tienes repasos pendientes. ¡Excelente trabajo!</p>
+                    <a href="{{ url_for('review.start_session') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>Practicar Nuevo Material
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Proyección de Repasos -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Próximos 7 Días</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="forecastChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <!-- Progreso por Área -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Progreso por Área</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Flashcards -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><i class="fas fa-clone text-primary me-2"></i>Flashcards</span>
+                            <span>{{ stats.flashcards.learned }}/{{ stats.flashcards.total }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width: {{ stats.flashcards.progress }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Vocabulario -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><i class="fas fa-book text-success me-2"></i>Vocabulario</span>
+                            <span>{{ stats.vocabulary.learned }}/{{ stats.vocabulary.total }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: {{ stats.vocabulary.progress }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Idioms -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><i class="fas fa-comment-dots text-info me-2"></i>Idioms</span>
+                            <span>{{ stats.idioms.learned }}/{{ stats.idioms.total }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width: {{ stats.idioms.progress }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phrasal Verbs -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><i class="fas fa-arrows-alt-h text-warning me-2"></i>Phrasal Verbs</span>
+                            <span>{{ stats.phrasal_verbs.learned }}/{{ stats.phrasal_verbs.total }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: {{ stats.phrasal_verbs.progress }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Áreas Débiles -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Áreas a Mejorar</h5>
+                </div>
+                <div class="card-body">
+                    {% if weak_areas %}
+                    <ul class="list-group list-group-flush">
+                        {% for area in weak_areas[:5] %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-{{ 'danger' if area.error_rate > 50 else 'warning' }} me-2">
+                                    {{ area.error_rate|default(area.error_count, true) }}{% if area.error_rate %}%{% endif %}
+                                </span>
+                                {{ area.area }}
+                            </div>
+                            <small class="text-muted">{{ area.type }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-thumbs-up fa-3x text-success mb-3"></i>
+                        <p class="text-muted">¡No hay áreas débiles detectadas!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recomendaciones -->
+    {% if recommendations %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Recomendaciones de Estudio</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for rec in recommendations %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-{{ 'danger' if rec.priority == 'high' else 'warning' if rec.priority == 'medium' else 'secondary' }}">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <span class="badge bg-{{ 'danger' if rec.priority == 'high' else 'warning' if rec.priority == 'medium' else 'secondary' }} me-2">
+                                            {{ rec.priority|upper }}
+                                        </span>
+                                        <div>
+                                            <h6 class="card-title mb-1">{{ rec.title }}</h6>
+                                            <p class="card-text small text-muted">{{ rec.description }}</p>
+                                            {% if rec.action_url %}
+                                            <a href="{{ rec.action_url }}" class="btn btn-sm btn-outline-primary">
+                                                {{ rec.action }}
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de proyección
+    const ctx = document.getElementById('forecastChart').getContext('2d');
+    
+    const forecastData = {{ stats.forecast|tojson|safe if stats.forecast else '[]' }};
+    const labels = forecastData.map(d => d.date);
+    const counts = forecastData.map(d => d.count);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Repasos Programados',
+                data: counts,
+                backgroundColor: 'rgba(13, 110, 253, 0.6)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

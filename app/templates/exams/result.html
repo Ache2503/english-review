@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultado del Examen - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center py-5">
+                    {% if attempt.passed %}
+                    <div class="mb-4">
+                        <i class="fas fa-trophy fa-5x text-warning"></i>
+                    </div>
+                    <h2 class="text-success mb-3">¡Felicidades! Aprobaste</h2>
+                    {% else %}
+                    <div class="mb-4">
+                        <i class="fas fa-book-reader fa-5x text-primary"></i>
+                    </div>
+                    <h2 class="text-primary mb-3">Sigue Practicando</h2>
+                    {% endif %}
+                    
+                    <div class="display-1 fw-bold {{ 'text-success' if attempt.passed else 'text-warning' }} mb-3">
+                        {{ "%.0f"|format(attempt.percentage or 0) }}%
+                    </div>
+                    
+                    <p class="text-muted mb-4">
+                        {{ attempt.exam.title if attempt.exam else 'Examen' }}
+                    </p>
+                    
+                    <div class="row justify-content-center g-4 mb-4">
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-primary mb-0">{{ attempt.score }}</h4>
+                                <small class="text-muted">Puntos obtenidos</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-info mb-0">{{ attempt.max_score }}</h4>
+                                <small class="text-muted">Puntos posibles</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-warning mb-0">{{ attempt.time_taken_minutes or 0 }}</h4>
+                                <small class="text-muted">Minutos usados</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 bg-light rounded">
+                                <h4 class="text-success mb-0">+{{ points_earned or 0 }}</h4>
+                                <small class="text-muted">Puntos ganados</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-4" style="height: 25px;">
+                        <div class="progress-bar {{ 'bg-success' if attempt.passed else 'bg-warning' }}" 
+                             style="width: {{ attempt.percentage or 0 }}%">
+                            {{ "%.0f"|format(attempt.percentage or 0) }}%
+                        </div>
+                    </div>
+                    
+                    <p class="text-muted small">
+                        Puntuación mínima para aprobar: {{ "%.0f"|format(attempt.exam.passing_score) if attempt.exam else 70 }}%
+                    </p>
+                </div>
+            </div>
+            
+            {% if section_results %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Resultados por Sección</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sección</th>
+                                    <th class="text-center">Correctas</th>
+                                    <th class="text-center">Puntos</th>
+                                    <th class="text-center">Porcentaje</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for section in section_results %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ section.section_type|capitalize }}</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        {{ section.correct }} / {{ section.total }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ section.points_earned }} / {{ section.max_points }}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge {{ 'bg-success' if section.percentage >= 70 else 'bg-warning' if section.percentage >= 50 else 'bg-danger' }}">
+                                            {{ "%.0f"|format(section.percentage) }}%
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        {% if section.percentage >= 70 %}
+                                        <i class="fas fa-check-circle text-success"></i>
+                                        {% else %}
+                                        <i class="fas fa-times-circle text-danger"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if answers_review %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Revisión de Respuestas</h5>
+                </div>
+                <div class="card-body">
+                    {% for answer in answers_review %}
+                    <div class="p-3 mb-3 border rounded {{ 'border-success' if answer.correct else 'border-danger' }}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge {{ 'bg-success' if answer.correct else 'bg-danger' }}">
+                                {{ 'Correcto' if answer.correct else 'Incorrecto' }}
+                            </span>
+                            <span class="badge bg-secondary">{{ answer.section }}</span>
+                        </div>
+                        
+                        <p class="mb-2"><strong>{{ answer.question }}</strong></p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">Tu respuesta:</small>
+                                <p class="{{ 'text-success' if answer.correct else 'text-danger' }} mb-0">
+                                    {{ answer.user_answer or 'Sin respuesta' }}
+                                </p>
+                            </div>
+                            {% if not answer.correct %}
+                            <div class="col-md-6">
+                                <small class="text-muted">Respuesta correcta:</small>
+                                <p class="text-success mb-0">{{ answer.correct_answer }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if answer.explanation and not answer.correct %}
+                        <div class="mt-2 p-2 bg-light rounded">
+                            <small><i class="fas fa-lightbulb me-1 text-warning"></i>{{ answer.explanation }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="text-center">
+                <a href="{{ url_for('exams.exam_detail', exam_id=attempt.exam_id) }}" class="btn btn-primary btn-lg me-2">
+                    <i class="fas fa-redo me-2"></i>Intentar de Nuevo
+                </a>
+                <a href="{{ url_for('exams.exam_list') }}" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-list me-2"></i>Ver Todos los Exámenes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

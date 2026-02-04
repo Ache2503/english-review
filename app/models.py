@@ -178,10 +178,90 @@ class UserProgress(db.Model):
     completed_at = db.Column(db.DateTime)
     progress_percentage = db.Column(db.Float, default=0.0)
     
+    # Nuevos campos para el sistema de desbloqueo
+    grammar_completed = db.Column(db.Boolean, default=False)
+    vocabulary_completed = db.Column(db.Boolean, default=False)
+    exercises_completed = db.Column(db.Boolean, default=False)
+    challenge_passed = db.Column(db.Boolean, default=False)
+    challenge_score = db.Column(db.Float, default=0.0)
+    challenge_attempts = db.Column(db.Integer, default=0)
+    unlocked = db.Column(db.Boolean, default=False)
+    
     __table_args__ = (db.UniqueConstraint('user_id', 'unit_id', name='uq_user_unit'),)
+    
+    def can_take_challenge(self):
+        """Verificar si puede tomar el desafío final"""
+        return self.grammar_completed and self.vocabulary_completed and self.exercises_completed
+    
+    def is_unit_completed(self):
+        """Verificar si la unidad está completamente terminada"""
+        return self.challenge_passed
     
     def __repr__(self):
         return f'<UserProgress User:{self.user_id} Unit:{self.unit_id}>'
+
+
+class UnitChallenge(db.Model):
+    """Modelo para desafíos de desbloqueo de unidad"""
+    __tablename__ = 'unit_challenges'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    unit_id = db.Column(db.Integer, db.ForeignKey('units.id'), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    passing_score = db.Column(db.Float, default=70.0)  # Porcentaje mínimo para pasar
+    time_limit = db.Column(db.Integer, default=30)  # Minutos
+    max_attempts = db.Column(db.Integer, default=3)  # Intentos máximos por día
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relaciones
+    questions = db.relationship('ChallengeQuestion', backref='challenge', lazy='dynamic', cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<UnitChallenge Unit:{self.unit_id}>'
+
+
+class ChallengeQuestion(db.Model):
+    """Preguntas para los desafíos de unidad"""
+    __tablename__ = 'challenge_questions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey('unit_challenges.id'), nullable=False, index=True)
+    question_type = db.Column(db.String(50), nullable=False)  # multiple_choice, fill_blank, translation, listening, writing
+    question_text = db.Column(db.Text, nullable=False)
+    correct_answer = db.Column(db.Text, nullable=False)
+    options = db.Column(db.JSON)  # Para preguntas de opción múltiple
+    explanation = db.Column(db.Text)  # Explicación de la respuesta correcta
+    points = db.Column(db.Integer, default=10)
+    difficulty = db.Column(db.String(20), default='medium')  # easy, medium, hard
+    skill_tested = db.Column(db.String(50))  # grammar, vocabulary, reading, writing
+    order = db.Column(db.Integer, default=0)
+    
+    def __repr__(self):
+        return f'<ChallengeQuestion {self.id}>'
+
+
+class UserChallengeAttempt(db.Model):
+    """Registro de intentos de desafío del usuario"""
+    __tablename__ = 'user_challenge_attempts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey('unit_challenges.id'), nullable=False, index=True)
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
+    score = db.Column(db.Float, default=0.0)
+    passed = db.Column(db.Boolean, default=False)
+    answers = db.Column(db.JSON)  # Respuestas del usuario
+    time_taken = db.Column(db.Integer)  # Segundos
+    
+    # Relaciones
+    user = db.relationship('User', backref='challenge_attempts')
+    challenge = db.relationship('UnitChallenge', backref='attempts')
+    
+    def __repr__(self):
+        return f'<UserChallengeAttempt User:{self.user_id} Challenge:{self.challenge_id}>'
 
 
 class UserWritingSubmission(db.Model):
@@ -802,3 +882,492 @@ class GrammarExerciseResult(db.Model):
     __table_args__ = (
         db.Index('idx_grammar_result_user_topic', 'user_id', 'grammar_topic'),
     )
+
+
+# ==========================================
+# SISTEMA DE RETO DIARIO (Daily Challenge)
+# ==========================================
+
+class DailyChallenge(db.Model):
+    """Retos diarios para los usuarios"""
+    __tablename__ = 'daily_challenges'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    challenge_date = db.Column(db.Date, nullable=False, unique=True, index=True)
+    challenge_type = db.Column(db.String(50), nullable=False)  # vocabulary, grammar, reading, writing, mixed
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    questions = db.Column(db.JSON, nullable=False)  # Lista de preguntas
+    difficulty = db.Column(db.String(20), default='intermediate')
+    points_reward = db.Column(db.Integer, default=50)
+    bonus_streak_points = db.Column(db.Integer, default=10)  # Puntos extra por racha
+    time_limit_seconds = db.Column(db.Integer)  # Límite de tiempo opcional
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<DailyChallenge {self.challenge_date}: {self.title}>'
+
+
+class UserDailyChallenge(db.Model):
+    """Registro de retos diarios completados por usuarios"""
+    __tablename__ = 'user_daily_challenges'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey('daily_challenges.id'), nullable=False, index=True)
+    score = db.Column(db.Float, nullable=False)
+    points_earned = db.Column(db.Integer, default=0)
+    answers = db.Column(db.JSON)  # Respuestas del usuario
+    time_taken_seconds = db.Column(db.Integer)
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='daily_challenges_completed')
+    challenge = db.relationship('DailyChallenge', backref='completions')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'challenge_id', name='unique_user_challenge'),
+    )
+
+
+# ==========================================
+# SIMULADOR DE EXÁMENES (Exam Simulator)
+# ==========================================
+
+class ExamSimulator(db.Model):
+    """Exámenes simulados (TOEFL, IELTS, Cambridge)"""
+    __tablename__ = 'exam_simulators'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    exam_type = db.Column(db.String(50), nullable=False, index=True)  # TOEFL, IELTS, CAMBRIDGE_FCE, CAMBRIDGE_CAE
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    level = db.Column(db.String(20))  # A1-C2
+    sections = db.Column(db.JSON, nullable=False)  # Secciones del examen
+    total_time_minutes = db.Column(db.Integer, nullable=False)
+    passing_score = db.Column(db.Float, default=60.0)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<ExamSimulator {self.exam_type}: {self.title}>'
+
+
+class ExamSection(db.Model):
+    """Secciones de examen (Reading, Grammar, Writing, etc.)"""
+    __tablename__ = 'exam_sections'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    exam_id = db.Column(db.Integer, db.ForeignKey('exam_simulators.id'), nullable=False, index=True)
+    section_type = db.Column(db.String(50), nullable=False)  # reading, grammar, vocabulary, writing
+    title = db.Column(db.String(200), nullable=False)
+    instructions = db.Column(db.Text)
+    questions = db.Column(db.JSON, nullable=False)  # Lista de preguntas
+    time_limit_minutes = db.Column(db.Integer)
+    points_per_question = db.Column(db.Float, default=1.0)
+    order = db.Column(db.Integer, default=0)
+    
+    exam = db.relationship('ExamSimulator', backref='exam_sections')
+    
+    def __repr__(self):
+        return f'<ExamSection {self.section_type}>'
+
+
+class UserExamAttempt(db.Model):
+    """Intentos de examen por usuario"""
+    __tablename__ = 'user_exam_attempts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    exam_id = db.Column(db.Integer, db.ForeignKey('exam_simulators.id'), nullable=False, index=True)
+    section_scores = db.Column(db.JSON)  # Puntuación por sección
+    total_score = db.Column(db.Float)
+    percentage = db.Column(db.Float)
+    passed = db.Column(db.Boolean)
+    time_taken_minutes = db.Column(db.Integer)
+    answers = db.Column(db.JSON)  # Todas las respuestas
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
+    
+    user = db.relationship('User', backref='exam_attempts')
+    exam = db.relationship('ExamSimulator', backref='attempts')
+    
+    def __repr__(self):
+        return f'<UserExamAttempt User:{self.user_id} Exam:{self.exam_id}>'
+
+
+# ==========================================
+# RASTREADOR DE ERRORES (Error Tracker)
+# ==========================================
+
+class UserErrorPattern(db.Model):
+    """Patrones de errores del usuario para análisis"""
+    __tablename__ = 'user_error_patterns'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    error_category = db.Column(db.String(100), nullable=False, index=True)  # grammar, vocabulary, spelling, punctuation
+    error_type = db.Column(db.String(100), nullable=False)  # specific error type
+    error_count = db.Column(db.Integer, default=1)
+    examples = db.Column(db.JSON)  # Ejemplos de errores
+    last_occurrence = db.Column(db.DateTime, default=datetime.utcnow)
+    suggestions = db.Column(db.JSON)  # Sugerencias de mejora
+    
+    user = db.relationship('User', backref='error_patterns')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'error_category', 'error_type', name='unique_user_error'),
+        db.Index('idx_error_user_category', 'user_id', 'error_category'),
+    )
+
+
+# ==========================================
+# MINI JUEGOS (Mini Games)
+# ==========================================
+
+class MiniGame(db.Model):
+    """Configuración de mini juegos"""
+    __tablename__ = 'mini_games'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    game_type = db.Column(db.String(50), nullable=False, unique=True)  # word_scramble, hangman, memory, fill_gaps
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    instructions = db.Column(db.Text)
+    difficulty_levels = db.Column(db.JSON)  # Configuración por nivel
+    points_per_level = db.Column(db.JSON)  # Puntos por nivel
+    is_active = db.Column(db.Boolean, default=True)
+    
+    def __repr__(self):
+        return f'<MiniGame {self.game_type}>'
+
+
+class MiniGameContent(db.Model):
+    """Contenido para mini juegos"""
+    __tablename__ = 'mini_game_contents'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    game_type = db.Column(db.String(50), nullable=False, index=True)
+    level = db.Column(db.String(20), nullable=False)  # A1-C2 o beginner/intermediate/advanced
+    content_data = db.Column(db.JSON, nullable=False)  # Datos específicos del juego
+    category = db.Column(db.String(100))  # Categoría temática
+    is_active = db.Column(db.Boolean, default=True)
+    
+    __table_args__ = (
+        db.Index('idx_game_level', 'game_type', 'level'),
+    )
+
+
+class UserGameScore(db.Model):
+    """Puntuaciones de usuarios en mini juegos"""
+    __tablename__ = 'user_game_scores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    game_type = db.Column(db.String(50), nullable=False, index=True)
+    level = db.Column(db.String(20))
+    score = db.Column(db.Integer, nullable=False)
+    time_seconds = db.Column(db.Integer)
+    words_completed = db.Column(db.Integer)
+    streak_bonus = db.Column(db.Integer, default=0)
+    played_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='game_scores')
+    
+    __table_args__ = (
+        db.Index('idx_user_game', 'user_id', 'game_type'),
+    )
+
+
+# ==========================================
+# GRAMMAR DRILLS (Ejercicios intensivos)
+# ==========================================
+
+class GrammarDrill(db.Model):
+    """Ejercicios intensivos de gramática cronometrados"""
+    __tablename__ = 'grammar_drills'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    grammar_topic = db.Column(db.String(100), nullable=False, index=True)
+    level = db.Column(db.String(20), nullable=False)  # A1-C2
+    questions = db.Column(db.JSON, nullable=False)  # Lista de ejercicios
+    time_limit_seconds = db.Column(db.Integer, default=300)  # 5 min por defecto
+    passing_score = db.Column(db.Float, default=70.0)
+    instructions = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<GrammarDrill {self.grammar_topic} {self.level}>'
+
+
+class UserDrillResult(db.Model):
+    """Resultados de drills de usuarios"""
+    __tablename__ = 'user_drill_results'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    drill_id = db.Column(db.Integer, db.ForeignKey('grammar_drills.id'), nullable=False, index=True)
+    score = db.Column(db.Float, nullable=False)
+    correct_answers = db.Column(db.Integer)
+    total_questions = db.Column(db.Integer)
+    time_taken_seconds = db.Column(db.Integer)
+    passed = db.Column(db.Boolean)
+    answers = db.Column(db.JSON)
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='drill_results')
+    drill = db.relationship('GrammarDrill', backref='results')
+
+
+# ==========================================
+# LEADERBOARD (Tabla de clasificación)
+# ==========================================
+
+class UserPoints(db.Model):
+    """Sistema de puntos del usuario"""
+    __tablename__ = 'user_points'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True, index=True)
+    total_points = db.Column(db.Integer, default=0)
+    weekly_points = db.Column(db.Integer, default=0)
+    monthly_points = db.Column(db.Integer, default=0)
+    level = db.Column(db.Integer, default=1)
+    experience = db.Column(db.Integer, default=0)
+    last_points_update = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref=db.backref('points', uselist=False))
+    
+    def __repr__(self):
+        return f'<UserPoints User:{self.user_id} Total:{self.total_points}>'
+
+
+class PointsTransaction(db.Model):
+    """Historial de transacciones de puntos"""
+    __tablename__ = 'points_transactions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    points = db.Column(db.Integer, nullable=False)  # Positivo o negativo
+    source = db.Column(db.String(100), nullable=False)  # challenge, quiz, game, drill, etc.
+    description = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='points_history')
+
+
+# ==========================================
+# IDIOMS & PHRASAL VERBS
+# ==========================================
+
+class Idiom(db.Model):
+    """Modismos en inglés"""
+    __tablename__ = 'idioms'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    phrase = db.Column(db.String(200), nullable=False, unique=True)
+    meaning = db.Column(db.Text, nullable=False)
+    spanish_equivalent = db.Column(db.String(200))
+    example_sentence = db.Column(db.Text)
+    example_translation = db.Column(db.Text)
+    origin = db.Column(db.Text)  # Origen del modismo
+    category = db.Column(db.String(100))  # animals, food, body, weather, etc.
+    level = db.Column(db.String(20), default='B1')  # A1-C2
+    usage_notes = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_idiom_level', 'level'),
+        db.Index('idx_idiom_category', 'category'),
+    )
+    
+    def __repr__(self):
+        return f'<Idiom {self.phrase}>'
+
+
+class PhrasalVerb(db.Model):
+    """Phrasal verbs en inglés"""
+    __tablename__ = 'phrasal_verbs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    verb = db.Column(db.String(100), nullable=False)  # Base verb: look, get, put
+    particle = db.Column(db.String(50), nullable=False)  # up, down, on, off, etc.
+    full_form = db.Column(db.String(150), nullable=False, unique=True)  # look up, get on
+    meaning = db.Column(db.Text, nullable=False)
+    spanish_translation = db.Column(db.String(200))
+    is_separable = db.Column(db.Boolean, default=False)  # Si se puede separar
+    example_sentence = db.Column(db.Text)
+    example_translation = db.Column(db.Text)
+    additional_meanings = db.Column(db.JSON)  # Otros significados
+    category = db.Column(db.String(100))  # movement, communication, relationship
+    level = db.Column(db.String(20), default='B1')
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_phrasal_verb_level', 'level'),
+        db.Index('idx_phrasal_verb_base', 'verb'),
+    )
+    
+    def __repr__(self):
+        return f'<PhrasalVerb {self.full_form}>'
+
+
+class UserIdiomProgress(db.Model):
+    """Progreso del usuario en idioms"""
+    __tablename__ = 'user_idiom_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    idiom_id = db.Column(db.Integer, db.ForeignKey('idioms.id'), nullable=False, index=True)
+    times_reviewed = db.Column(db.Integer, default=0)
+    times_correct = db.Column(db.Integer, default=0)
+    mastery_level = db.Column(db.String(20), default='new')  # new, learning, mastered
+    last_reviewed = db.Column(db.DateTime)
+    next_review = db.Column(db.DateTime)
+    
+    user = db.relationship('User', backref='idiom_progress')
+    idiom = db.relationship('Idiom', backref='user_progress')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'idiom_id', name='unique_user_idiom'),
+    )
+
+
+class UserPhrasalVerbProgress(db.Model):
+    """Progreso del usuario en phrasal verbs"""
+    __tablename__ = 'user_phrasal_verb_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    phrasal_verb_id = db.Column(db.Integer, db.ForeignKey('phrasal_verbs.id'), nullable=False, index=True)
+    times_reviewed = db.Column(db.Integer, default=0)
+    times_correct = db.Column(db.Integer, default=0)
+    mastery_level = db.Column(db.String(20), default='new')
+    last_reviewed = db.Column(db.DateTime)
+    next_review = db.Column(db.DateTime)
+    
+    user = db.relationship('User', backref='phrasal_verb_progress')
+    phrasal_verb = db.relationship('PhrasalVerb', backref='user_progress')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'phrasal_verb_id', name='unique_user_phrasal'),
+    )
+
+
+# ==========================================
+# MODELOS PARA SISTEMA DE REPASO Y ESCRITURA
+# ==========================================
+
+class UserVocabularyProgress(db.Model):
+    """Progreso del usuario en vocabulario"""
+    __tablename__ = 'user_vocabulary_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    vocabulary_id = db.Column(db.Integer, db.ForeignKey('vocabulary_items.id'), nullable=False, index=True)
+    times_reviewed = db.Column(db.Integer, default=0)
+    times_correct = db.Column(db.Integer, default=0)
+    mastery_level = db.Column(db.Integer, default=0)  # 0-5
+    last_reviewed = db.Column(db.DateTime)
+    next_review = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='vocabulary_progress')
+    vocabulary = db.relationship('VocabularyItem', backref='user_progress')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'vocabulary_id', name='unique_user_vocabulary'),
+    )
+    
+    @property
+    def accuracy(self):
+        if self.times_reviewed == 0:
+            return 0
+        return round((self.times_correct / self.times_reviewed) * 100, 1)
+    
+    def __repr__(self):
+        return f'<UserVocabularyProgress User:{self.user_id} Vocab:{self.vocabulary_id}>'
+
+
+class ReviewSessionLog(db.Model):
+    """Registro de sesiones de repaso completadas"""
+    __tablename__ = 'review_session_logs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    session_type = db.Column(db.String(50))  # mixed, flashcards, vocabulary, idioms, etc.
+    total_items = db.Column(db.Integer, default=0)
+    correct_count = db.Column(db.Integer, default=0)
+    wrong_count = db.Column(db.Integer, default=0)
+    score = db.Column(db.Float)
+    time_spent_seconds = db.Column(db.Integer)
+    focus_areas = db.Column(db.JSON)  # Áreas de enfoque de la sesión
+    items_reviewed = db.Column(db.JSON)  # Detalle de cada item revisado
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
+    
+    user = db.relationship('User', backref='review_sessions')
+    
+    def __repr__(self):
+        return f'<ReviewSessionLog User:{self.user_id} Score:{self.score}>'
+
+
+class WritingAnalysisLog(db.Model):
+    """Registro de análisis de escritura realizados"""
+    __tablename__ = 'writing_analysis_logs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    unit_id = db.Column(db.Integer, db.ForeignKey('units.id'), index=True)
+    original_text = db.Column(db.Text, nullable=False)
+    word_count = db.Column(db.Integer)
+    sentence_count = db.Column(db.Integer)
+    score = db.Column(db.Float)
+    grade = db.Column(db.String(10))  # A+, A, B, etc.
+    grammar_errors = db.Column(db.Integer, default=0)
+    spelling_errors = db.Column(db.Integer, default=0)
+    style_errors = db.Column(db.Integer, default=0)
+    errors_detail = db.Column(db.JSON)  # Detalle de errores encontrados
+    strengths = db.Column(db.JSON)  # Lista de fortalezas
+    improvements = db.Column(db.JSON)  # Sugerencias de mejora
+    analyzed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='writing_analyses')
+    unit = db.relationship('Unit', backref='writing_analyses')
+    
+    def __repr__(self):
+        return f'<WritingAnalysisLog User:{self.user_id} Score:{self.score}>'
+
+
+class UserGrammarProgress(db.Model):
+    """Progreso del usuario en temas gramaticales específicos"""
+    __tablename__ = 'user_grammar_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    grammar_topic = db.Column(db.String(100), nullable=False, index=True)  # verb-to-be, present-simple, etc.
+    times_practiced = db.Column(db.Integer, default=0)
+    times_correct = db.Column(db.Integer, default=0)
+    mastery_level = db.Column(db.Integer, default=0)  # 0-5
+    common_errors = db.Column(db.JSON)  # Errores frecuentes en este tema
+    last_practiced = db.Column(db.DateTime)
+    next_review = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='grammar_progress')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'grammar_topic', name='unique_user_grammar_topic'),
+    )
+    
+    @property
+    def accuracy(self):
+        if self.times_practiced == 0:
+            return 0
+        return round((self.times_correct / self.times_practiced) * 100, 1)
+    
+    def __repr__(self):
+        return f'<UserGrammarProgress User:{self.user_id} Topic:{self.grammar_topic}>'

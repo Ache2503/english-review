@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+
+{% block title %}Práctica de Escritura - English Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .prompt-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 1rem;
+        transition: transform 0.3s;
+    }
+    .prompt-card:hover {
+        transform: scale(1.02);
+    }
+    .prompt-card.selected {
+        box-shadow: 0 0 0 4px rgba(255,255,255,0.5), 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .writing-guidelines {
+        font-size: 0.9rem;
+    }
+    .writing-guidelines li {
+        margin-bottom: 0.5rem;
+    }
+    .level-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 0.8rem;
+    }
+    .word-goal {
+        height: 8px;
+        border-radius: 4px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+    .word-goal-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    .timer-display {
+        font-family: 'Courier New', monospace;
+        font-size: 1.5rem;
+    }
+    .vocabulary-hint {
+        background: #fff3cd;
+        border-left: 3px solid #ffc107;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-keyboard text-primary me-2"></i>Práctica de Escritura</h2>
+            <p class="text-muted">Elige un tema y practica tu escritura con feedback instantáneo</p>
+        </div>
+    </div>
+    
+    <!-- Paso 1: Selección de prompt -->
+    <div id="promptSelection">
+        <h5 class="mb-3"><i class="fas fa-lightbulb me-2"></i>Paso 1: Elige un Tema</h5>
+        
+        <!-- Filtros -->
+        <div class="mb-4">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" onclick="filterPrompts('all')">Todos</button>
+                <button type="button" class="btn btn-outline-primary" onclick="filterPrompts('beginner')">Principiante</button>
+                <button type="button" class="btn btn-outline-primary" onclick="filterPrompts('intermediate')">Intermedio</button>
+                <button type="button" class="btn btn-outline-primary" onclick="filterPrompts('advanced')">Avanzado</button>
+            </div>
+        </div>
+        
+        <div class="row g-3" id="promptsContainer">
+            <!-- Prompt 1 -->
+            <div class="col-md-4 prompt-item" data-level="beginner">
+                <div class="prompt-card p-4 position-relative h-100" onclick="selectPrompt(this, 1)">
+                    <span class="level-badge badge bg-success">Principiante</span>
+                    <h5><i class="fas fa-user me-2"></i>Sobre Mí</h5>
+                    <p class="small opacity-75">Escribe un párrafo presentándote. Incluye tu nombre, edad, ocupación y hobbies.</p>
+                    <div class="mt-3 small">
+                        <span><i class="fas fa-pen me-1"></i>50-100 palabras</span>
+                        <span class="ms-3"><i class="fas fa-clock me-1"></i>10 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prompt 2 -->
+            <div class="col-md-4 prompt-item" data-level="beginner">
+                <div class="prompt-card p-4 position-relative h-100" onclick="selectPrompt(this, 2)" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <span class="level-badge badge bg-success">Principiante</span>
+                    <h5><i class="fas fa-home me-2"></i>Mi Rutina Diaria</h5>
+                    <p class="small opacity-75">Describe tu día típico desde que te levantas hasta que te acuestas.</p>
+                    <div class="mt-3 small">
+                        <span><i class="fas fa-pen me-1"></i>80-120 palabras</span>
+                        <span class="ms-3"><i class="fas fa-clock me-1"></i>15 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prompt 3 -->
+            <div class="col-md-4 prompt-item" data-level="intermediate">
+                <div class="prompt-card p-4 position-relative h-100" onclick="selectPrompt(this, 3)" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <span class="level-badge badge bg-warning text-dark">Intermedio</span>
+                    <h5><i class="fas fa-plane me-2"></i>Un Viaje Memorable</h5>
+                    <p class="small opacity-75">Cuenta sobre un viaje que hiciste. ¿Dónde fuiste? ¿Qué experimentaste?</p>
+                    <div class="mt-3 small">
+                        <span><i class="fas fa-pen me-1"></i>100-150 palabras</span>
+                        <span class="ms-3"><i class="fas fa-clock me-1"></i>20 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prompt 4 -->
+            <div class="col-md-4 prompt-item" data-level="intermediate">
+                <div class="prompt-card p-4 position-relative h-100" onclick="selectPrompt(this, 4)" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <span class="level-badge badge bg-warning text-dark">Intermedio</span>
+                    <h5><i class="fas fa-lightbulb me-2"></i>Si Pudiera...</h5>
+                    <p class="small opacity-75">Si pudieras cambiar algo en el mundo, ¿qué sería y por qué?</p>
+                    <div class="mt-3 small">
+                        <span><i class="fas fa-pen me-1"></i>120-180 palabras</span>
+                        <span class="ms-3"><i class="fas fa-clock me-1"></i>20 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prompt 5 -->
+            <div class="col-md-4 prompt-item" data-level="advanced">
+                <div class="prompt-card p-4 position-relative h-100" onclick="selectPrompt(this, 5)" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <span class="level-badge badge bg-danger">Avanzado</span>
+                    <h5><i class="fas fa-balance-scale me-2"></i>Debate: Tecnología</h5>
+                    <p class="small opacity-75">¿La tecnología nos hace más o menos conectados socialmente? Argumenta tu posición.</p>
+                    <div class="mt-3 small">
+                        <span><i class="fas fa-pen me-1"></i>150-200 palabras</span>
+                        <span class="ms-3"><i class="fas fa-clock me-1"></i>25 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prompt 6 -->
+            <div class="col-md-4 prompt-item" data-level="advanced">
+                <div class="prompt-card p-4 position-relative h-100" onclick="selectPrompt(this, 6)" style="background: linear-gradient(135deg, #232526 0%, #414345 100%);">
+                    <span class="level-badge badge bg-danger">Avanzado</span>
+                    <h5><i class="fas fa-book me-2"></i>Reseña de Libro/Película</h5>
+                    <p class="small opacity-75">Escribe una reseña crítica de un libro o película que hayas disfrutado recientemente.</p>
+                    <div class="mt-3 small">
+                        <span><i class="fas fa-pen me-1"></i>180-250 palabras</span>
+                        <span class="ms-3"><i class="fas fa-clock me-1"></i>30 min</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <button id="startWritingBtn" class="btn btn-primary btn-lg" disabled onclick="startWriting()">
+                <i class="fas fa-play me-2"></i>Comenzar a Escribir
+            </button>
+        </div>
+    </div>
+    
+    <!-- Paso 2: Área de escritura (oculto inicialmente) -->
+    <div id="writingSection" style="display: none;">
+        <div class="row">
+            <!-- Panel principal de escritura -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0" id="selectedPromptTitle">Tema Seleccionado</h5>
+                        </div>
+                        <div class="timer-display text-primary">
+                            <i class="fas fa-clock me-2"></i>
+                            <span id="timerDisplay">00:00</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="selectedPromptDescription" class="alert alert-info mb-3"></div>
+                        
+                        <textarea id="writingArea" 
+                                  class="form-control" 
+                                  style="min-height: 350px; font-size: 1.1rem; line-height: 1.8;"
+                                  placeholder="Comienza a escribir aquí..."
+                                  oninput="updateProgress()"></textarea>
+                        
+                        <!-- Barra de progreso de palabras -->
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small><span id="currentWords">0</span> / <span id="targetWords">100</span> palabras</small>
+                                <small id="progressStatus" class="text-muted">Sigue escribiendo...</small>
+                            </div>
+                            <div class="word-goal">
+                                <div id="wordGoalFill" class="word-goal-fill bg-primary" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-outline-secondary" onclick="cancelWriting()">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                        <div>
+                            <button class="btn btn-outline-primary me-2" onclick="saveDraft()">
+                                <i class="fas fa-save me-2"></i>Guardar Borrador
+                            </button>
+                            <button class="btn btn-success" onclick="submitForAnalysis()">
+                                <i class="fas fa-check me-2"></i>Enviar para Análisis
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel lateral de ayuda -->
+            <div class="col-lg-4">
+                <!-- Vocabulario sugerido -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-book-open me-2"></i>Vocabulario Útil</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="vocabularyHints">
+                            <div class="vocabulary-hint mb-2">
+                                <strong>First of all</strong> - En primer lugar
+                            </div>
+                            <div class="vocabulary-hint mb-2">
+                                <strong>Moreover</strong> - Además
+                            </div>
+                            <div class="vocabulary-hint mb-2">
+                                <strong>However</strong> - Sin embargo
+                            </div>
+                            <div class="vocabulary-hint mb-2">
+                                <strong>In conclusion</strong> - En conclusión
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Consejos -->
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Consejos de Escritura</h6>
+                    </div>
+                    <div class="card-body writing-guidelines">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check text-success me-2"></i>Usa oraciones cortas y claras</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Varía el vocabulario</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Conecta las ideas con transiciones</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Revisa la concordancia sujeto-verbo</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Usa los tiempos verbales correctamente</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Datos de los prompts
+const prompts = {
+    1: {
+        title: 'Sobre Mí',
+        description: 'Escribe un párrafo presentándote. Incluye tu nombre, edad, dónde vives, tu ocupación (trabajo o estudios) y tus hobbies o pasatiempos favoritos.',
+        minWords: 50,
+        maxWords: 100,
+        time: 10,
+        vocabulary: [
+            { word: "My name is...", translation: "Mi nombre es..." },
+            { word: "I am ... years old", translation: "Tengo ... años" },
+            { word: "I work as...", translation: "Trabajo como..." },
+            { word: "In my free time", translation: "En mi tiempo libre" }
+        ]
+    },
+    2: {
+        title: 'Mi Rutina Diaria',
+        description: 'Describe un día típico en tu vida, desde que te despiertas hasta que te vas a dormir. Incluye tus actividades principales, horarios aproximados y cómo te sientes durante el día.',
+        minWords: 80,
+        maxWords: 120,
+        time: 15,
+        vocabulary: [
+            { word: "I usually wake up at...", translation: "Usualmente me despierto a las..." },
+            { word: "After that", translation: "Después de eso" },
+            { word: "Then I...", translation: "Luego yo..." },
+            { word: "Before going to bed", translation: "Antes de ir a dormir" }
+        ]
+    },
+    3: {
+        title: 'Un Viaje Memorable',
+        description: 'Cuenta sobre un viaje que hiciste y fue especial para ti. Describe el destino, con quién fuiste, qué actividades hiciste, y por qué fue memorable. Usa el pasado simple.',
+        minWords: 100,
+        maxWords: 150,
+        time: 20,
+        vocabulary: [
+            { word: "Last year/month", translation: "El año/mes pasado" },
+            { word: "I traveled to...", translation: "Viajé a..." },
+            { word: "The best part was...", translation: "La mejor parte fue..." },
+            { word: "I will never forget", translation: "Nunca olvidaré" }
+        ]
+    },
+    4: {
+        title: 'Si Pudiera Cambiar el Mundo',
+        description: 'Si tuvieras el poder de cambiar algo en el mundo, ¿qué cambiarías y por qué? Explica las razones de tu elección y el impacto que tendría. Usa el condicional (would).',
+        minWords: 120,
+        maxWords: 180,
+        time: 20,
+        vocabulary: [
+            { word: "If I could...", translation: "Si pudiera..." },
+            { word: "I would change...", translation: "Cambiaría..." },
+            { word: "This would help...", translation: "Esto ayudaría..." },
+            { word: "As a result", translation: "Como resultado" }
+        ]
+    },
+    5: {
+        title: 'Tecnología y Conexión Social',
+        description: '¿La tecnología nos hace más conectados o más aislados socialmente? Presenta tu posición y argumentos claros. Incluye ejemplos específicos y considera contrargumentos.',
+        minWords: 150,
+        maxWords: 200,
+        time: 25,
+        vocabulary: [
+            { word: "On one hand... on the other hand", translation: "Por un lado... por otro lado" },
+            { word: "In my opinion", translation: "En mi opinión" },
+            { word: "For instance", translation: "Por ejemplo" },
+            { word: "To conclude", translation: "Para concluir" }
+        ]
+    },
+    6: {
+        title: 'Reseña de Libro/Película',
+        description: 'Escribe una reseña crítica de un libro o película. Incluye un resumen breve (sin spoilers), qué te gustó, qué no te gustó, y si lo recomendarías.',
+        minWords: 180,
+        maxWords: 250,
+        time: 30,
+        vocabulary: [
+            { word: "The story is about...", translation: "La historia trata sobre..." },
+            { word: "What I liked most was...", translation: "Lo que más me gustó fue..." },
+            { word: "I highly recommend", translation: "Recomiendo mucho" },
+            { word: "The ending was...", translation: "El final fue..." }
+        ]
+    }
+};
+
+let selectedPromptId = null;
+let timerInterval = null;
+let elapsedSeconds = 0;
+
+// Seleccionar prompt
+function selectPrompt(element, promptId) {
+    document.querySelectorAll('.prompt-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    element.classList.add('selected');
+    selectedPromptId = promptId;
+    document.getElementById('startWritingBtn').disabled = false;
+}
+
+// Filtrar prompts por nivel
+function filterPrompts(level) {
+    document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    document.querySelectorAll('.prompt-item').forEach(item => {
+        if (level === 'all' || item.dataset.level === level) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+// Comenzar a escribir
+function startWriting() {
+    if (!selectedPromptId) return;
+    
+    const prompt = prompts[selectedPromptId];
+    
+    document.getElementById('promptSelection').style.display = 'none';
+    document.getElementById('writingSection').style.display = 'block';
+    
+    document.getElementById('selectedPromptTitle').textContent = prompt.title;
+    document.getElementById('selectedPromptDescription').textContent = prompt.description;
+    document.getElementById('targetWords').textContent = prompt.maxWords;
+    
+    // Actualizar vocabulario
+    const vocabContainer = document.getElementById('vocabularyHints');
+    vocabContainer.innerHTML = prompt.vocabulary.map(v => `
+        <div class="vocabulary-hint mb-2">
+            <strong>${v.word}</strong> - ${v.translation}
+        </div>
+    `).join('');
+    
+    // Iniciar timer
+    elapsedSeconds = 0;
+    timerInterval = setInterval(updateTimer, 1000);
+    
+    document.getElementById('writingArea').focus();
+}
+
+// Actualizar timer
+function updateTimer() {
+    elapsedSeconds++;
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = elapsedSeconds % 60;
+    document.getElementById('timerDisplay').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Actualizar progreso de palabras
+function updateProgress() {
+    const text = document.getElementById('writingArea').value;
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const prompt = prompts[selectedPromptId];
+    
+    document.getElementById('currentWords').textContent = words;
+    
+    const percentage = Math.min((words / prompt.maxWords) * 100, 100);
+    const fill = document.getElementById('wordGoalFill');
+    fill.style.width = percentage + '%';
+    
+    const status = document.getElementById('progressStatus');
+    if (words < prompt.minWords) {
+        fill.className = 'word-goal-fill bg-warning';
+        status.textContent = `Mínimo: ${prompt.minWords} palabras`;
+        status.className = 'text-warning';
+    } else if (words <= prompt.maxWords) {
+        fill.className = 'word-goal-fill bg-success';
+        status.textContent = '¡Buen progreso!';
+        status.className = 'text-success';
+    } else {
+        fill.className = 'word-goal-fill bg-danger';
+        status.textContent = '¡Superaste el límite!';
+        status.className = 'text-danger';
+    }
+}
+
+// Cancelar escritura
+function cancelWriting() {
+    if (confirm('¿Estás seguro? Perderás tu progreso.')) {
+        clearInterval(timerInterval);
+        document.getElementById('writingSection').style.display = 'none';
+        document.getElementById('promptSelection').style.display = 'block';
+        document.getElementById('writingArea').value = '';
+    }
+}
+
+// Guardar borrador
+function saveDraft() {
+    const text = document.getElementById('writingArea').value;
+    localStorage.setItem(`draft_${selectedPromptId}`, text);
+    localStorage.setItem(`draft_${selectedPromptId}_time`, elapsedSeconds);
+    alert('Borrador guardado correctamente');
+}
+
+// Enviar para análisis
+async function submitForAnalysis() {
+    const text = document.getElementById('writingArea').value;
+    const prompt = prompts[selectedPromptId];
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+    
+    if (words < prompt.minWords * 0.5) {
+        alert(`Por favor escribe al menos ${Math.floor(prompt.minWords * 0.5)} palabras`);
+        return;
+    }
+    
+    clearInterval(timerInterval);
+    
+    // Crear formulario y redirigir al analizador
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("writing.analyze_text") }}';
+    
+    const textInput = document.createElement('input');
+    textInput.type = 'hidden';
+    textInput.name = 'text';
+    textInput.value = text;
+    form.appendChild(textInput);
+    
+    const formatInput = document.createElement('input');
+    formatInput.type = 'hidden';
+    formatInput.name = 'format';
+    formatInput.value = 'html';
+    form.appendChild(formatInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}

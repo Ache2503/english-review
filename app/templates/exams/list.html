@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Simulador de Exámenes - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-graduation-cap text-danger me-2"></i>Simulador de Exámenes</h2>
+            <p class="text-muted">Prepárate para exámenes oficiales TOEFL, IELTS y Cambridge</p>
+        </div>
+    </div>
+    
+    {% for exam_type, exams in exam_types.items() %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-{{ 'primary' if exam_type == 'TOEFL' else 'danger' if exam_type == 'IELTS' else 'success' }}">
+            <h5 class="mb-0 text-white">
+                {% if exam_type == 'TOEFL' %}
+                    <i class="fas fa-flag-usa me-2"></i>TOEFL
+                {% elif exam_type == 'IELTS' %}
+                    <i class="fas fa-globe-europe me-2"></i>IELTS
+                {% else %}
+                    <i class="fas fa-university me-2"></i>{{ exam_type }}
+                {% endif %}
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                {% for exam in exams %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">{{ exam.title }}</h5>
+                                {% if exam.level %}
+                                <span class="badge bg-secondary">{{ exam.level }}</span>
+                                {% endif %}
+                            </div>
+                            <p class="card-text text-muted small">{{ exam.description or 'Simulador de práctica' }}</p>
+                            
+                            <div class="d-flex justify-content-between text-muted small mb-3">
+                                <span><i class="fas fa-clock me-1"></i>{{ exam.total_time_minutes }} min</span>
+                                <span><i class="fas fa-trophy me-1"></i>{{ "%.0f"|format(exam.passing_score) }}% para aprobar</span>
+                            </div>
+                            
+                            {% if best_scores.get(exam.id) %}
+                            <div class="mb-3">
+                                <small class="text-muted">Tu mejor:</small>
+                                <span class="badge bg-{{ 'success' if best_scores[exam.id] >= exam.passing_score else 'warning' }}">
+                                    {{ "%.0f"|format(best_scores[exam.id]) }}%
+                                </span>
+                            </div>
+                            {% endif %}
+                            
+                            <a href="{{ url_for('exams.exam_detail', exam_id=exam.id) }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-eye me-1"></i>Ver detalles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-2"></i>No hay exámenes disponibles todavía.
+    </div>
+    {% endfor %}
+    
+    {% if user_attempts %}
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Tus Intentos Recientes</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Examen</th>
+                            <th class="text-center">Puntuación</th>
+                            <th class="text-center">Resultado</th>
+                            <th class="text-center">Tiempo</th>
+                            <th>Fecha</th>
+                            <th class="text-end">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attempt in user_attempts %}
+                        <tr>
+                            <td>{{ attempt.exam.title if attempt.exam else 'Examen' }}</td>
+                            <td class="text-center">
+                                <strong class="text-{{ 'success' if attempt.passed else 'danger' }}">
+                                    {{ "%.0f"|format(attempt.percentage or 0) }}%
+                                </strong>
+                            </td>
+                            <td class="text-center">
+                                {% if attempt.passed %}
+                                <span class="badge bg-success"><i class="fas fa-check me-1"></i>Aprobado</span>
+                                {% else %}
+                                <span class="badge bg-danger"><i class="fas fa-times me-1"></i>No aprobado</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ attempt.time_taken_minutes or 0 }} min</td>
+                            <td>
+                                <small class="text-muted">
+                                    {{ attempt.completed_at.strftime('%d/%m/%Y %H:%M') if attempt.completed_at else '-' }}
+                                </small>
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ url_for('exams.view_attempt', attempt_id=attempt.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

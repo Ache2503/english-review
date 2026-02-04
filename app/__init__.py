@@ -52,6 +52,15 @@ def create_app(config_name='development'):
     from app.routes.grammar import grammar_bp
     from app.routes.stats import stats_bp
     from app.routes.study import study_bp
+    from app.routes.challenges import challenges_bp
+    from app.routes.exams import exams_bp
+    from app.routes.games import games_bp
+    from app.routes.drills import drills_bp
+    from app.routes.idioms import idioms_bp
+    from app.routes.reports import reports_bp
+    from app.routes.review import review_bp
+    from app.routes.writing import writing_bp
+    from app.routes.unit_challenge import unit_challenge_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -68,6 +77,15 @@ def create_app(config_name='development'):
     app.register_blueprint(grammar_bp)
     app.register_blueprint(stats_bp)
     app.register_blueprint(study_bp)
+    app.register_blueprint(challenges_bp)
+    app.register_blueprint(exams_bp)
+    app.register_blueprint(games_bp)
+    app.register_blueprint(drills_bp)
+    app.register_blueprint(idioms_bp)
+    app.register_blueprint(reports_bp)
+    app.register_blueprint(review_bp)
+    app.register_blueprint(writing_bp)
+    app.register_blueprint(unit_challenge_bp)
     
     # Error handlers
     @app.errorhandler(404)

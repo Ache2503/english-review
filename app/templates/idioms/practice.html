@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+
+{% block title %}Practicar Idioms - English Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .idiom-card {
+        transition: transform 0.3s ease;
+    }
+    .idiom-card:hover {
+        transform: translateY(-5px);
+    }
+    .option-btn {
+        transition: all 0.2s ease;
+    }
+    .option-btn:hover {
+        transform: scale(1.02);
+    }
+    .option-btn.correct {
+        background-color: var(--bs-success) !important;
+        color: white !important;
+    }
+    .option-btn.incorrect {
+        background-color: var(--bs-danger) !important;
+        color: white !important;
+    }
+    .shake {
+        animation: shake 0.5s;
+    }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-dumbbell text-primary me-2"></i>Practicar Idioms</h2>
+            <p class="text-muted">Adivina el significado de cada expresión</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-primary text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="score" class="mb-0">0</h4>
+                    <small>Puntos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-success text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="streak" class="mb-0">0</h4>
+                    <small>Racha</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-info text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="correct" class="mb-0">0</h4>
+                    <small>Correctas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-danger text-white text-center">
+                <div class="card-body py-2">
+                    <h4 id="incorrect" class="mb-0">0</h4>
+                    <small>Incorrectas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div id="quizContainer" class="card shadow-sm idiom-card">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comment-dots me-2"></i>
+                            <span id="questionNumber">Pregunta 1</span>
+                        </h5>
+                        <span id="levelBadge" class="badge bg-light text-dark">-</span>
+                    </div>
+                </div>
+                <div class="card-body text-center py-5">
+                    <div id="idiomExpression" class="display-6 text-primary mb-4">
+                        Cargando...
+                    </div>
+                    
+                    <p class="text-muted mb-4">¿Cuál es el significado de esta expresión?</p>
+                    
+                    <div id="optionsContainer" class="d-grid gap-2">
+                        <!-- Options will be loaded here -->
+                    </div>
+                    
+                    <div id="feedback" class="mt-4" style="display: none;">
+                        <div id="feedbackMessage" class="alert"></div>
+                        <button id="nextBtn" class="btn btn-primary" onclick="loadNextQuestion()">
+                            <i class="fas fa-arrow-right me-2"></i>Siguiente
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="resultsContainer" class="card shadow-sm" style="display: none;">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-trophy fa-5x text-warning mb-4"></i>
+                    <h3 class="mb-4">¡Práctica Completada!</h3>
+                    
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-4 col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 id="finalScore" class="text-primary mb-0">0</h4>
+                                <small class="text-muted">Puntos Totales</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4 id="finalAccuracy" class="text-success mb-0">0%</h4>
+                                <small class="text-muted">Precisión</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-primary" onclick="restartQuiz()">
+                            <i class="fas fa-redo me-2"></i>Practicar de Nuevo
+                        </button>
+                        <a href="{{ url_for('idioms.idioms_list') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>Ver Todos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let idioms = {{ idioms|tojson|safe if idioms else '[]' }};
+let currentIndex = 0;
+let score = 0;
+let streak = 0;
+let correct = 0;
+let incorrect = 0;
+let maxStreak = 0;
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function loadQuestion() {
+    if (currentIndex >= idioms.length || idioms.length === 0) {
+        showResults();
+        return;
+    }
+    
+    const idiom = idioms[currentIndex];
+    document.getElementById('questionNumber').textContent = `Pregunta ${currentIndex + 1} de ${idioms.length}`;
+    document.getElementById('levelBadge').textContent = idiom.level || 'B1';
+    document.getElementById('idiomExpression').textContent = idiom.expression;
+    
+    // Generate options
+    const options = [idiom.meaning];
+    const otherIdioms = idioms.filter((_, i) => i !== currentIndex);
+    shuffleArray(otherIdioms);
+    
+    for (let i = 0; i < Math.min(3, otherIdioms.length); i++) {
+        options.push(otherIdioms[i].meaning);
+    }
+    
+    shuffleArray(options);
+    
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-outline-primary btn-lg option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(option, idiom.meaning, idiom.id);
+        container.appendChild(btn);
+    });
+    
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('quizContainer').style.display = 'block';
+    document.getElementById('resultsContainer').style.display = 'none';
+}
+
+function selectAnswer(selected, correct_answer, idiomId) {
+    const buttons = document.querySelectorAll('.option-btn');
+    const isCorrect = selected === correct_answer;
+    
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correct_answer) {
+            btn.classList.add('correct');
+        } else if (btn.textContent === selected && !isCorrect) {
+            btn.classList.add('incorrect', 'shake');
+        }
+    });
+    
+    if (isCorrect) {
+        streak++;
+        correct++;
+        score += 10 + (streak > 1 ? streak * 2 : 0);
+        if (streak > maxStreak) maxStreak = streak;
+        
+        document.getElementById('feedbackMessage').className = 'alert alert-success';
+        document.getElementById('feedbackMessage').innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>¡Correcto! +${10 + (streak > 1 ? streak * 2 : 0)} puntos
+        `;
+    } else {
+        streak = 0;
+        incorrect++;
+        
+        document.getElementById('feedbackMessage').className = 'alert alert-danger';
+        document.getElementById('feedbackMessage').innerHTML = `
+            <i class="fas fa-times-circle me-2"></i>Incorrecto. La respuesta era: "${correct_answer}"
+        `;
+    }
+    
+    // Update stats
+    document.getElementById('score').textContent = score;
+    document.getElementById('streak').textContent = streak;
+    document.getElementById('correct').textContent = correct;
+    document.getElementById('incorrect').textContent = incorrect;
+    
+    document.getElementById('feedback').style.display = 'block';
+    
+    // Record progress
+    fetch(`/idioms/quiz/${idiomId}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({correct: isCorrect})
+    });
+}
+
+function loadNextQuestion() {
+    currentIndex++;
+    loadQuestion();
+}
+
+function showResults() {
+    document.getElementById('quizContainer').style.display = 'none';
+    document.getElementById('resultsContainer').style.display = 'block';
+    
+    const total = correct + incorrect;
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+    
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('finalAccuracy').textContent = accuracy + '%';
+}
+
+function restartQuiz() {
+    currentIndex = 0;
+    score = 0;
+    streak = 0;
+    correct = 0;
+    incorrect = 0;
+    
+    shuffleArray(idioms);
+    
+    document.getElementById('score').textContent = '0';
+    document.getElementById('streak').textContent = '0';
+    document.getElementById('correct').textContent = '0';
+    document.getElementById('incorrect').textContent = '0';
+    
+    loadQuestion();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (idioms.length > 0) {
+        shuffleArray(idioms);
+        loadQuestion();
+    } else {
+        document.getElementById('idiomExpression').textContent = 'No hay idioms disponibles';
+    }
+});
+</script>
+{% endblock %}

@@ -1,15 +1,34 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Unit, UserProgress, GrammarRule, VocabularyCategory, WritingPractice, UnitExtra
+from app.services.unit_unlock import UnitUnlockSystem
 
 units_bp = Blueprint('units', __name__, url_prefix='/units')
+
+
+def check_unit_unlocked(unit_id):
+    """Helper para verificar si la unidad está desbloqueada para el usuario actual"""
+    unlock_system = UnitUnlockSystem(current_user.id)
+    is_unlocked = unlock_system.is_unit_unlocked(unit_id)
+    if not is_unlocked:
+        return False, "Debes completar la unidad anterior primero."
+    return True, None
+
 
 @units_bp.route('/<int:unit_id>')
 @login_required
 def view_unit(unit_id):
     """Ver detalles de una unidad"""
     unit = Unit.query.get_or_404(unit_id)
+    
+    # Verificar si la unidad está desbloqueada
+    unlock_system = UnitUnlockSystem(current_user.id)
+    is_unlocked = unlock_system.is_unit_unlocked(unit_id)
+    
+    if not is_unlocked:
+        flash('🔒 Debes completar la unidad anterior primero.', 'warning')
+        return redirect(url_for('unit_challenge.units_overview'))
     
     # Obtener o crear progreso del usuario
     progress = UserProgress.query.filter_by(
@@ -22,6 +41,9 @@ def view_unit(unit_id):
         db.session.add(progress)
         db.session.commit()
     
+    # Obtener info de desbloqueo para la siguiente unidad
+    unit_status = unlock_system.get_unit_requirements(unit_id)
+    
     # Extra JSON activities/tips
     extra = UnitExtra.query.filter_by(unit_id=unit_id).first()
     activities = extra.data if extra and extra.data else {}
@@ -29,15 +51,26 @@ def view_unit(unit_id):
     return render_template('unit_detail.html',
                            unit=unit,
                            progress=progress,
-                           activities=activities)
+                           activities=activities,
+                           unit_status=unit_status)
 
 
 @units_bp.route('/<int:unit_id>/grammar')
 @login_required
 def view_grammar(unit_id):
     """Ver reglas gramaticales de una unidad"""
+    # Verificar si la unidad está desbloqueada
+    is_unlocked, message = check_unit_unlocked(unit_id)
+    if not is_unlocked:
+        flash(f'🔒 {message}', 'warning')
+        return redirect(url_for('unit_challenge.units_overview'))
+    
     unit = Unit.query.get_or_404(unit_id)
     grammar_rules = GrammarRule.query.filter_by(unit_id=unit_id).order_by(GrammarRule.order).all()
+    
+    # Marcar gramática como completada
+    unlock_system = UnitUnlockSystem(current_user.id)
+    unlock_system.mark_section_complete(unit_id, 'grammar')
     
     return render_template('grammar_view.html',
                            unit=unit,
@@ -48,8 +81,18 @@ def view_grammar(unit_id):
 @login_required
 def view_vocabulary(unit_id):
     """Ver vocabulario de una unidad"""
+    # Verificar si la unidad está desbloqueada
+    is_unlocked, message = check_unit_unlocked(unit_id)
+    if not is_unlocked:
+        flash(f'🔒 {message}', 'warning')
+        return redirect(url_for('unit_challenge.units_overview'))
+    
     unit = Unit.query.get_or_404(unit_id)
     vocab_categories = VocabularyCategory.query.filter_by(unit_id=unit_id).order_by(VocabularyCategory.order).all()
+    
+    # Marcar vocabulario como completado
+    unlock_system = UnitUnlockSystem(current_user.id)
+    unlock_system.mark_section_complete(unit_id, 'vocabulary')
     
     return render_template('vocabulary_view.html',
                            unit=unit,
@@ -60,8 +103,18 @@ def view_vocabulary(unit_id):
 @login_required
 def view_writing_practices(unit_id):
     """Ver ejercicios de escritura de una unidad"""
+    # Verificar si la unidad está desbloqueada
+    is_unlocked, message = check_unit_unlocked(unit_id)
+    if not is_unlocked:
+        flash(f'🔒 {message}', 'warning')
+        return redirect(url_for('unit_challenge.units_overview'))
+    
     unit = Unit.query.get_or_404(unit_id)
     writing_practices = WritingPractice.query.filter_by(unit_id=unit_id).order_by(WritingPractice.order).all()
+    
+    # Marcar ejercicios como completados
+    unlock_system = UnitUnlockSystem(current_user.id)
+    unlock_system.mark_section_complete(unit_id, 'exercises')
     
     return render_template('writing_practice.html',
                            unit=unit,
@@ -72,6 +125,12 @@ def view_writing_practices(unit_id):
 @login_required
 def view_sentence_structures(unit_id):
     """Ver estructuras de oraciones basadas en gramática de la unidad"""
+    # Verificar si la unidad está desbloqueada
+    is_unlocked, message = check_unit_unlocked(unit_id)
+    if not is_unlocked:
+        flash(f'🔒 {message}', 'warning')
+        return redirect(url_for('unit_challenge.units_overview'))
+    
     unit = Unit.query.get_or_404(unit_id)
     grammar_rules = GrammarRule.query.filter_by(unit_id=unit_id).order_by(GrammarRule.order).all()
     
@@ -158,7 +217,7 @@ def view_sentence_structures(unit_id):
 @units_bp.route('/<int:unit_id>/mark-complete', methods=['POST'])
 @login_required
 def mark_complete(unit_id):
-    """Marcar unidad como completada"""
+    """Marcar unidad como completada - ahora requiere pasar el desafío"""
     unit = Unit.query.get_or_404(unit_id)
     
     progress = UserProgress.query.filter_by(
@@ -166,9 +225,14 @@ def mark_complete(unit_id):
         unit_id=unit_id
     ).first_or_404()
     
+    # Verificar si se completó el desafío
+    if not progress.challenge_passed:
+        flash('⚠️ Debes pasar el desafío de la unidad para completarla.', 'warning')
+        return redirect(url_for('unit_challenge.unit_requirements', unit_id=unit_id))
+    
     progress.completed = True
     progress.progress_percentage = 100.0
     db.session.commit()
     
-    flash(f'¡Unidad {unit.unit_number} completada!', 'success')
-    return redirect(url_for('dashboard.index'))
+    flash(f'🎉 ¡Unidad {unit.unit_number} completada! La siguiente unidad ha sido desbloqueada.', 'success')
+    return redirect(url_for('unit_challenge.units_overview'))

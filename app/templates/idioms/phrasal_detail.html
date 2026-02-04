@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pv.full_form }} - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('idioms.phrasal_verbs_list') }}">Phrasal Verbs</a></li>
+            <li class="breadcrumb-item active">{{ pv.full_form }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-arrows-alt-h me-2"></i>{{ pv.full_form }}
+                        </h4>
+                        <div>
+                            <span class="badge bg-light text-dark me-2">{{ pv.level }}</span>
+                            {% if pv.is_separable %}
+                            <span class="badge bg-warning text-dark" title="Este phrasal verb se puede separar">
+                                Separable
+                            </span>
+                            {% else %}
+                            <span class="badge bg-secondary" title="Este phrasal verb no se puede separar">
+                                Inseparable
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Significado</h5>
+                        {% if pv.meaning %}
+                        <p class="lead">{{ pv.meaning }}</p>
+                        {% if pv.spanish_translation %}
+                        <p class="text-secondary fst-italic"><strong>Español:</strong> {{ pv.spanish_translation }}</p>
+                        {% endif %}
+                        {% if pv.additional_meanings %}
+                        <h6 class="text-muted mt-3">Otros significados:</h6>
+                        <ol class="list-group list-group-numbered">
+                            {% for am in pv.additional_meanings %}
+                            <li class="list-group-item">{{ am }}</li>
+                            {% endfor %}
+                        </ol>
+                        {% endif %}
+                        {% else %}
+                        <p class="text-muted">No hay significado registrado</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Ejemplos de Uso</h5>
+                        {% if pv.example_sentences %}
+                        {% for example in pv.example_sentences %}
+                        <div class="bg-light p-3 rounded mb-2">
+                            <i class="fas fa-quote-left text-success me-2"></i>
+                            {{ example }}
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <p class="text-muted">No hay ejemplos registrados</p>
+                        {% endif %}
+                    </div>
+                    
+                    {% if pv.is_separable %}
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Verbo Separable</h6>
+                        <p class="mb-0 small">
+                            Este phrasal verb puede separarse. El objeto puede ir entre el verbo y la partícula:
+                            <br><strong>Ejemplo:</strong> "Turn off the light" → "Turn the light off"
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if related_pvs %}
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Phrasal Verbs Relacionados</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for related in related_pvs %}
+                            <a href="{{ url_for('idioms.phrasal_verb_detail', pv_id=related.id) }}" 
+                               class="badge bg-success text-decoration-none py-2 px-3">
+                                {{ related.full_form }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Consejos de Aprendizaje</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-success rounded-circle p-2">1</span>
+                                </div>
+                                <div class="ms-3">
+                                    <strong>Aprende en contexto</strong>
+                                    <p class="small text-muted mb-0">Memoriza los ejemplos completos, no solo el significado</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-success rounded-circle p-2">2</span>
+                                </div>
+                                <div class="ms-3">
+                                    <strong>Agrupa por partícula</strong>
+                                    <p class="small text-muted mb-0">Aprende otros verbos con "{{ pv.particle or 'la misma partícula' }}"</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-success rounded-circle p-2">3</span>
+                                </div>
+                                <div class="ms-3">
+                                    <strong>Practica con flashcards</strong>
+                                    <p class="small text-muted mb-0">La repetición espaciada es muy efectiva</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-success rounded-circle p-2">4</span>
+                                </div>
+                                <div class="ms-3">
+                                    <strong>Úsalo al hablar</strong>
+                                    <p class="small text-muted mb-0">Intenta usarlo en una oración propia hoy</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Tu Progreso</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if progress %}
+                    <div class="mb-3">
+                        <div class="display-4 text-success">{{ progress.mastery_level }}/5</div>
+                        <small class="text-muted">Nivel de Maestría</small>
+                    </div>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" style="width: {{ progress.mastery_level * 20 }}%"></div>
+                    </div>
+                    <div class="row text-center small mb-3">
+                        <div class="col">
+                            <strong class="text-success">{{ progress.correct_count }}</strong>
+                            <br><span class="text-muted">Correctas</span>
+                        </div>
+                        <div class="col">
+                            <strong class="text-danger">{{ progress.incorrect_count }}</strong>
+                            <br><span class="text-muted">Incorrectas</span>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Última práctica: {{ progress.last_practiced.strftime('%d/%m/%Y') if progress.last_practiced else 'Nunca' }}
+                    </small>
+                    {% else %}
+                    <div class="py-4">
+                        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aún no has practicado este phrasal verb</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong>Verbo base:</strong> {{ pv.verb or '-' }}
+                        </li>
+                        <li class="mb-2">
+                            <strong>Partícula:</strong> {{ pv.particle or '-' }}
+                        </li>
+                        <li class="mb-2">
+                            <strong>Nivel:</strong> 
+                            <span class="badge bg-{{ 'success' if pv.level in ['A1', 'A2'] else 'warning' if pv.level in ['B1', 'B2'] else 'danger' }}">
+                                {{ pv.level }}
+                            </span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Tipo:</strong> 
+                            {% if pv.is_separable %}
+                            <span class="badge bg-warning text-dark">Separable</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inseparable</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('idioms.practice_phrasal_verbs') }}" class="btn btn-success">
+                    <i class="fas fa-dumbbell me-2"></i>Practicar
+                </a>
+                <a href="{{ url_for('idioms.phrasal_verbs_list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a la lista
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block title %}Word Scramble - Mini Juegos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-random me-2"></i>Word Scramble
+                    </h4>
+                    <span class="badge bg-light text-primary">{{ level }}</span>
+                </div>
+                <div class="card-body">
+                    <div id="game-intro">
+                        <div class="text-center py-4">
+                            <div class="display-4 mb-3">🔤</div>
+                            <h3>¿Listo para jugar?</h3>
+                            <p class="text-muted">Reordena las letras para formar la palabra correcta</p>
+                            <button id="start-btn" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Comenzar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="game-area" class="d-none">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span id="score-display" class="badge bg-success fs-6">Puntos: 0</span>
+                            <span id="progress-display" class="badge bg-secondary fs-6">1/10</span>
+                            <span id="timer-display" class="badge bg-warning text-dark fs-6">
+                                <i class="fas fa-clock me-1"></i>00:00
+                            </span>
+                        </div>
+                        
+                        <div class="text-center py-4">
+                            <div id="scrambled-word" class="display-4 mb-4 text-primary letter-spacing-2"></div>
+                            <p id="hint" class="text-muted mb-4"></p>
+                            
+                            <input type="text" id="answer-input" class="form-control form-control-lg text-center mb-3" 
+                                   placeholder="Escribe la palabra..." autocomplete="off">
+                            
+                            <button id="check-btn" class="btn btn-primary me-2">
+                                <i class="fas fa-check me-1"></i>Verificar
+                            </button>
+                            <button id="skip-btn" class="btn btn-outline-secondary">
+                                <i class="fas fa-forward me-1"></i>Saltar
+                            </button>
+                        </div>
+                        
+                        <div id="feedback" class="alert d-none"></div>
+                    </div>
+                    
+                    <div id="game-results" class="d-none">
+                        <div class="text-center py-4">
+                            <div class="display-1 mb-3" id="result-emoji">🎉</div>
+                            <h2 id="result-title">¡Bien hecho!</h2>
+                            <div class="row justify-content-center g-3 my-4">
+                                <div class="col-auto">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center px-4">
+                                            <h3 class="mb-0" id="final-score">0</h3>
+                                            <small>Puntos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center px-4">
+                                            <h3 class="mb-0" id="words-correct">0/10</h3>
+                                            <small>Palabras</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body text-center px-4">
+                                            <h3 class="mb-0" id="final-time">00:00</h3>
+                                            <small>Tiempo</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button id="play-again" class="btn btn-primary me-2">
+                                    <i class="fas fa-redo me-1"></i>Jugar de nuevo
+                                </button>
+                                <a href="{{ url_for('games.game_list') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-th me-1"></i>Otros juegos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.letter-spacing-2 { letter-spacing: 0.5rem; }
+</style>
+
+<script>
+const level = '{{ level }}';
+let words = [];
+let currentIndex = 0;
+let score = 0;
+let startTime = null;
+let timerInterval = null;
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('check-btn').addEventListener('click', checkAnswer);
+document.getElementById('skip-btn').addEventListener('click', skipWord);
+document.getElementById('play-again').addEventListener('click', () => location.reload());
+document.getElementById('answer-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkAnswer();
+});
+
+async function startGame() {
+    // Fetch words
+    const response = await fetch(`/games/word-scramble/get-words?level=${level}&count=10`);
+    const data = await response.json();
+    words = data.words;
+    
+    // Start game
+    document.getElementById('game-intro').classList.add('d-none');
+    document.getElementById('game-area').classList.remove('d-none');
+    
+    startTime = Date.now();
+    startTimer();
+    showWord();
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+        const seconds = (elapsed % 60).toString().padStart(2, '0');
+        document.getElementById('timer-display').innerHTML = 
+            `<i class="fas fa-clock me-1"></i>${minutes}:${seconds}`;
+    }, 1000);
+}
+
+function showWord() {
+    if (currentIndex >= words.length) {
+        endGame();
+        return;
+    }
+    
+    const word = words[currentIndex];
+    document.getElementById('scrambled-word').textContent = word.scrambled.toUpperCase();
+    document.getElementById('hint').textContent = word.hint ? `Pista: ${word.hint}` : '';
+    document.getElementById('progress-display').textContent = `${currentIndex + 1}/${words.length}`;
+    document.getElementById('answer-input').value = '';
+    document.getElementById('answer-input').focus();
+    document.getElementById('feedback').classList.add('d-none');
+}
+
+function checkAnswer() {
+    const input = document.getElementById('answer-input').value.trim().toLowerCase();
+    const correct = words[currentIndex].answer.toLowerCase();
+    const feedback = document.getElementById('feedback');
+    
+    if (input === correct) {
+        score += 10;
+        document.getElementById('score-display').textContent = `Puntos: ${score}`;
+        feedback.className = 'alert alert-success';
+        feedback.innerHTML = '<i class="fas fa-check-circle me-2"></i>¡Correcto!';
+        feedback.classList.remove('d-none');
+        
+        setTimeout(() => {
+            currentIndex++;
+            showWord();
+        }, 1000);
+    } else {
+        feedback.className = 'alert alert-danger';
+        feedback.innerHTML = '<i class="fas fa-times-circle me-2"></i>Incorrecto. Intenta de nuevo.';
+        feedback.classList.remove('d-none');
+    }
+}
+
+function skipWord() {
+    const feedback = document.getElementById('feedback');
+    feedback.className = 'alert alert-warning';
+    feedback.innerHTML = `<i class="fas fa-info-circle me-2"></i>La palabra era: <strong>${words[currentIndex].answer}</strong>`;
+    feedback.classList.remove('d-none');
+    
+    setTimeout(() => {
+        currentIndex++;
+        showWord();
+    }, 1500);
+}
+
+async function endGame() {
+    clearInterval(timerInterval);
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    
+    // Save score
+    await fetch('/games/word-scramble/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            score: score,
+            level: level,
+            time_seconds: elapsed,
+            words_completed: Math.floor(score / 10)
+        })
+    });
+    
+    // Show results
+    document.getElementById('game-area').classList.add('d-none');
+    document.getElementById('game-results').classList.remove('d-none');
+    
+    const correctWords = Math.floor(score / 10);
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('words-correct').textContent = `${correctWords}/${words.length}`;
+    
+    const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const seconds = (elapsed % 60).toString().padStart(2, '0');
+    document.getElementById('final-time').textContent = `${minutes}:${seconds}`;
+    
+    if (correctWords >= 8) {
+        document.getElementById('result-emoji').textContent = '🏆';
+        document.getElementById('result-title').textContent = '¡Excelente!';
+    } else if (correctWords >= 5) {
+        document.getElementById('result-emoji').textContent = '👍';
+        document.getElementById('result-title').textContent = '¡Bien hecho!';
+    } else {
+        document.getElementById('result-emoji').textContent = '💪';
+        document.getElementById('result-title').textContent = 'Sigue practicando';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de Escritura - English Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .pattern-card {
+        border-left: 4px solid;
+        transition: transform 0.2s;
+    }
+    .pattern-card:hover {
+        transform: translateX(5px);
+    }
+    .pattern-card.high { border-left-color: #dc3545; }
+    .pattern-card.medium { border-left-color: #ffc107; }
+    .pattern-card.low { border-left-color: #28a745; }
+    .timeline-entry {
+        position: relative;
+        padding-left: 30px;
+        border-left: 2px solid #dee2e6;
+    }
+    .timeline-entry::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #0d6efd;
+    }
+    .progress-trend {
+        height: 4px;
+        border-radius: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-history text-primary me-2"></i>Historial de Escritura</h2>
+            <p class="text-muted">Analiza tus patrones de errores y sigue tu progreso</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('writing.analyze_page') }}" class="btn btn-primary">
+                <i class="fas fa-pencil-alt me-2"></i>Nueva Práctica
+            </a>
+        </div>
+    </div>
+    
+    <!-- Resumen general -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 text-center">
+                <div class="card-body">
+                    <h2 class="text-primary mb-0">{{ stats.total_analyses or 0 }}</h2>
+                    <small class="text-muted">Textos Analizados</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 text-center">
+                <div class="card-body">
+                    <h2 class="text-danger mb-0">{{ stats.total_errors or 0 }}</h2>
+                    <small class="text-muted">Errores Corregidos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 text-center">
+                <div class="card-body">
+                    <h2 class="text-success mb-0">{{ stats.avg_score or '--' }}%</h2>
+                    <small class="text-muted">Puntuación Promedio</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100 text-center">
+                <div class="card-body">
+                    <h2 class="text-info mb-0">{{ stats.words_written or 0 }}</h2>
+                    <small class="text-muted">Palabras Escritas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Patrones de errores -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bug me-2"></i>Patrones de Errores Frecuentes</h5>
+                </div>
+                <div class="card-body">
+                    {% if error_patterns %}
+                        {% for pattern in error_patterns %}
+                        <div class="pattern-card {{ pattern.severity }} bg-light rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0">{{ pattern.error_type }}</h6>
+                                <span class="badge bg-{{ 'danger' if pattern.severity == 'high' else 'warning' if pattern.severity == 'medium' else 'success' }}">
+                                    {{ pattern.count }} veces
+                                </span>
+                            </div>
+                            <p class="small mb-2">{{ pattern.description }}</p>
+                            <div class="small text-muted">
+                                <strong>Ejemplo:</strong> {{ pattern.example }}
+                            </div>
+                            <div class="progress progress-trend mt-2">
+                                <div class="progress-bar bg-{{ 'danger' if pattern.severity == 'high' else 'warning' if pattern.severity == 'medium' else 'success' }}" 
+                                     style="width: {{ (pattern.count / error_patterns[0].count * 100) if error_patterns else 0 }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                            <p>¡Aún no hay patrones de errores registrados!</p>
+                            <p class="small">Empieza a practicar y aquí verás los errores a mejorar.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Errores comunes de hispanohablantes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-language me-2"></i>Errores Típicos de Hispanohablantes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="spanishErrorsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#falsefriendsCollapse">
+                                    <i class="fas fa-user-friends me-2 text-danger"></i>
+                                    False Friends
+                                </button>
+                            </h2>
+                            <div id="falsefriendsCollapse" class="accordion-collapse collapse" data-bs-parent="#spanishErrorsAccordion">
+                                <div class="accordion-body">
+                                    <ul class="small">
+                                        <li><strong>actually</strong> ≠ actualmente (significa "en realidad")</li>
+                                        <li><strong>library</strong> ≠ librería (significa "biblioteca")</li>
+                                        <li><strong>eventually</strong> ≠ eventualmente (significa "finalmente")</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#articlesCollapse">
+                                    <i class="fas fa-font me-2 text-primary"></i>
+                                    Artículos
+                                </button>
+                            </h2>
+                            <div id="articlesCollapse" class="accordion-collapse collapse" data-bs-parent="#spanishErrorsAccordion">
+                                <div class="accordion-body">
+                                    <ul class="small">
+                                        <li>No usar "the" con generalizaciones: <em>The life is beautiful</em> → <em>Life is beautiful</em></li>
+                                        <li>Olvidar artículos contables: <em>I have car</em> → <em>I have a car</em></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prepositionsCollapse">
+                                    <i class="fas fa-link me-2 text-success"></i>
+                                    Preposiciones
+                                </button>
+                            </h2>
+                            <div id="prepositionsCollapse" class="accordion-collapse collapse" data-bs-parent="#spanishErrorsAccordion">
+                                <div class="accordion-body">
+                                    <ul class="small">
+                                        <li><strong>depend on</strong> no "depend of"</li>
+                                        <li><strong>married to</strong> no "married with"</li>
+                                        <li><strong>interested in</strong> no "interested on"</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progreso temporal -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Progreso Semanal</h5>
+            <small class="text-muted">Últimas 4 semanas</small>
+        </div>
+        <div class="card-body">
+            <canvas id="progressChart" height="100"></canvas>
+        </div>
+    </div>
+    
+    <!-- Historial reciente -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Textos Recientes</h5>
+        </div>
+        <div class="card-body">
+            {% if recent_texts %}
+                {% for text in recent_texts %}
+                <div class="timeline-entry mb-4 pb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>{{ text.date.strftime('%d %b %Y, %H:%M') }}</strong>
+                            <span class="badge bg-{{ 'success' if text.score >= 80 else 'warning' if text.score >= 60 else 'danger' }} ms-2">
+                                {{ text.score }}%
+                            </span>
+                        </div>
+                        <small class="text-muted">{{ text.word_count }} palabras</small>
+                    </div>
+                    <p class="small text-muted mt-1 mb-2">{{ text.preview|truncate(150) }}</p>
+                    <div class="small">
+                        <span class="text-danger me-3"><i class="fas fa-times-circle me-1"></i>{{ text.grammar_errors }} gramática</span>
+                        <span class="text-primary me-3"><i class="fas fa-spell-check me-1"></i>{{ text.spelling_errors }} ortografía</span>
+                        <span class="text-success"><i class="fas fa-paint-brush me-1"></i>{{ text.style_errors }} estilo</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-pencil-alt fa-3x mb-3"></i>
+                    <p>Aún no has analizado ningún texto</p>
+                    <a href="{{ url_for('writing.analyze_page') }}" class="btn btn-primary">
+                        <i class="fas fa-play me-2"></i>Empezar Ahora
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de progreso
+const ctx = document.getElementById('progressChart').getContext('2d');
+const progressChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ week_labels | tojson | safe if week_labels else ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'] | tojson }},
+        datasets: [{
+            label: 'Puntuación Promedio',
+            data: {{ week_scores | tojson | safe if week_scores else [0, 0, 0, 0] | tojson }},
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.3,
+            fill: true
+        }, {
+            label: 'Errores por Texto',
+            data: {{ week_errors | tojson | safe if week_errors else [0, 0, 0, 0] | tojson }},
+            borderColor: '#dc3545',
+            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

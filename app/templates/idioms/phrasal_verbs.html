@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Phrasal Verbs - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-arrows-alt-h text-success me-2"></i>Phrasal Verbs</h2>
+            <p class="text-muted">Aprende verbos compuestos esenciales del inglés</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <select id="levelFilter" class="form-select">
+                <option value="">Todos los niveles</option>
+                <option value="A1">A1 - Básico</option>
+                <option value="A2">A2 - Elemental</option>
+                <option value="B1">B1 - Intermedio</option>
+                <option value="B2">B2 - Intermedio Alto</option>
+                <option value="C1">C1 - Avanzado</option>
+                <option value="C2">C2 - Dominio</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <select id="verbFilter" class="form-select">
+                <option value="">Todos los verbos</option>
+                {% for verb in base_verbs %}
+                <option value="{{ verb }}">{{ verb }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Buscar phrasal verb...">
+                <button class="btn btn-outline-success" type="button" onclick="filterPVs()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-check-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="mb-0">{{ learned_count or 0 }}</h5>
+                        <small>Aprendidos</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-book fa-2x me-3"></i>
+                    <div>
+                        <h5 class="mb-0">{{ total_pvs or 0 }}</h5>
+                        <small>Total Disponibles</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fas fa-star fa-2x me-3"></i>
+                    <div>
+                        <h5 class="mb-0">{{ mastered_count or 0 }}</h5>
+                        <small>Dominados</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover" id="pvTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Phrasal Verb</th>
+                    <th>Significado</th>
+                    <th>Ejemplo</th>
+                    <th class="text-center">Nivel</th>
+                    <th class="text-center">Maestría</th>
+                    <th class="text-end">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pv in phrasal_verbs %}
+                <tr class="pv-row" 
+                    data-level="{{ pv.level }}" 
+                    data-verb="{{ pv.verb }}"
+                    data-search="{{ pv.full_form|lower }} {{ pv.meaning|lower if pv.meaning else '' }}">
+                    <td>
+                        <strong class="text-success">{{ pv.full_form }}</strong>
+                        {% if pv.is_separable %}
+                        <span class="badge bg-light text-dark ms-1" title="Separable">S</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ pv.meaning if pv.meaning else '-' }}
+                    </td>
+                    <td>
+                        <small class="text-muted fst-italic">
+                            {% if pv.example_sentences %}
+                                {{ pv.example_sentences[0] if pv.example_sentences is iterable else pv.example_sentences }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-{{ 'success' if pv.level in ['A1', 'A2'] else 'warning' if pv.level in ['B1', 'B2'] else 'danger' }}">
+                            {{ pv.level }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        {% if user_progress.get(pv.id) %}
+                        <div class="progress" style="width: 60px; height: 6px;">
+                            <div class="progress-bar bg-success" style="width: {{ user_progress[pv.id].mastery_level * 20 }}%"></div>
+                        </div>
+                        {% else %}
+                        <small class="text-muted">-</small>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('idioms.phrasal_verb_detail', pv_id=pv.id) }}" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No hay phrasal verbs disponibles todavía.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('idioms.practice_phrasal_verbs') }}" class="btn btn-success btn-lg me-2">
+            <i class="fas fa-dumbbell me-2"></i>Practicar Phrasal Verbs
+        </a>
+        <a href="{{ url_for('idioms.idioms_list') }}" class="btn btn-outline-info btn-lg">
+            <i class="fas fa-comment-dots me-2"></i>Ver Idioms
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterPVs() {
+    const level = document.getElementById('levelFilter').value.toLowerCase();
+    const verb = document.getElementById('verbFilter').value.toLowerCase();
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    
+    document.querySelectorAll('.pv-row').forEach(row => {
+        const rowLevel = row.dataset.level.toLowerCase();
+        const rowVerb = row.dataset.verb.toLowerCase();
+        const rowSearch = row.dataset.search;
+        
+        const matchLevel = !level || rowLevel === level;
+        const matchVerb = !verb || rowVerb === verb;
+        const matchSearch = !search || rowSearch.includes(search);
+        
+        row.style.display = (matchLevel && matchVerb && matchSearch) ? '' : 'none';
+    });
+}
+
+document.getElementById('levelFilter').addEventListener('change', filterPVs);
+document.getElementById('verbFilter').addEventListener('change', filterPVs);
+document.getElementById('searchInput').addEventListener('input', filterPVs);
+</script>
+{% endblock %}
