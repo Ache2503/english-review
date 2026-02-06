@@ -1,10 +1,25 @@
+import re
 from flask import Flask
+from markupsafe import Markup
 from flask_caching import Cache
 from config import config
 from app.extensions import db, login_manager, init_app
 from app.models import User
 from dotenv import load_dotenv
 from app.routes.conversation import conversation_bp
+
+
+def markdown_to_html(text):
+    """Convierte **texto** a <strong>texto</strong> y otros formatos markdown básicos"""
+    if not text:
+        return ''
+    # Convertir **texto** a <strong>texto</strong>
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', str(text))
+    # Convertir *texto* a <em>texto</em>
+    text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
+    # Convertir saltos de línea
+    text = text.replace('\n', '<br>')
+    return Markup(text)
 # OPTIMIZACIÓN: Inicializar caché
 cache = Cache(config={
     'CACHE_TYPE': 'simple',  # SimpleCache (en memoria)
@@ -23,6 +38,10 @@ def create_app(config_name='development'):
     
     # Inicializar caché
     cache.init_app(app)
+    
+    # Registrar filtros personalizados de Jinja2
+    app.jinja_env.filters['md'] = markdown_to_html
+    app.jinja_env.filters['markdown'] = markdown_to_html
     
     # Inicializar extensiones
     init_app(app)

@@ -47,10 +47,10 @@
                             </h5>
                         </div>
                         <div class="card-body">
-                            <p class="card-text text-muted">{{ reading.instructions[:100] }}...</p>
+                            <p class="card-text text-muted">{{ (reading.instructions or reading.content or '')[:100] }}...</p>
                             <div class="mb-3">
                                 <span class="badge bg-secondary">{{ reading.difficulty }}</span>
-                                <span class="badge bg-info">{{ reading.content.split()|length }} palabras</span>
+                                <span class="badge bg-info">{{ (reading.content or '').split()|length }} palabras</span>
                             </div>
                         </div>
                         <div class="card-footer bg-light">

@@ -296,3 +296,89 @@ def api_analyze():
         'score': result.get('score', 0),
         'metrics': metrics
     })
+
+
+@practice_bp.route('/api/submit-exercise/<int:exercise_id>', methods=['POST'])
+@login_required
+def api_submit_exercise(exercise_id):
+    """API para enviar respuesta de ejercicio sin recargar página"""
+    exercise = SentenceExercise.query.get_or_404(exercise_id)
+    data = request.get_json(silent=True) or {}
+    user_answer = (data.get('answer') or '').strip()
+    
+    if not user_answer:
+        return jsonify({'ok': False, 'error': 'Por favor escribe una respuesta.'}), 400
+    
+    # Obtener todas las respuestas correctas (principal + alternativas)
+    correct_answers = exercise.get_all_correct_answers()
+    
+    # Usar el sistema de verificación con similitud
+    from app.services.feedback import check_answer_similarity, check_grammar_errors
+    from app.services.streaks import update_user_streak
+    
+    is_correct, matched_answer, similarity = check_answer_similarity(user_answer, correct_answers, threshold=0.85)
+    
+    # Verificar errores gramaticales
+    grammar_check = check_grammar_errors(user_answer)
+    
+    # Generar feedback detallado
+    feedback_parts = []
+    
+    if is_correct:
+        if similarity == 1.0:
+            feedback_parts.append("✅ ¡Perfecto! Respuesta exacta.")
+        else:
+            feedback_parts.append(f"✅ ¡Correcto! Tu respuesta es válida (similitud: {int(similarity * 100)}%).")
+        
+        if similarity < 1.0:
+            feedback_parts.append(f"💡 Respuesta esperada: '{matched_answer}'")
+    else:
+        feedback_parts.append(f"❌ Incorrecto (similitud: {int(similarity * 100)}%).")
+        feedback_parts.append(f"✏️ La respuesta correcta es: '{exercise.correct_answer}'")
+        
+        if exercise.alternative_answers:
+            alt_text = "', '".join(exercise.alternative_answers)
+            feedback_parts.append(f"📝 También se aceptan: '{alt_text}'")
+    
+    # Agregar análisis gramatical si hay errores
+    if grammar_check["available"] and grammar_check["error_count"] > 0:
+        feedback_parts.append(f"\n⚠️ Errores gramaticales detectados ({grammar_check['error_count']}):")
+        for error in grammar_check["errors"][:3]:
+            error_msg = error["message"]
+            replacements = error.get("replacements", [])
+            if replacements:
+                feedback_parts.append(f"  • {error_msg} → Intenta: '{replacements[0]}'")
+            else:
+                feedback_parts.append(f"  • {error_msg}")
+            db.session.add(ErrorLog(
+                user_id=current_user.id,
+                unit_id=exercise.unit_id,
+                source='exercise',
+                message=error_msg,
+                context=error.get('context'),
+                rule=error.get('rule')
+            ))
+    elif grammar_check["available"] and is_correct:
+        feedback_parts.append("\n✨ Sin errores gramaticales detectados.")
+
+    update_user_streak(current_user.id)
+    
+    feedback = "\n".join(feedback_parts)
+    
+    # Guardar respuesta
+    submission = UserSentenceExercise(
+        user_id=current_user.id,
+        exercise_id=exercise_id,
+        user_answer=user_answer,
+        is_correct=is_correct,
+        feedback=feedback
+    )
+    db.session.add(submission)
+    db.session.commit()
+    
+    return jsonify({
+        'ok': True,
+        'is_correct': is_correct,
+        'feedback': feedback,
+        'similarity': int(similarity * 100)
+    })

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dark Mode - Topic Grammar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-primary: #1e293b;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --link-color: #2563eb;
+            --link-hover: #1e40af;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-body: #0a0e27;
+                --bg-card: #141829;
+                --text-main: #f0f4f8;
+                --text-primary: #ffffff;
+                --text-light: #cbd5e1;
+                --text-muted: #94a3b8;
+                --border-color: #2a3f5f;
+                --input-bg: #1a2332;
+                --input-border: #3a4f6f;
+                --link-color: #60a5fa;
+                --link-hover: #93c5fd;
+            }
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .card {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .table {
+            color: var(--text-main);
+        }
+
+        .table th {
+            background-color: transparent;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* TOPIC STYLES */
+        .topic-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 1rem;
+            color: var(--text-main);
+        }
+
+        .grammar-table {
+            background: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        .grammar-table th {
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .grammar-table td {
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .highlight-cell {
+            background: #e8f4fd !important;
+            color: #0d6efd;
+        }
+
+        .note-box {
+            background: #fffbeb;
+            border-left: 4px solid #fbbf24;
+            color: var(--text-main);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .comparison-box {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            color: var(--text-main);
+        }
+
+        .comparison-primary {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left: 5px solid #2196f3;
+        }
+
+        .comparison-success {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-left: 5px solid #4caf50;
+        }
+
+        .vocab-chip {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin: 0.25rem;
+        }
+
+        .exercise-number {
+            width: 35px;
+            height: 35px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .exercise-sentence {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* DARK MODE */
+        @media (prefers-color-scheme: dark) {
+            .topic-header {
+                background: linear-gradient(135deg, #1a2f4f, #141829);
+                color: #f0f4f8;
+            }
+
+            .grammar-table th {
+                background: #1a2f4f;
+                color: #ffffff;
+                border-bottom-color: #2a3f5f;
+            }
+
+            .grammar-table td {
+                border-bottom-color: #2a3f5f;
+                color: #e0e8f0;
+            }
+
+            .highlight-cell {
+                background: #1a3a52 !important;
+                color: #7dd3fc !important;
+            }
+
+            .note-box {
+                background: rgba(251, 191, 36, 0.15);
+                border-left-color: #fbbf24;
+                color: #f0f4f8;
+            }
+
+            .comparison-box {
+                color: #f0f4f8;
+            }
+
+            .comparison-primary {
+                background: linear-gradient(135deg, #1a3a52, #1a2f4f);
+                border-left-color: #60a5fa;
+            }
+
+            .comparison-success {
+                background: linear-gradient(135deg, #1a3a2f, #1a2f2f);
+                border-left-color: #22c55e;
+            }
+
+            .vocab-chip {
+                background: linear-gradient(135deg, #1a2f4f, #141829);
+                color: #f0f4f8;
+            }
+
+            .exercise-sentence {
+                color: #f0f4f8;
+            }
+        }
+
+        .test-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="mb-4">Test Dark Mode - Topic Grammar</h1>
+        <p class="text-muted">Verifica los estilos en modo oscuro. Abre DevTools y prueba con <code>prefers-color-scheme: dark</code></p>
+
+        <!-- Header -->
+        <div class="test-section">
+            <div class="topic-header">
+                <h2>📚 Present Simple Tense</h2>
+                <p>Aprende cómo usar el presente simple en inglés</p>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="test-section">
+            <h3>Tabla de Ejemplos</h3>
+            <table class="table grammar-table">
+                <thead>
+                    <tr>
+                        <th>Sujeto</th>
+                        <th>Verbo</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>I, You, We, They</td>
+                        <td class="highlight-cell">verb base</td>
+                        <td>I work here</td>
+                    </tr>
+                    <tr>
+                        <td>He, She, It</td>
+                        <td class="highlight-cell">verb + s/es</td>
+                        <td>She works here</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Note Box -->
+        <div class="test-section">
+            <h3>Nota Importante</h3>
+            <div class="note-box">
+                <strong>⚠️ Recordatorio:</strong> El presente simple se usa para hablar de hechos generales, hábitos y situaciones que son verdaderas generalmente.
+            </div>
+        </div>
+
+        <!-- Comparison Boxes -->
+        <div class="test-section">
+            <h3>Comparaciones</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="comparison-box comparison-primary">
+                        <strong class="comparison-title">Forma Afirmativa</strong>
+                        <p class="comparison-desc">Sujeto + Verbo + Objeto</p>
+                        <ul class="comparison-examples">
+                            <li>I work</li>
+                            <li>She likes</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="comparison-box comparison-success">
+                        <strong class="comparison-title">Forma Negativa</strong>
+                        <p class="comparison-desc">Sujeto + do/does + not + Verbo</p>
+                        <ul class="comparison-examples">
+                            <li>I don't work</li>
+                            <li>She doesn't like</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vocab Chips -->
+        <div class="test-section">
+            <h3>Vocabulario</h3>
+            <div>
+                <span class="vocab-chip">Work - Trabajar</span>
+                <span class="vocab-chip">Study - Estudiar</span>
+                <span class="vocab-chip">Play - Jugar</span>
+                <span class="vocab-chip">Like - Gustar</span>
+            </div>
+        </div>
+
+        <!-- Exercises -->
+        <div class="test-section">
+            <h3>Ejercicio</h3>
+            <div class="exercise-item mb-3">
+                <span class="exercise-number">1</span>
+                <div>
+                    <div class="exercise-sentence">Complete: "She _____ (work) in a hospital"</div>
+                    <small class="text-muted">Pista: Usa la tercera persona singular</small>
+                </div>
+            </div>
+            <div class="exercise-item">
+                <span class="exercise-number">2</span>
+                <div>
+                    <div class="exercise-sentence">Transforma a negativa: "They play football"</div>
+                    <small class="text-muted">Pista: Usa "do not" en plural</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>💡 Tip:</strong> Abre las DevTools (F12) y cambia a <code>prefers-color-scheme: dark</code> en el inspector para ver cómo cambian los colores automáticamente.
+        </div>
+    </div>
+</body>
+</html>

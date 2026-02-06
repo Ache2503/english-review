@@ -1,0 +1,426 @@
+/**
+ * Dark Mode - Estilos Complementarios
+ * Estilos adicionales para mejorar la visibilidad en modo oscuro
+ * para componentes específicos de la plataforma
+ */
+
+@media (prefers-color-scheme: dark) {
+
+    /* ===== TARJETAS DE TEMA (UNIT CARDS) ===== */
+    .unit-card,
+    .lesson-card,
+    .topic-card {
+        background: linear-gradient(135deg, #1a2f4f 0%, #141829 100%) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .unit-card h5,
+    .lesson-card h5,
+    .topic-card h5 {
+        color: #ffffff !important;
+    }
+
+    .unit-card p,
+    .lesson-card p,
+    .topic-card p {
+        color: #e0e8f0 !important;
+    }
+
+    .unit-card .badge,
+    .lesson-card .badge,
+    .topic-card .badge {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    /* ===== CUESTIONARIOS Y EJERCICIOS ===== */
+    .quiz-container,
+    .exercise-container,
+    .practice-container {
+        background: var(--bg-body) !important;
+        color: #f0f4f8 !important;
+    }
+
+    .question-text,
+    .quiz-question {
+        color: #ffffff !important;
+    }
+
+    .answer-option,
+    .quiz-option {
+        background: var(--bg-card) !important;
+        border-color: #2a3f5f !important;
+        color: #e0e8f0 !important;
+    }
+
+    .answer-option:hover,
+    .quiz-option:hover {
+        background: #1a2f4f !important;
+        border-color: #3a4f7f !important;
+    }
+
+    .answer-option.selected,
+    .quiz-option.selected {
+        background: #3b82f6 !important;
+        color: #ffffff !important;
+        border-color: #60a5fa !important;
+    }
+
+    .answer-option.correct {
+        background: #22c55e !important;
+        color: #ffffff !important;
+        border-color: #4ade80 !important;
+    }
+
+    .answer-option.incorrect {
+        background: #ef4444 !important;
+        color: #ffffff !important;
+        border-color: #f87171 !important;
+    }
+
+    /* ===== FLASHCARDS ===== */
+    .flashcard,
+    .flash-card {
+        background: linear-gradient(135deg, #1a2f4f, #141829) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .flashcard-front,
+    .flashcard-back {
+        color: #ffffff !important;
+    }
+
+    .flashcard-question,
+    .flashcard-answer {
+        color: #e0e8f0 !important;
+    }
+
+    /* ===== ESCRITURA Y ANÁLISIS ===== */
+    .writing-editor,
+    .text-editor {
+        background: var(--input-bg) !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .writing-feedback,
+    .correction-feedback {
+        background: var(--bg-card) !important;
+        color: #f0f4f8 !important;
+        border-left: 4px solid #60a5fa !important;
+    }
+
+    .feedback-positive {
+        color: #4ade80 !important;
+        border-left-color: #22c55e !important;
+    }
+
+    .feedback-negative {
+        color: #f87171 !important;
+        border-left-color: #ef4444 !important;
+    }
+
+    .feedback-neutral {
+        color: #93c5fd !important;
+        border-left-color: #60a5fa !important;
+    }
+
+    /* ===== GRAMÁTICA ===== */
+    .grammar-example,
+    .example-box {
+        background: var(--bg-card) !important;
+        border-color: #2a3f5f !important;
+        color: #e0e8f0 !important;
+    }
+
+    .grammar-explanation {
+        color: #f0f4f8 !important;
+    }
+
+    .example-code,
+    .code-block {
+        background: #1a2332 !important;
+        color: #4ade80 !important;
+        border: 1px solid #2a3f5f !important;
+    }
+
+    /* ===== VOCABULARIO ===== */
+    .vocab-card,
+    .vocabulary-item {
+        background: linear-gradient(135deg, #1a2f4f, #141829) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .vocab-word {
+        color: #ffffff !important;
+    }
+
+    .vocab-translation,
+    .vocab-definition {
+        color: #e0e8f0 !important;
+    }
+
+    .vocab-example {
+        color: #a8b8cc !important;
+        font-style: italic;
+    }
+
+    /* ===== LECTURA ===== */
+    .reading-text,
+    .article-content {
+        color: #e0e8f0 !important;
+        background: var(--bg-body) !important;
+    }
+
+    .reading-highlight {
+        background: rgba(251, 191, 36, 0.2) !important;
+        color: #fde047 !important;
+    }
+
+    .word-meaning,
+    .vocabulary-tooltip {
+        background: var(--bg-card) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    /* ===== DESAFÍOS ===== */
+    .challenge-card,
+    .challenge-item {
+        background: linear-gradient(135deg, #1a2f4f, #141829) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .challenge-title {
+        color: #ffffff !important;
+    }
+
+    .challenge-description {
+        color: #e0e8f0 !important;
+    }
+
+    .challenge-requirement {
+        background: rgba(59, 130, 246, 0.1) !important;
+        border-left: 3px solid #3b82f6 !important;
+        color: #93c5fd !important;
+    }
+
+    .challenge-locked {
+        opacity: 0.6;
+        filter: grayscale(0.5);
+    }
+
+    /* ===== INSIGNIAS Y LOGROS ===== */
+    .badge-item,
+    .achievement-card {
+        background: linear-gradient(135deg, #1a2f4f, #141829) !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .badge-name,
+    .achievement-title {
+        color: #ffffff !important;
+    }
+
+    .badge-description,
+    .achievement-description {
+        color: #a8b8cc !important;
+    }
+
+    .badge-unlocked {
+        filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+    }
+
+    .badge-locked {
+        filter: grayscale(1) drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+    }
+
+    /* ===== PROGRESO Y ESTADÍSTICAS ===== */
+    .progress-section {
+        background: var(--bg-card) !important;
+        color: #f0f4f8 !important;
+    }
+
+    .progress-item {
+        border-color: #2a3f5f !important;
+    }
+
+    .progress-label {
+        color: #e0e8f0 !important;
+    }
+
+    .progress-value {
+        color: #ffffff !important;
+    }
+
+    /* ===== CONVERSACIONES ===== */
+    .conversation-scenario,
+    .scenario-card {
+        background: linear-gradient(135deg, #1a2f4f, #141829) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .conversation-title {
+        color: #ffffff !important;
+    }
+
+    .conversation-difficulty {
+        background: var(--border-color) !important;
+        color: #1a2332 !important;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+    }
+
+    .difficulty-beginner {
+        background: #22c55e !important;
+        color: white !important;
+    }
+
+    .difficulty-intermediate {
+        background: #fbbf24 !important;
+        color: #000000 !important;
+    }
+
+    .difficulty-advanced {
+        background: #ef4444 !important;
+        color: white !important;
+    }
+
+    /* ===== NAVEGACIÓN ===== */
+    .breadcrumb {
+        background: transparent !important;
+    }
+
+    .breadcrumb-item {
+        color: #a8b8cc !important;
+    }
+
+    .breadcrumb-item a {
+        color: #60a5fa !important;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #93c5fd !important;
+    }
+
+    .breadcrumb-item.active {
+        color: #e0e8f0 !important;
+    }
+
+    /* ===== BOTONES DE ACCIÓN ESPECÍFICOS ===== */
+    .btn-play,
+    .btn-practice {
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        border-color: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .btn-play:hover,
+    .btn-practice:hover {
+        background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+        border-color: #60a5fa !important;
+    }
+
+    /* ===== ICONOS Y EMOJIS ===== */
+    .icon-light {
+        filter: brightness(1.2) !important;
+    }
+
+    /* ===== DROPDOWNS Y SELECTS ===== */
+    .dropdown-menu {
+        background: var(--bg-card) !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .dropdown-item {
+        color: #e0e8f0 !important;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        background: #1a2f4f !important;
+        color: #ffffff !important;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    /* ===== SPINNERS Y LOADERS ===== */
+    .spinner-border {
+        border-color: rgba(147, 197, 253, 0.25) !important;
+        border-right-color: #3b82f6 !important;
+    }
+
+    .spinner-grow {
+        background-color: #3b82f6 !important;
+    }
+
+    /* ===== TOOLTIPS Y POPOVERS ===== */
+    .tooltip-inner {
+        background: var(--bg-card) !important;
+        color: #f0f4f8 !important;
+        border: 1px solid #2a3f5f !important;
+    }
+
+    .popover {
+        background: var(--bg-card) !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .popover-header {
+        background: #1a2f4f !important;
+        border-bottom-color: #2a3f5f !important;
+        color: #ffffff !important;
+    }
+
+    .popover-body {
+        color: #e0e8f0 !important;
+    }
+
+    /* ===== CONTROLES DE RANGO ===== */
+    input[type="range"] {
+        accent-color: #3b82f6 !important;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+        background: #2a3f5f !important;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        background: #3b82f6 !important;
+    }
+
+    input[type="range"]::-moz-range-track {
+        background: #2a3f5f !important;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        background: #3b82f6 !important;
+        border-color: #3b82f6 !important;
+    }
+
+}
+
+/* ===== MODO CLARO - ASEGURAR CONTRASTE ===== */
+@media (prefers-color-scheme: light) {
+    
+    .unit-card,
+    .lesson-card,
+    .topic-card,
+    .flashcard,
+    .vocab-card,
+    .challenge-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    }
+
+}

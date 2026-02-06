@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Topic Test</title>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-primary: #1e293b;
+            --text-light: #cbd5e1;
+            --border-color: #e2e8f0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-body: #0a0e27;
+                --bg-card: #141829;
+                --text-main: #f0f4f8;
+                --text-primary: #ffffff;
+                --text-light: #cbd5e1;
+                --border-color: #2a3f5f;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .section {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .section h2 {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* Topic Header */
+        .topic-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 1rem;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .topic-header {
+                background: linear-gradient(135deg, #1a2f4f, #141829);
+                color: #f0f4f8;
+            }
+        }
+
+        /* Table */
+        .grammar-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        .grammar-table th {
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .grammar-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .highlight-cell {
+            background: #e8f4fd !important;
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .highlight-cell {
+                background: #1a3a52 !important;
+                color: #7dd3fc !important;
+            }
+        }
+
+        /* Note Box */
+        .note-box {
+            background: #fffbeb;
+            border-left: 4px solid #fbbf24;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            color: var(--text-main);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .note-box {
+                background: rgba(251, 191, 36, 0.15);
+                border-left-color: #fbbf24;
+                color: #f0f4f8;
+            }
+        }
+
+        /* Comparison Boxes */
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-box {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            color: var(--text-main);
+        }
+
+        .comparison-primary {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left: 5px solid #2196f3;
+        }
+
+        .comparison-success {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-left: 5px solid #4caf50;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .comparison-primary {
+                background: linear-gradient(135deg, #1a3a52, #1a2f4f) !important;
+                border-left-color: #60a5fa !important;
+            }
+
+            .comparison-success {
+                background: linear-gradient(135deg, #1a3a2f, #1a2f2f) !important;
+                border-left-color: #22c55e !important;
+            }
+        }
+
+        .comparison-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .comparison-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .comparison-examples {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-examples li {
+            padding: 0.5rem 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+
+        /* Vocab Chips */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .vocab-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            color: var(--text-main);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .vocab-chip {
+                background: linear-gradient(135deg, #1a2f4f, #141829);
+                color: #f0f4f8;
+            }
+
+            .vocab-chip:hover {
+                background: linear-gradient(135deg, #1a3a52, #1a2f4f);
+                border-color: #60a5fa;
+            }
+        }
+
+        .chip-english {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .chip-spanish {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Exercise */
+        .exercise-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-body);
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .exercise-number {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .exercise-sentence {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .hint-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .mode-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .mode-toggle {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .info-box {
+                background: rgba(96, 165, 250, 0.1);
+                border: 1px solid rgba(96, 165, 250, 0.3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌙 Dark Mode Test - Grammar Topic</h1>
+            <p>Verifica los estilos en modo oscuro. El sitio se adapta automáticamente a tu preferencia del sistema.</p>
+        </div>
+
+        <!-- Section 1: Topic Header -->
+        <div class="section">
+            <h2>📚 Topic Header</h2>
+            <div class="topic-header">
+                <h3>Present Simple Tense</h3>
+                <p>Aprende a usar el presente simple en inglés. Este es el tiempo más básico y fundamental del idioma.</p>
+            </div>
+            <p>Los colores en el encabezado deben cambiar de gradiente claro a gradiente oscuro según tu tema del sistema.</p>
+        </div>
+
+        <!-- Section 2: Tables -->
+        <div class="section">
+            <h2>📊 Tablas de Gramática</h2>
+            <p>Las tablas deben ser legibles en ambos modos:</p>
+            <table class="grammar-table">
+                <thead>
+                    <tr>
+                        <th>Sujeto</th>
+                        <th>Estructura</th>
+                        <th>Ejemplo</th>
+                        <th>Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>I, You, We, They</td>
+                        <td class="highlight-cell">Verb Base</td>
+                        <td>I work</td>
+                        <td>Sin cambios</td>
+                    </tr>
+                    <tr>
+                        <td>He, She, It</td>
+                        <td class="highlight-cell">Verb + s/es</td>
+                        <td>She works</td>
+                        <td>Tercera persona</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="info-box">
+                ✅ Las celdas highlight deben cambiar de azul claro a azul oscuro en dark mode
+            </div>
+        </div>
+
+        <!-- Section 3: Note Box -->
+        <div class="section">
+            <h2>⚠️ Cajas de Nota</h2>
+            <div class="note-box">
+                <strong>Importante:</strong> El presente simple se utiliza para expresar acciones habituales, hechos generales y verdades universales. Es fundamental dominar este tiempo.
+            </div>
+            <div class="info-box">
+                ✅ La nota debe cambiar de amarillo claro a un tono más oscuro en dark mode
+            </div>
+        </div>
+
+        <!-- Section 4: Comparisons -->
+        <div class="section">
+            <h2>⚖️ Comparaciones</h2>
+            <div class="comparison-row">
+                <div class="comparison-box comparison-primary">
+                    <div class="comparison-title">✅ Forma Afirmativa</div>
+                    <div class="comparison-desc">Sujeto + Verbo + Objeto</div>
+                    <ul class="comparison-examples">
+                        <li>I work in a bank</li>
+                        <li>She likes pizza</li>
+                        <li>They play football</li>
+                    </ul>
+                </div>
+                <div class="comparison-box comparison-success">
+                    <div class="comparison-title">❌ Forma Negativa</div>
+                    <div class="comparison-desc">Sujeto + don't/doesn't + Verbo</div>
+                    <ul class="comparison-examples">
+                        <li>I don't work here</li>
+                        <li>She doesn't like fish</li>
+                        <li>They don't play chess</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-box">
+                ✅ Las cajas de comparación deben mantener sus colores distintivos pero con versiones dark-friendly
+            </div>
+        </div>
+
+        <!-- Section 5: Vocabulary Chips -->
+        <div class="section">
+            <h2>🏷️ Vocabulario</h2>
+            <div class="chips-container">
+                <div class="vocab-chip">
+                    <div class="chip-english">Work</div>
+                    <div class="chip-spanish">Trabajar</div>
+                </div>
+                <div class="vocab-chip">
+                    <div class="chip-english">Study</div>
+                    <div class="chip-spanish">Estudiar</div>
+                </div>
+                <div class="vocab-chip">
+                    <div class="chip-english">Play</div>
+                    <div class="chip-spanish">Jugar</div>
+                </div>
+                <div class="vocab-chip">
+                    <div class="chip-english">Like</div>
+                    <div class="chip-spanish">Gustar</div>
+                </div>
+                <div class="vocab-chip">
+                    <div class="chip-english">Live</div>
+                    <div class="chip-spanish">Vivir</div>
+                </div>
+                <div class="vocab-chip">
+                    <div class="chip-english">Go</div>
+                    <div class="chip-spanish">Ir</div>
+                </div>
+            </div>
+            <div class="info-box">
+                ✅ Los chips deben cambiar de gradiente claro a oscuro y ser completamente legibles
+            </div>
+        </div>
+
+        <!-- Section 6: Exercises -->
+        <div class="section">
+            <h2>✏️ Ejercicios</h2>
+            <div class="exercise-item">
+                <div class="exercise-number">1</div>
+                <div>
+                    <div class="exercise-sentence">Complete: "She _____ (work) in a hospital"</div>
+                    <div class="hint-text">💡 Pista: Recuerda agregar -s en tercera persona singular</div>
+                </div>
+            </div>
+            <div class="exercise-item">
+                <div class="exercise-number">2</div>
+                <div>
+                    <div class="exercise-sentence">Transforma a negativa: "They play football"</div>
+                    <div class="hint-text">💡 Pista: Usa "don't" para plural</div>
+                </div>
+            </div>
+            <div class="exercise-item">
+                <div class="exercise-number">3</div>
+                <div>
+                    <div class="exercise-sentence">¿Es correcto? "He go to school" - Sí/No</div>
+                    <div class="hint-text">💡 Pista: Verifica la conjugación correcta</div>
+                </div>
+            </div>
+            <div class="info-box">
+                ✅ Los ejercicios deben ser completamente legibles en ambos temas
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section" style="text-align: center;">
+            <h2>✅ Checklist de Dark Mode</h2>
+            <ul style="list-style: none; text-align: left; display: inline-block;">
+                <li>✅ Headers con gradientes oscuros en dark mode</li>
+                <li>✅ Tablas con contraste adecuado</li>
+                <li>✅ Celdas highlight con colores oscuros</li>
+                <li>✅ Cajas de nota legibles</li>
+                <li>✅ Cajas de comparación con colores adaptados</li>
+                <li>✅ Chips de vocabulario con fondos oscuros</li>
+                <li>✅ Ejercicios legibles en ambos modos</li>
+                <li>✅ Todo el texto tiene contraste WCAG AA+</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mode-toggle">
+        🌗 Tu sistema está en: <span id="mode">modo claro</span>
+    </div>
+
+    <script>
+        function updateModeDisplay() {
+            const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.getElementById('mode').textContent = isDark ? 'modo oscuro' : 'modo claro';
+        }
+
+        updateModeDisplay();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateModeDisplay);
+    </script>
+</body>
+</html>

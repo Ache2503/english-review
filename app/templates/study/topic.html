@@ -70,7 +70,7 @@
                 </div>
                 <div class="card-body">
                     <div class="theory-content">
-                        {{ topic.theory.introduction | safe | replace('**', '<strong>') | replace('**', '</strong>') }}
+                        {{ topic.theory.introduction | md }}
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                                 <tr>
                                     <td>
                                         {% if ex.sentence %}
-                                            <span class="example-sentence">{{ ex.sentence | safe }}</span>
+                                            <span class="example-sentence">{{ ex.sentence | md }}</span>
                                             {% if ex.translation %}
                                             <br><small class="text-muted">{{ ex.translation }}</small>
                                             {% endif %}
@@ -112,30 +112,99 @@
                                             <span class="text-primary">{{ ex.comparative }}</span> → 
                                             <span class="text-success">{{ ex.superlative }}</span>
                                             {% if ex.sentence_comp %}
-                                            <br><small>{{ ex.sentence_comp | safe }}</small>
+                                            <br><small>{{ ex.sentence_comp | md }}</small>
+                                            {% endif %}
+                                            {% if ex.sentence_super %}
+                                            <br><small>{{ ex.sentence_super | md }}</small>
                                             {% endif %}
                                         {% elif ex.active and ex.passive %}
-                                            <strong>Active:</strong> {{ ex.active | safe }}<br>
-                                            <strong>Passive:</strong> {{ ex.passive | safe }}
+                                            <strong>Active:</strong> {{ ex.active | md }}<br>
+                                            <strong>Passive:</strong> {{ ex.passive | md }}
                                             {% if ex.note %}<br><small class="text-muted">{{ ex.note }}</small>{% endif %}
                                         {% elif ex.wrong and ex.correct %}
                                             <span class="text-danger"><i class="fas fa-times me-1"></i>{{ ex.wrong }}</span><br>
                                             <span class="text-success"><i class="fas fa-check me-1"></i>{{ ex.correct }}</span>
                                         {% elif ex.first and ex.second %}
-                                            <strong>First:</strong> {{ ex.first | safe }}<br>
-                                            <strong>Second:</strong> {{ ex.second | safe }}
+                                            <strong>First:</strong> {{ ex.first | md }}<br>
+                                            <strong>Second:</strong> {{ ex.second | md }}
                                             {% if ex.explanation %}<br><small class="text-muted">{{ ex.explanation }}</small>{% endif %}
                                         {% elif ex.article %}
                                             <strong>{{ ex.article }}</strong> {{ ex.word }} 
                                             <small class="text-muted">({{ ex.explanation }})</small>
                                         {% elif ex.tense %}
-                                            <strong>{{ ex.tense }}:</strong> {{ ex.be_form }} + pp → {{ ex.example | safe }}
+                                            <strong>{{ ex.tense }}:</strong> {{ ex.be_form }} + pp → {{ ex.example | md }}
                                         {% elif ex.simple and ex.continuous %}
-                                            <strong>Simple:</strong> {{ ex.simple | safe }}<br>
-                                            <strong>Continuous:</strong> {{ ex.continuous | safe }}
+                                            <strong>Simple:</strong> {{ ex.simple | md }}<br>
+                                            <strong>Continuous:</strong> {{ ex.continuous | md }}
                                             {% if ex.explanation %}<br><small class="text-muted">{{ ex.explanation }}</small>{% endif %}
+                                        {% elif ex.with_the and ex.without %}
+                                            <strong>Con THE:</strong> {{ ex.with_the | md }}<br>
+                                            <strong>Sin THE:</strong> {{ ex.without | md }}
+                                            {% if ex.rule %}<br><small class="text-muted">{{ ex.rule }}</small>{% endif %}
+                                        {% elif ex.variant %}
+                                            <strong>{{ ex.variant }}:</strong> {{ ex.example | md }}
+                                        {% elif ex.informal and ex.formal %}
+                                            <strong>Informal:</strong> {{ ex.informal | md }}<br>
+                                            <strong>Formal:</strong> {{ ex.formal | md }}
+                                            {% if ex.note %}<br><small class="text-muted">{{ ex.note }}</small>{% endif %}
+                                        {% elif ex.with_to and ex.with_for %}
+                                            <strong>Con TO:</strong> {{ ex.with_to | md }}<br>
+                                            <strong>Con FOR:</strong> {{ ex.with_for | md }}
+                                            {% if ex.note %}<br><small class="text-muted">{{ ex.note }}</small>{% endif %}
+                                        {% elif ex.word and ex.example %}
+                                            <strong>{{ ex.word }}:</strong> {{ ex.example | md }}
+                                            {% if ex.meaning %}<br><small class="text-muted">{{ ex.meaning }}</small>{% endif %}
+                                        {% elif ex.modal %}
+                                            <strong>{{ ex.modal }}:</strong> {{ ex.example | md }}
+                                            {% if ex.use %}<br><small class="text-muted">{{ ex.use }}</small>{% endif %}
+                                            {% if ex.certainty %}<br><small class="text-info">Certeza: {{ ex.certainty }}</small>{% endif %}
+                                        {% elif ex.verb %}
+                                            <strong>{{ ex.verb }}:</strong> 
+                                            {% if ex.gerund %}<span class="text-primary">Gerund: {{ ex.gerund }}</span>{% endif %}
+                                            {% if ex.infinitive %}<span class="text-success">Infinitive: {{ ex.infinitive }}</span>{% endif %}
+                                            {% if ex.example %}{{ ex.example | md }}{% endif %}
+                                            {% if ex.gerund_meaning %}<br><small class="text-muted">Gerund: {{ ex.gerund_meaning }}</small>{% endif %}
+                                            {% if ex.infinitive_meaning %}<br><small class="text-muted">Infinitive: {{ ex.infinitive_meaning }}</small>{% endif %}
+                                        {% elif ex.direct and ex.reported %}
+                                            <strong>Direct:</strong> {{ ex.direct | md }}<br>
+                                            <strong>Reported:</strong> {{ ex.reported | md }}
+                                            {% if ex.change %}<br><small class="text-info">{{ ex.change }}</small>{% endif %}
+                                        {% elif ex.defining and ex.non_defining %}
+                                            <strong>Defining:</strong> {{ ex.defining | md }}<br>
+                                            <strong>Non-defining:</strong> {{ ex.non_defining | md }}
+                                            {% if ex.note_def %}<br><small class="text-muted">{{ ex.note_def }}</small>{% endif %}
+                                        {% elif ex.wish %}
+                                            <strong>Wish:</strong> {{ ex.wish | md }}
+                                            {% if ex.reality %}<br><small class="text-muted">Reality: {{ ex.reality }}</small>{% endif %}
+                                            {% if ex.time %}<br><small class="text-info">{{ ex.time }}</small>{% endif %}
+                                        {% elif ex.situation and ex.question %}
+                                            <strong>{{ ex.situation }}:</strong> {{ ex.question | md }}
+                                        {% elif ex.prep and ex.example %}
+                                            <strong>{{ ex.prep }}:</strong> {{ ex.example | md }}
+                                            {% if ex.use %}<br><small class="text-muted">{{ ex.use }}</small>{% endif %}
+                                        {% elif ex.category and ex.items %}
+                                            <strong>{{ ex.category }}:</strong> {{ ex.items | join(', ') }}
+                                        {% elif ex.type and ex.example %}
+                                            <strong>{{ ex.type }}:</strong> {{ ex.example | md }}
+                                            {% if ex.structure %}<br><small class="text-info">{{ ex.structure }}</small>{% endif %}
+                                        {% elif ex.form and ex.example %}
+                                            <strong>{{ ex.form }}:</strong> {{ ex.example | md }}
+                                        {% elif ex.aux and ex.example %}
+                                            <strong>{{ ex.aux }}:</strong> {{ ex.example | md }}
+                                        {% elif ex.perfect %}
+                                            <strong>Perfect:</strong> {{ ex.perfect | md }}
+                                            {% if ex.context %}<br><small class="text-muted">{{ ex.context }}</small>{% endif %}
+                                        {% elif ex.example %}
+                                            {{ ex.example | md }}
+                                            {% if ex.note %}<br><small class="text-muted">{{ ex.note }}</small>{% endif %}
+                                            {% if ex.reason %}<br><small class="text-info">{{ ex.reason }}</small>{% endif %}
                                         {% else %}
-                                            {{ ex | safe }}
+                                            {# Fallback genérico para diccionarios #}
+                                            {% for key, value in ex.items() %}
+                                                {% if value %}
+                                                    <strong>{{ key | replace('_', ' ') | title }}:</strong> {{ value | md }}<br>
+                                                {% endif %}
+                                            {% endfor %}
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -149,7 +218,7 @@
                         <h6><i class="fas fa-spell-check me-2"></i>Reglas de Ortografía:</h6>
                         <ul class="mb-0">
                             {% for sr in rule.spelling_rules %}
-                            <li>{{ sr | safe }}</li>
+                            <li>{{ sr | md }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -160,7 +229,7 @@
                         <h6><i class="fas fa-check-circle me-2"></i>Usos:</h6>
                         <ul class="mb-0">
                             {% for use in rule.uses %}
-                            <li>{{ use | safe }}</li>
+                            <li>{{ use | md }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -171,7 +240,7 @@
                         <h6><i class="fas fa-ban me-2"></i>Stative Verbs (NO usan -ing):</h6>
                         <ul class="mb-0">
                             {% for sv in rule.stative_verbs %}
-                            <li>{{ sv | safe }}</li>
+                            <li>{{ sv | md }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -188,7 +257,7 @@
 
                     {% if rule.note %}
                     <div class="alert alert-secondary mt-3 mb-0">
-                        <i class="fas fa-info-circle me-2"></i>{{ rule.note | safe }}
+                        <i class="fas fa-info-circle me-2"></i>{{ rule.note | md }}
                     </div>
                     {% endif %}
                 </div>
@@ -209,7 +278,7 @@
                         <p class="mb-2"><strong>Estructura:</strong> {{ struct.structure }}</p>
                         {% endif %}
                         <div class="bg-light p-3 rounded">
-                            <pre class="mb-0" style="white-space: pre-wrap;">{{ struct.example | safe }}</pre>
+                            <pre class="mb-0" style="white-space: pre-wrap;">{{ struct.example | md }}</pre>
                         </div>
                         {% if struct.note %}
                         <small class="text-muted mt-2 d-block"><i class="fas fa-sticky-note me-1"></i>{{ struct.note }}</small>
@@ -475,7 +544,7 @@
                     </button>
                 </div>
                 <div class="card-body quick-reference-content">
-                    {{ topic.quick_reference | safe }}
+                    {{ topic.quick_reference | md }}
                 </div>
             </div>
         </div>
@@ -594,6 +663,175 @@
     .tab-pane {
         display: block !important;
         opacity: 1 !important;
+    }
+}
+
+/* ===== DARK MODE STYLES ===== */
+@media (prefers-color-scheme: dark) {
+    
+    /* Card headers */
+    .card-header {
+        background-color: #1a2f4f !important;
+        border-bottom-color: #2a3f5f !important;
+    }
+
+    .card-header.bg-light {
+        background-color: #1a2f4f !important;
+    }
+
+    .card-header.bg-primary {
+        background-color: #0d47a1 !important;
+    }
+
+    /* Tables */
+    .table {
+        color: #f0f4f8;
+        border-color: #2a3f5f;
+    }
+
+    .table thead th {
+        background-color: #1a2f4f;
+        color: #ffffff;
+        border-bottom-color: #2a3f5f;
+    }
+
+    .table tbody td {
+        border-bottom-color: #2a3f5f;
+        color: #e0e8f0;
+    }
+
+    .table-striped tbody tr {
+        background-color: transparent;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(26, 47, 79, 0.3);
+    }
+
+    /* Light backgrounds */
+    .bg-light {
+        background-color: #1a2332 !important;
+        color: #f0f4f8;
+    }
+
+    .bg-light p,
+    .bg-light div {
+        color: #e0e8f0;
+    }
+
+    /* Question items */
+    .question-item {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8;
+    }
+
+    .question-item.correct {
+        background-color: rgba(34, 197, 94, 0.15) !important;
+        border-left-color: #22c55e !important;
+    }
+
+    .question-item.incorrect {
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        border-left-color: #ef4444 !important;
+    }
+
+    /* Labels and inputs in dark mode */
+    .question-item label,
+    .question-item .answer-input {
+        color: #f0f4f8;
+    }
+
+    .answer-input {
+        background-color: #2a3f5f;
+        color: #f0f4f8;
+        border-color: #3a4f6f;
+    }
+
+    .answer-input:focus {
+        background-color: #2a3f5f;
+        color: #f0f4f8;
+        border-color: #60a5fa;
+    }
+
+    /* Reference section */
+    .quick-reference-content {
+        color: #f0f4f8;
+    }
+
+    .quick-reference-content table {
+        border-color: #2a3f5f;
+    }
+
+    .quick-reference-content th {
+        background-color: #1a2f4f;
+        color: #ffffff;
+        border-color: #2a3f5f;
+    }
+
+    .quick-reference-content td {
+        background-color: transparent;
+        color: #e0e8f0;
+        border-color: #2a3f5f;
+    }
+
+    /* Alert boxes */
+    .alert-info {
+        background-color: rgba(13, 110, 253, 0.15);
+        border-color: #0d6efd;
+        color: #93c5fd;
+    }
+
+    /* Formula/code boxes */
+    .bg-dark {
+        background-color: #0a0e27 !important;
+    }
+
+    /* Badges */
+    .badge.bg-white {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    /* Card bodies */
+    .card-body {
+        background-color: var(--bg-card);
+        color: var(--text-main);
+    }
+
+    /* Rule/Mistake/Tip cards */
+    .rule-card,
+    .mistake-card,
+    .tip-card {
+        background-color: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    /* Nav pills */
+    .nav-pills .nav-link {
+        color: #e0e8f0;
+    }
+
+    .nav-pills .nav-link:hover {
+        background-color: #2a3f5f;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        background-color: transparent;
+    }
+
+    .breadcrumb-item a {
+        color: #60a5fa;
+    }
+
+    .breadcrumb-item.active {
+        color: #e0e8f0;
+    }
+
+    /* Example sentence styling */
+    .example-sentence {
+        color: #f0f4f8;
     }
 }
 </style>

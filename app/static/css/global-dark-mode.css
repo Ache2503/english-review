@@ -1,0 +1,544 @@
+/* ============================================================================
+   GLOBAL DARK MODE STYLES - Aplicados a todos los templates
+   Este archivo contiene todos los estilos dark mode globales que se aplican
+   automáticamente cuando el sistema operativo está en modo oscuro.
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+
+    /* ========== TABLES ========== */
+    .table {
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .table thead th {
+        background-color: #1a2f4f !important;
+        color: #ffffff !important;
+        border-bottom-color: #2a3f5f !important;
+    }
+
+    .table tbody tr {
+        border-bottom-color: #2a3f5f !important;
+    }
+
+    .table tbody td {
+        color: #e0e8f0 !important;
+        border-bottom-color: #2a3f5f !important;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(26, 47, 79, 0.3) !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(26, 47, 79, 0.5) !important;
+    }
+
+    .table-light {
+        background-color: transparent !important;
+    }
+
+    /* ========== LIGHT BACKGROUNDS ========== */
+    .bg-light {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+    }
+
+    .bg-light * {
+        color: #e0e8f0 !important;
+    }
+
+    .bg-light p {
+        color: #e0e8f0 !important;
+    }
+
+    .bg-light h1, .bg-light h2, .bg-light h3, .bg-light h4, .bg-light h5, .bg-light h6 {
+        color: #f0f4f8 !important;
+    }
+
+    .bg-light a {
+        color: #60a5fa !important;
+    }
+
+    .bg-light code, .bg-light pre {
+        background-color: #0a0e27 !important;
+        color: #86efac !important;
+    }
+
+    /* ========== ALERTS ========== */
+    .alert {
+        color: #f0f4f8 !important;
+        border-color: var(--border-color) !important;
+    }
+
+    .alert-info {
+        background-color: rgba(13, 110, 253, 0.15) !important;
+        border-color: #0d6efd !important;
+        color: #93c5fd !important;
+    }
+
+    .alert-success {
+        background-color: rgba(34, 197, 94, 0.15) !important;
+        border-color: #22c55e !important;
+        color: #86efac !important;
+    }
+
+    .alert-warning {
+        background-color: rgba(251, 146, 60, 0.15) !important;
+        border-color: #fb923c !important;
+        color: #fed7aa !important;
+    }
+
+    .alert-danger {
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        border-color: #ef4444 !important;
+        color: #fca5a5 !important;
+    }
+
+    /* ========== BADGES ========== */
+    .badge {
+        color: #f0f4f8 !important;
+    }
+
+    .badge.bg-light {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .badge.bg-white {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    /* ========== FORM CONTROLS ========== */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="search"],
+    textarea,
+    select {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    input[type="search"]:focus,
+    textarea:focus,
+    select:focus {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #60a5fa !important;
+        box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25) !important;
+    }
+
+    .form-control {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .form-control:focus {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #60a5fa !important;
+        box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25) !important;
+    }
+
+    .form-control::placeholder {
+        color: #7a8a9e !important;
+    }
+
+    .form-check-input {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .form-check-input:checked {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+    }
+
+    /* ========== LIST GROUPS ========== */
+    .list-group-item {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .list-group-item:hover {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .list-group-item.active {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+    }
+
+    /* ========== BREADCRUMBS ========== */
+    .breadcrumb {
+        background-color: transparent !important;
+    }
+
+    .breadcrumb-item a {
+        color: #60a5fa !important;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #93c5fd !important;
+    }
+
+    .breadcrumb-item.active {
+        color: #a8b8cc !important;
+    }
+
+    /* ========== TABS & PILLS ========== */
+    .nav-tabs {
+        border-bottom-color: #2a3f5f !important;
+    }
+
+    .nav-tabs .nav-link {
+        color: #a8b8cc !important;
+        border-color: transparent !important;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f #2a3f5f transparent !important;
+    }
+
+    .nav-pills .nav-link {
+        color: #a8b8cc !important;
+    }
+
+    .nav-pills .nav-link:hover {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: #0d6efd !important;
+        color: #ffffff !important;
+    }
+
+    /* ========== PAGINATION ========== */
+    .pagination .page-link {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #2a3f5f !important;
+        color: #ffffff !important;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+    }
+
+    /* ========== MODALS ========== */
+    .modal-content {
+        background-color: #141829 !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .modal-header {
+        background-color: #1a2f4f !important;
+        border-bottom-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .modal-header .btn-close {
+        filter: invert(1) !important;
+    }
+
+    .modal-footer {
+        border-top-color: #2a3f5f !important;
+    }
+
+    /* ========== POPOVERS & TOOLTIPS ========== */
+    .popover {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .popover-header {
+        background-color: #0a0e27 !important;
+        border-bottom-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .popover-body {
+        color: #e0e8f0 !important;
+    }
+
+    .bs-popover-top > .popover-arrow::before {
+        border-top-color: #2a3f5f !important;
+    }
+
+    .bs-popover-end > .popover-arrow::before {
+        border-right-color: #2a3f5f !important;
+    }
+
+    .bs-popover-bottom > .popover-arrow::before {
+        border-bottom-color: #2a3f5f !important;
+    }
+
+    .bs-popover-start > .popover-arrow::before {
+        border-left-color: #2a3f5f !important;
+    }
+
+    .tooltip-inner {
+        background-color: #0a0e27 !important;
+    }
+
+    /* ========== SPINNERS & LOADERS ========== */
+    .spinner-border {
+        border-color: #2a3f5f !important;
+    }
+
+    .spinner-border-sm {
+        border-color: #2a3f5f !important;
+    }
+
+    .spinner-grow {
+        background-color: #60a5fa !important;
+    }
+
+    /* ========== DROPDOWNS ========== */
+    .dropdown-menu {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .dropdown-item {
+        color: #e0e8f0 !important;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active {
+        background-color: #0d6efd !important;
+        color: #ffffff !important;
+    }
+
+    .dropdown-divider {
+        border-color: #2a3f5f !important;
+    }
+
+    .dropdown-header {
+        color: #a8b8cc !important;
+    }
+
+    /* ========== CARDS ========== */
+    .card {
+        background-color: #141829 !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .card-header {
+        background-color: #1a2f4f !important;
+        border-bottom-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .card-footer {
+        background-color: #0a0e27 !important;
+        border-top-color: #2a3f5f !important;
+        color: #a8b8cc !important;
+    }
+
+    /* ========== PROGRESS BARS ========== */
+    .progress {
+        background-color: #0a0e27 !important;
+    }
+
+    .progress-bar {
+        background-color: #0d6efd !important;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn-outline-secondary {
+        color: #a8b8cc !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #2a3f5f !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .btn-light {
+        background-color: #2a3f5f !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .btn-light:hover {
+        background-color: #3a4f6f !important;
+        border-color: #3a4f6f !important;
+        color: #ffffff !important;
+    }
+
+    /* ========== HORIZONTAL RULE ========== */
+    hr {
+        border-color: #2a3f5f !important;
+    }
+
+    /* ========== CODE & PRE ========== */
+    code {
+        background-color: #0a0e27 !important;
+        color: #86efac !important;
+    }
+
+    pre {
+        background-color: #0a0e27 !important;
+        color: #86efac !important;
+        border: 1px solid #2a3f5f !important;
+    }
+
+    .pre-scrollable {
+        background-color: #0a0e27 !important;
+    }
+
+    /* ========== BLOCKQUOTE ========== */
+    blockquote {
+        border-left-color: #2a3f5f !important;
+        color: #a8b8cc !important;
+    }
+
+    /* ========== FIGURE ========== */
+    .figure-caption {
+        color: #a8b8cc !important;
+    }
+
+    /* ========== CUSTOM ELEMENTS ========== */
+    
+    /* Question items (usado en study/topic.html) */
+    .question-item {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+    .question-item.correct {
+        background-color: rgba(34, 197, 94, 0.15) !important;
+        border-left-color: #22c55e !important;
+    }
+
+    .question-item.incorrect {
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        border-left-color: #ef4444 !important;
+    }
+
+    /* Card headers con bg-light */
+    .card-header.bg-light {
+        background-color: #1a2f4f !important;
+    }
+
+    .card-header.bg-primary {
+        background-color: #0d47a1 !important;
+    }
+
+    /* Answer inputs */
+    .answer-input {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .answer-input:focus {
+        background-color: #1a2332 !important;
+        color: #f0f4f8 !important;
+        border-color: #60a5fa !important;
+    }
+
+    /* Rule/Mistake/Tip cards */
+    .rule-card,
+    .mistake-card,
+    .tip-card {
+        background-color: #141829 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    /* Quick reference content */
+    .quick-reference-content {
+        color: #f0f4f8 !important;
+    }
+
+    .quick-reference-content table th {
+        background-color: #1a2f4f !important;
+        color: #ffffff !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .quick-reference-content table td {
+        background-color: transparent !important;
+        color: #e0e8f0 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    /* Example sentences */
+    .example-sentence {
+        color: #f0f4f8 !important;
+    }
+
+    .example-sentence strong {
+        color: #60a5fa !important;
+    }
+
+    /* Mini search dropdown (usado en grammar) */
+    .mini-search-dropdown {
+        background-color: #1a2332 !important;
+        border-color: #2a3f5f !important;
+    }
+
+    .mini-dropdown-item {
+        border-color: #2a3f5f !important;
+        color: #e0e8f0 !important;
+    }
+
+    .mini-dropdown-item:hover {
+        background-color: #2a3f5f !important;
+    }
+
+    .mini-dropdown-item .verb-name {
+        color: #60a5fa !important;
+    }
+
+    .mini-dropdown-item .verb-spanish,
+    .mini-dropdown-item .verb-forms {
+        color: #a8b8cc !important;
+    }
+
+    /* Badge styling in tables */
+    table .badge {
+        background-color: #2a3f5f !important;
+        color: #f0f4f8 !important;
+    }
+
+}

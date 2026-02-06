@@ -518,125 +518,76 @@ EXTENDED_UNITS_DATA = [
 
 
 def seed_database_extended():
-    """Seed database with enriched content"""
+    """Seed database with enriched content - ONLY adds UnitExtra, doesn't delete existing data"""
     with app.app_context():
-        print("Limpiando base de datos...")
-        # SQLite: Eliminar y recrear tablas
-        db.drop_all()
-        db.create_all()
+        print("Verificando unidades existentes...")
+        
+        # NO eliminar tablas - solo agregar contenido
+        # db.drop_all()  # COMENTADO - NO DESTRUIR DATOS
+        db.create_all()  # Crear tablas si no existen
         db.session.commit()
 
-        print("Cargando unidades enriquecidas...")
+        print("Cargando contenido extendido para unidades...")
+        
+        units_updated = 0
+        units_skipped = 0
         
         for unit_data in EXTENDED_UNITS_DATA:
-            # Create unit
-            unit = Unit(
-                unit_number=unit_data['unit_number'],
-                title=unit_data['title'],
-                description=unit_data.get('description', f"Unit {unit_data['unit_number']}: {unit_data['title']}")
-            )
-            db.session.add(unit)
-            db.session.flush()
-
-            # Add topics
-            for idx, topic_title in enumerate(unit_data['topics']):
-                topic = Topic(
-                    unit_id=unit.id,
-                    title=topic_title,
-                    order=idx
+            # Buscar unidad existente
+            unit = Unit.query.filter_by(unit_number=unit_data['unit_number']).first()
+            
+            if not unit:
+                print(f"  ⚠️  Unit {unit_data['unit_number']} no existe, creándola...")
+                unit = Unit(
+                    unit_number=unit_data['unit_number'],
+                    title=unit_data['title'],
+                    description=unit_data.get('description', f"Unit {unit_data['unit_number']}: {unit_data['title']}")
                 )
-                db.session.add(topic)
-
-            # Add grammar rules
-            for idx, grammar in enumerate(unit_data['grammar']):
-                rule = GrammarRule(
-                    unit_id=unit.id,
-                    topic=grammar.get('title', ''),
-                    rule=grammar.get('rule', ''),
-                    example=grammar.get('example', ''),
-                    order=idx
-                )
-                db.session.add(rule)
-
-            # Add vocabulary with detailed information
-            vocab_data = unit_data.get('vocabulary', {})
-            for cat_idx, category in enumerate(vocab_data.get('categories', [])):
-                vocab_cat = VocabularyCategory(
-                    unit_id=unit.id,
-                    category_name=category['name'],
-                    order=cat_idx
-                )
-                db.session.add(vocab_cat)
+                db.session.add(unit)
                 db.session.flush()
-
-                # Add vocabulary items
-                for word_idx, word_data in enumerate(category.get('words', [])):
-                    vocab_item = VocabularyItem(
-                        category_id=vocab_cat.id,
-                        word=word_data['word'],
-                        definition=f"{word_data.get('translation', '')} - {word_data.get('example', '')}",
-                        example=word_data.get('example', ''),
-                        pronunciation=word_data.get('pronunciation', ''),
-                        order=word_idx
-                    )
-                    db.session.add(vocab_item)
-
-            # Add writing practices (multiple exercises per unit)
+            
+            # Verificar si ya tiene UnitExtra
+            existing_extra = UnitExtra.query.filter_by(unit_id=unit.id).first()
+            
+            if existing_extra:
+                print(f"  ℹ️  Unit {unit_data['unit_number']}: Ya tiene datos extendidos, actualizando...")
+                # Actualizar datos existentes
+                existing_data = existing_extra.data or {}
+                new_data = {
+                    'dialogues': unit_data.get('dialogues', existing_data.get('dialogues', [])),
+                    'practice_activities': unit_data.get('practice_activities', existing_data.get('practice_activities', [])),
+                    'prompts': unit_data.get('prompts', existing_data.get('prompts', [])),
+                    'tips': unit_data.get('tips', existing_data.get('tips', [])),
+                    'activities': unit_data.get('activities', existing_data.get('activities', {})),
+                    'exercises_count': len(unit_data.get('exercises', []))
+                }
+                existing_extra.data = new_data
+                units_updated += 1
+            else:
+                # Crear nuevo UnitExtra
+                extras = {
+                    'dialogues': unit_data.get('dialogues', []),
+                    'practice_activities': unit_data.get('practice_activities', []),
+                    'prompts': unit_data.get('prompts', []),
+                    'tips': unit_data.get('tips', []),
+                    'activities': unit_data.get('activities', {}),
+                    'exercises_count': len(unit_data.get('exercises', []))
+                }
+                extra = UnitExtra(unit_id=unit.id, data=extras)
+                db.session.add(extra)
+                units_updated += 1
+            
             exercises = unit_data.get('exercises', [])
-            for ex_idx, exercise in enumerate(exercises):
-                if exercise.get('type') == 'writing':
-                    writing = WritingPractice(
-                        unit_id=unit.id,
-                        title=exercise.get('title', f'Exercise {ex_idx + 1}'),
-                        instructions=exercise.get('instructions', ''),
-                        example_text=exercise.get('example', ''),
-                        difficulty=exercise.get('difficulty', 'intermediate'),
-                        order=ex_idx
-                    )
-                    db.session.add(writing)
-
-            # Store enriched data in UnitExtra (vocabulario detallado, diálogos, práctica)
-            extras = {
-                'dialogues': unit_data.get('dialogues', []),
-                'practice_activities': unit_data.get('practice_activities', []),
-                'prompts': unit_data.get('prompts', []),
-                'tips': unit_data.get('tips', []),
-                'activities': unit_data.get('activities', {}),
-                'exercises_count': len(exercises)
-            }
-            extra = UnitExtra(unit_id=unit.id, data=extras)
-            db.session.add(extra)
-
-            # Create basic quiz
-            quiz = Quiz(
-                unit_id=unit.id,
-                title=f"Grammar Check - Unit {unit_data['unit_number']}",
-                description="Quiz sobre gramática clave de la unidad"
-            )
-            db.session.add(quiz)
-            db.session.flush()
-
-            # Add 2-3 quiz questions
-            q1 = QuizQuestion(
-                quiz_id=quiz.id,
-                prompt=f"What is the main grammar concept in this unit?",
-                order=1
-            )
-            db.session.add(q1)
-            db.session.flush()
-            db.session.add_all([
-                QuizOption(question_id=q1.id, text="Review the grammar section", is_correct=False, order=1),
-                QuizOption(question_id=q1.id, text="Complete the exercises", is_correct=True, order=2),
-                QuizOption(question_id=q1.id, text="Watch videos", is_correct=False, order=3),
-            ])
-
-            print(f"✓ Unit {unit_data['unit_number']}: {unit_data['title']} - {len(exercises)} exercises, {len(unit_data.get('vocabulary', {}).get('categories', []))} vocab categories, {len(unit_data.get('dialogues', []))} dialogues")
+            dialogues = unit_data.get('dialogues', [])
+            vocab_cats = unit_data.get('vocabulary', {}).get('categories', [])
+            
+            print(f"  ✓ Unit {unit_data['unit_number']}: {unit_data['title']} - {len(exercises)} exercises, {len(vocab_cats)} vocab categories, {len(dialogues)} dialogues")
 
         db.session.commit()
-        print("\n✓ Base de datos enriquecida cargada exitosamente!")
+        
+        print(f"\n✅ Contenido extendido cargado exitosamente!")
+        print(f"   Unidades actualizadas: {units_updated}")
         print("Características agregadas:")
-        print("  - Vocabulario detallado (palabra, traducción, pronunciación, ejemplo)")
-        print("  - Múltiples ejercicios de escritura por unidad (beginner/intermediate/advanced)")
         print("  - Diálogos prácticos con ejemplos reales")
         print("  - Actividades de práctica y prompts adicionales")
         print("  - Sistema de tips y recomendaciones")

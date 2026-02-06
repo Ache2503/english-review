@@ -21,7 +21,7 @@
             
             {% if unit.overview %}
             <div class="alert alert-info mb-0">
-                <strong>Vista General:</strong> {{ unit.overview }}
+                <strong>Vista General:</strong> {{ unit.overview | md }}
             </div>
             {% endif %}
         </div>
@@ -52,7 +52,7 @@
             <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Explicación Detallada</h5>
         </div>
         <div class="card-body">
-            <p>{{ unit.detailed_explanation }}</p>
+            <div class="explanation-content">{{ unit.detailed_explanation | md }}</div>
         </div>
     </div>
     {% endif %}
@@ -79,7 +79,7 @@
                  data-bs-parent="#explanationsAccordion">
                 <div class="accordion-body">
                     <div class="content-text">
-                        {{ explanation.content | replace('\n', '<br>') }}
+                        {{ explanation.content | md }}
                     </div>
                 </div>
             </div>

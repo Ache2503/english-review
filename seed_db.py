@@ -140,14 +140,26 @@ def load_units_data() -> list:
     print("Usando datos embebidos de fallback...")
     return UNITS_DATA_FALLBACK
 
-def seed_database():
-    """Cargar datos iniciales en la base de datos"""
+def seed_database(clean=True):
+    """Cargar datos iniciales en la base de datos
+    
+    Args:
+        clean: Si True, limpia la base de datos antes de cargar. 
+               Si False, solo agrega datos que no existen.
+    """
     with app.app_context():
-        # Limpiar datos existentes
-        print("Limpiando base de datos...")
-        db.drop_all()
-        db.create_all()
-        db.session.commit()
+        if clean:
+            # Limpiar datos existentes
+            print("Limpiando base de datos...")
+            db.drop_all()
+            db.create_all()
+            db.session.commit()
+        else:
+            # Solo crear tablas si no existen
+            print("Verificando estructura de tablas...")
+            db.create_all()
+            db.session.commit()
+            
         print("Cargando unidades...")
         units_data = load_units_data()
         for unit_data in units_data:
@@ -283,4 +295,8 @@ def seed_database():
         print("\n✓ Base de datos cargada exitosamente!")
 
 if __name__ == '__main__':
-    seed_database()
+    import sys
+    clean = '--no-clean' not in sys.argv
+    if not clean:
+        print("Modo --no-clean: No se eliminarán datos existentes")
+    seed_database(clean=clean)

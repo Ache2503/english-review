@@ -4764,6 +4764,1031 @@ La elección depende de:
 ### Incontables Comunes
 money, water, milk, coffee, bread, rice, information, advice, news, homework, work, music, furniture, luggage, weather, time
 '''
+    },
+    
+    # ==================== NUEVOS TEMAS ====================
+    'phrasal-verbs': {
+        'title': 'Phrasal Verbs',
+        'icon': '🔀',
+        'difficulty': 'intermediate',
+        'estimated_time': '30 min',
+        'description': 'Domina los verbos compuestos más comunes del inglés.',
+        
+        'theory': {
+            'introduction': '''
+Los **Phrasal Verbs** son verbos compuestos formados por un verbo + partícula (preposición o adverbio).
+El significado generalmente es **diferente** del verbo original.
+
+**Ejemplo:** **look** = mirar, pero **look after** = cuidar
+''',
+            'rules': [
+                {
+                    'title': '📌 Tipos de Phrasal Verbs',
+                    'rule': 'Pueden ser separables o inseparables',
+                    'formula': 'Verb + Particle (+ Object)',
+                    'examples': [
+                        {'type': 'Separable', 'example': 'Turn **off** the TV / Turn the TV **off** / Turn **it** off',
+                         'note': 'Con pronombres, SIEMPRE van separados'},
+                        {'type': 'Inseparable', 'example': 'Look **after** the baby / Look **after** it (NO: Look it after)',
+                         'note': 'Nunca se separan'},
+                        {'type': 'Intransitivo', 'example': 'The plane **took off** at 8am.',
+                         'note': 'No llevan objeto'}
+                    ]
+                },
+                {
+                    'title': '🔄 Phrasal Verbs con GET',
+                    'rule': 'GET es uno de los más versátiles',
+                    'formula': 'GET + partícula',
+                    'examples': [
+                        {'verb': 'get up', 'meaning': 'levantarse', 'sentence': 'I **get up** at 7am every day.'},
+                        {'verb': 'get on', 'meaning': 'subir (transporte)', 'sentence': 'We **get on** the bus here.'},
+                        {'verb': 'get off', 'meaning': 'bajar (transporte)', 'sentence': '**Get off** at the next stop.'},
+                        {'verb': 'get along', 'meaning': 'llevarse bien', 'sentence': 'Do you **get along** with your boss?'},
+                        {'verb': 'get over', 'meaning': 'superar/recuperarse', 'sentence': 'She finally **got over** the breakup.'},
+                        {'verb': 'get away', 'meaning': 'escapar', 'sentence': 'The thief **got away**.'}
+                    ]
+                },
+                {
+                    'title': '🔄 Phrasal Verbs con LOOK',
+                    'rule': 'Muy comunes en conversación',
+                    'formula': 'LOOK + partícula',
+                    'examples': [
+                        {'verb': 'look for', 'meaning': 'buscar', 'sentence': "I'm **looking for** my keys."},
+                        {'verb': 'look after', 'meaning': 'cuidar', 'sentence': 'Can you **look after** my cat?'},
+                        {'verb': 'look up', 'meaning': 'buscar (información)', 'sentence': '**Look up** the word in the dictionary.'},
+                        {'verb': 'look forward to', 'meaning': 'esperar con ilusión', 'sentence': "I'm **looking forward to** the party."},
+                        {'verb': 'look out', 'meaning': 'tener cuidado', 'sentence': "**Look out!** There's a car coming."}
+                    ]
+                },
+                {
+                    'title': '🔄 Phrasal Verbs con TAKE',
+                    'rule': 'Acciones y cambios',
+                    'formula': 'TAKE + partícula',
+                    'examples': [
+                        {'verb': 'take off', 'meaning': 'despegar/quitarse', 'sentence': '**Take off** your shoes, please.'},
+                        {'verb': 'take up', 'meaning': 'empezar (hobby)', 'sentence': "I've **taken up** yoga recently."},
+                        {'verb': 'take after', 'meaning': 'parecerse a', 'sentence': 'She **takes after** her mother.'},
+                        {'verb': 'take care of', 'meaning': 'encargarse de', 'sentence': "I'll **take care of** the problem."},
+                        {'verb': 'take back', 'meaning': 'devolver', 'sentence': 'Can I **take back** this shirt?'}
+                    ]
+                },
+                {
+                    'title': '🔄 Phrasal Verbs con TURN',
+                    'rule': 'Cambios de estado y dirección',
+                    'formula': 'TURN + partícula',
+                    'examples': [
+                        {'verb': 'turn on', 'meaning': 'encender', 'sentence': '**Turn on** the lights.'},
+                        {'verb': 'turn off', 'meaning': 'apagar', 'sentence': 'Please **turn off** your phone.'},
+                        {'verb': 'turn up', 'meaning': 'subir (volumen)/aparecer', 'sentence': 'He **turned up** late to the meeting.'},
+                        {'verb': 'turn down', 'meaning': 'bajar/rechazar', 'sentence': 'She **turned down** the job offer.'},
+                        {'verb': 'turn into', 'meaning': 'convertirse en', 'sentence': 'The caterpillar **turned into** a butterfly.'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': "I'm looking forward to see you.", 'correct': "I'm looking forward **to seeing** you.",
+             'explanation': 'Después de "to" en phrasal verbs, usa GERUNDIO'},
+            {'wrong': 'Turn off it.', 'correct': 'Turn **it** off.',
+             'explanation': 'Con pronombres, los phrasal separables DEBEN separarse'},
+            {'wrong': 'I must look after him him.', 'correct': 'I must look **after** him.',
+             'explanation': 'Look after es inseparable'}
+        ],
+        
+        'tips': [
+            {'icon': '📚', 'title': 'Aprende en contexto', 'content': 'No memorices listas, aprende phrasal verbs en oraciones.'},
+            {'icon': '🎯', 'title': 'Enfócate en los más comunes', 'content': 'GET, TAKE, LOOK, PUT, TURN, GIVE, COME, GO cubren el 80%.'},
+            {'icon': '📝', 'title': 'Pronombres = separar', 'content': 'Si es separable y usas pronombre: SIEMPRE separar.'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con la partícula correcta.',
+                'questions': [
+                    {'prompt': "I'm looking ___ my glasses. Have you seen them?", 'answer': 'for', 'hint': 'look for = buscar'},
+                    {'prompt': "Please turn ___ the music. It's too loud.", 'answer': 'down', 'hint': 'turn down = bajar'},
+                    {'prompt': 'She takes ___ her grandmother.', 'answer': 'after', 'hint': 'take after = parecerse a'},
+                    {'prompt': 'What time do you usually get ___?', 'answer': 'up', 'hint': 'get up = levantarse'},
+                    {'prompt': "I'm looking forward ___ meeting you.", 'answer': 'to', 'hint': 'look forward to = esperar con ilusión'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 📋 Phrasal Verbs Esenciales
+
+| Phrasal Verb | Significado | Ejemplo |
+|--------------|-------------|---------|
+| get up | levantarse | I get up at 7. |
+| look for | buscar | I'm looking for my keys. |
+| look after | cuidar | Look after your sister. |
+| turn on/off | encender/apagar | Turn off the TV. |
+| take off | despegar/quitarse | Take off your coat. |
+| give up | rendirse/dejar | Don't give up! |
+| put on | ponerse | Put on your jacket. |
+| find out | descubrir | I found out the truth. |
+| run out of | quedarse sin | We ran out of milk. |
+| come back | regresar | Come back soon! |
+'''
+    },
+    
+    'prepositions-time': {
+        'title': 'Prepositions of Time',
+        'icon': '⏰',
+        'difficulty': 'beginner',
+        'estimated_time': '20 min',
+        'description': 'Domina IN, ON, AT para expresar tiempo correctamente.',
+        
+        'theory': {
+            'introduction': '''
+Las preposiciones de tiempo **IN, ON, AT** tienen reglas específicas:
+- **AT** - horas, momentos precisos
+- **ON** - días, fechas
+- **IN** - períodos largos (meses, años, estaciones)
+''',
+            'rules': [
+                {
+                    'title': '⏰ AT - Momentos Precisos',
+                    'rule': 'Usa AT para horas y momentos específicos',
+                    'formula': 'AT + hora/momento',
+                    'examples': [
+                        {'prep': 'at', 'example': "I wake up **at 7 o'clock**.", 'use': 'Horas'},
+                        {'prep': 'at', 'example': "Let's meet **at noon**.", 'use': 'Mediodía/Medianoche'},
+                        {'prep': 'at', 'example': 'We eat turkey **at Christmas**.', 'use': 'Festividades'},
+                        {'prep': 'at', 'example': "I'll call you **at the weekend**.", 'use': 'Fin de semana (UK)'},
+                        {'prep': 'at', 'example': '**At that moment**, I realized the truth.', 'use': 'Momentos'}
+                    ]
+                },
+                {
+                    'title': '📅 ON - Días y Fechas',
+                    'rule': 'Usa ON para días específicos',
+                    'formula': 'ON + día/fecha',
+                    'examples': [
+                        {'prep': 'on', 'example': 'I go to gym **on Mondays**.', 'use': 'Días de la semana'},
+                        {'prep': 'on', 'example': 'My birthday is **on March 15th**.', 'use': 'Fechas'},
+                        {'prep': 'on', 'example': 'We got married **on a sunny day**.', 'use': 'Día + descripción'},
+                        {'prep': 'on', 'example': '**On the weekend**, I relax.', 'use': 'Fin de semana (US)'},
+                        {'prep': 'on', 'example': 'See you **on Christmas Day**.', 'use': 'Día festivo específico'}
+                    ]
+                },
+                {
+                    'title': '📆 IN - Períodos Largos',
+                    'rule': 'Usa IN para meses, años, estaciones, décadas, siglos',
+                    'formula': 'IN + período',
+                    'examples': [
+                        {'prep': 'in', 'example': 'I was born **in 1995**.', 'use': 'Años'},
+                        {'prep': 'in', 'example': "It's hot **in summer**.", 'use': 'Estaciones'},
+                        {'prep': 'in', 'example': "We'll travel **in December**.", 'use': 'Meses'},
+                        {'prep': 'in', 'example': 'Disco was popular **in the 70s**.', 'use': 'Décadas'},
+                        {'prep': 'in', 'example': "I'll be ready **in 5 minutes**.", 'use': 'Dentro de (futuro)'},
+                        {'prep': 'in', 'example': 'I work best **in the morning**.', 'use': 'Partes del día'}
+                    ]
+                },
+                {
+                    'title': '⚠️ Sin Preposición',
+                    'rule': 'NO uses preposición con: this, last, next, every, yesterday, tomorrow, today',
+                    'formula': 'CERO preposición',
+                    'examples': [
+                        {'wrong': 'on this Monday', 'correct': '**this** Monday', 'note': 'This = sin preposición'},
+                        {'wrong': 'in last year', 'correct': '**last** year', 'note': 'Last = sin preposición'},
+                        {'wrong': 'on next Friday', 'correct': '**next** Friday', 'note': 'Next = sin preposición'},
+                        {'wrong': 'on every day', 'correct': '**every** day', 'note': 'Every = sin preposición'},
+                        {'wrong': 'in yesterday', 'correct': '**yesterday**', 'note': 'Yesterday = sin preposición'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'I was born in March 15th.', 'correct': 'I was born **on** March 15th.',
+             'explanation': 'Fechas específicas usan ON'},
+            {'wrong': 'See you in Monday.', 'correct': 'See you **on** Monday.',
+             'explanation': 'Días de la semana usan ON'},
+            {'wrong': 'I wake up in 6am.', 'correct': 'I wake up **at** 6am.',
+             'explanation': 'Horas usan AT'}
+        ],
+        
+        'tips': [
+            {'icon': '🎯', 'title': 'Regla de precisión', 'content': 'Más preciso = AT. Menos preciso = IN. Días = ON.'},
+            {'icon': '📝', 'title': 'Truco "IN the"', 'content': 'morning, afternoon, evening usan IN. Pero AT night.'},
+            {'icon': '⚡', 'title': 'Memoria: A-O-I', 'content': 'AT=momento, ON=día, IN=período. Orden de precisión.'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con AT, ON o IN.',
+                'questions': [
+                    {'prompt': "I'll see you ___ 3 o'clock.", 'answer': 'at', 'hint': 'Hora = at'},
+                    {'prompt': 'We go to church ___ Sundays.', 'answer': 'on', 'hint': 'Día = on'},
+                    {'prompt': 'She was born ___ 1998.', 'answer': 'in', 'hint': 'Año = in'},
+                    {'prompt': 'The meeting is ___ Monday morning.', 'answer': 'on', 'hint': 'Día específico = on'},
+                    {'prompt': "I'll call you back ___ 5 minutes.", 'answer': 'in', 'hint': 'Dentro de = in'},
+                    {'prompt': 'We met ___ Christmas.', 'answer': 'at', 'hint': 'Festividad = at'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## ⏰ AT, ON, IN para Tiempo
+
+| Preposición | Uso | Ejemplos |
+|-------------|-----|----------|
+| **AT** | Horas, momentos | at 5pm, at noon, at midnight |
+| **AT** | Festividades | at Christmas, at Easter |
+| **ON** | Días | on Monday, on weekends |
+| **ON** | Fechas | on July 4th, on my birthday |
+| **IN** | Meses | in January, in December |
+| **IN** | Años/Décadas | in 2020, in the 90s |
+| **IN** | Estaciones | in summer, in winter |
+| **IN** | Partes del día | in the morning (pero AT night) |
+
+### ⚠️ Sin Preposición
+this, last, next, every, yesterday, tomorrow, today
+'''
+    },
+    
+    'prepositions-place': {
+        'title': 'Prepositions of Place',
+        'icon': '📍',
+        'difficulty': 'beginner',
+        'estimated_time': '20 min',
+        'description': 'Aprende a usar IN, ON, AT para lugares correctamente.',
+        
+        'theory': {
+            'introduction': '''
+Las preposiciones de lugar **IN, ON, AT** siguen estas reglas:
+- **IN** - dentro de espacios cerrados/áreas
+- **ON** - sobre superficies
+- **AT** - puntos específicos/direcciones
+''',
+            'rules': [
+                {
+                    'title': '📦 IN - Dentro de',
+                    'rule': 'Usa IN para espacios cerrados o áreas',
+                    'formula': 'IN + espacio/área',
+                    'examples': [
+                        {'prep': 'in', 'example': 'The keys are **in** the drawer.', 'use': 'Dentro de contenedor'},
+                        {'prep': 'in', 'example': 'I live **in** Mexico City.', 'use': 'Ciudades'},
+                        {'prep': 'in', 'example': 'She works **in** an office.', 'use': 'Edificios (interior)'},
+                        {'prep': 'in', 'example': "He's **in** the kitchen.", 'use': 'Habitaciones'},
+                        {'prep': 'in', 'example': 'I read it **in** the newspaper.', 'use': 'Medios impresos'}
+                    ]
+                },
+                {
+                    'title': '📄 ON - Sobre',
+                    'rule': 'Usa ON para superficies y medios de transporte',
+                    'formula': 'ON + superficie',
+                    'examples': [
+                        {'prep': 'on', 'example': 'The book is **on** the table.', 'use': 'Superficies'},
+                        {'prep': 'on', 'example': "There's a picture **on** the wall.", 'use': 'Paredes'},
+                        {'prep': 'on', 'example': 'I saw it **on** TV.', 'use': 'Pantallas'},
+                        {'prep': 'on', 'example': "She's **on** the bus.", 'use': 'Transporte público'},
+                        {'prep': 'on', 'example': 'I live **on** Main Street.', 'use': 'Calles (sin número)'}
+                    ]
+                },
+                {
+                    'title': '📌 AT - Punto Específico',
+                    'rule': 'Usa AT para lugares específicos y direcciones',
+                    'formula': 'AT + punto/dirección',
+                    'examples': [
+                        {'prep': 'at', 'example': "I'm **at** the bus stop.", 'use': 'Puntos específicos'},
+                        {'prep': 'at', 'example': "She's **at** work.", 'use': 'Actividades/Lugares comunes'},
+                        {'prep': 'at', 'example': 'Meet me **at** the entrance.', 'use': 'Puntos de encuentro'},
+                        {'prep': 'at', 'example': 'I live **at** 25 Oak Street.', 'use': 'Direcciones con número'},
+                        {'prep': 'at', 'example': "He's **at** the doctor's.", 'use': 'Negocios/Servicios'}
+                    ]
+                },
+                {
+                    'title': '🚗 Transporte',
+                    'rule': 'IN para carros/taxis, ON para transporte público',
+                    'formula': 'IN car/taxi, ON bus/train/plane',
+                    'examples': [
+                        {'prep': 'in', 'example': "He's **in** the car.", 'use': 'Carros, taxis'},
+                        {'prep': 'on', 'example': "She's **on** the train.", 'use': 'Trenes'},
+                        {'prep': 'on', 'example': "We're **on** the plane.", 'use': 'Aviones'},
+                        {'prep': 'on', 'example': "I'm **on** my bike.", 'use': 'Bicicletas, motos'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': "I'm in the bus stop.", 'correct': "I'm **at** the bus stop.",
+             'explanation': 'Puntos específicos usan AT'},
+            {'wrong': 'She lives on Paris.', 'correct': 'She lives **in** Paris.',
+             'explanation': 'Ciudades usan IN'},
+            {'wrong': 'The picture is in the wall.', 'correct': 'The picture is **on** the wall.',
+             'explanation': 'Superficies verticales usan ON'}
+        ],
+        
+        'tips': [
+            {'icon': '🎯', 'title': 'IN = dentro', 'content': 'Si puedes entrar, probablemente es IN.'},
+            {'icon': '📝', 'title': 'ON = superficie', 'content': 'Si algo toca una superficie, es ON.'},
+            {'icon': '📍', 'title': 'AT = punto', 'content': 'Si es un punto en el mapa o dirección, es AT.'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con IN, ON o AT.',
+                'questions': [
+                    {'prompt': 'I live ___ Mexico.', 'answer': 'in', 'hint': 'País = in'},
+                    {'prompt': 'The cat is ___ the roof.', 'answer': 'on', 'hint': 'Superficie = on'},
+                    {'prompt': 'Meet me ___ the airport.', 'answer': 'at', 'hint': 'Punto de encuentro = at'},
+                    {'prompt': "She's ___ her car.", 'answer': 'in', 'hint': 'Carros = in'},
+                    {'prompt': 'I saw it ___ the news.', 'answer': 'on', 'hint': 'TV/medios = on'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 📍 IN, ON, AT para Lugar
+
+| Preposición | Uso | Ejemplos |
+|-------------|-----|----------|
+| **IN** | Países, ciudades | in Mexico, in Paris |
+| **IN** | Habitaciones, edificios | in the kitchen, in a hotel |
+| **IN** | Carros, taxis | in the car, in a taxi |
+| **ON** | Superficies | on the table, on the floor |
+| **ON** | Calles (sin número) | on Main Street |
+| **ON** | Transporte público | on the bus, on the train |
+| **AT** | Direcciones | at 123 Main St. |
+| **AT** | Lugares específicos | at the station, at work |
+'''
+    },
+    
+    'have-has-got': {
+        'title': 'Have / Has Got',
+        'icon': '🎁',
+        'difficulty': 'beginner',
+        'estimated_time': '15 min',
+        'description': 'Aprende a expresar posesión y características con have got.',
+        
+        'theory': {
+            'introduction': '''
+**Have got** se usa para expresar **posesión** y **características**.
+Es más común en inglés británico. En inglés americano se prefiere **have**.
+
+**I have got** = **I've got** = Tengo
+''',
+            'rules': [
+                {
+                    'title': '✅ Afirmativo',
+                    'rule': 'Subject + have/has got + complement',
+                    'formula': 'I/You/We/They + HAVE GOT | He/She/It + HAS GOT',
+                    'examples': [
+                        {'sentence': "I **have got** a new car. / I'**ve got** a new car."},
+                        {'sentence': "She **has got** blue eyes. / She'**s got** blue eyes."},
+                        {'sentence': "They **have got** two children. / They'**ve got** two children."},
+                        {'sentence': "He **has got** a headache. / He'**s got** a headache."}
+                    ]
+                },
+                {
+                    'title': '❌ Negativo',
+                    'rule': "Subject + haven't/hasn't got + complement",
+                    'formula': "have not got = haven't got | has not got = hasn't got",
+                    'examples': [
+                        {'sentence': "I **haven't got** any money."},
+                        {'sentence': "She **hasn't got** a boyfriend."},
+                        {'sentence': "We **haven't got** time."},
+                        {'sentence': "It **hasn't got** a battery."}
+                    ]
+                },
+                {
+                    'title': '❓ Preguntas',
+                    'rule': 'Have/Has + subject + got + complement?',
+                    'formula': 'HAVE/HAS + sujeto + GOT?',
+                    'examples': [
+                        {'sentence': '**Have** you **got** a pen?', 'translation': '¿Tienes un bolígrafo?'},
+                        {'sentence': '**Has** she **got** a car?', 'translation': '¿Tiene ella un carro?'},
+                        {'sentence': '**Have** they **got** any news?', 'translation': '¿Tienen noticias?'},
+                        {'sentence': 'What **have** you **got** in your bag?', 'translation': '¿Qué tienes en tu bolsa?'}
+                    ]
+                },
+                {
+                    'title': '🔄 Have Got vs Have',
+                    'rule': 'Mismo significado, diferente estructura',
+                    'formula': 'HAVE GOT (UK) = HAVE (US)',
+                    'examples': [
+                        {'sentence': "I've got a dog. = I have a dog.", 'note': 'Ambos correctos'},
+                        {'sentence': 'Have you got time? = Do you have time?', 'note': 'Pregunta'},
+                        {'sentence': "She hasn't got money. = She doesn't have money.", 'note': 'Negativo'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'I have got go to work.', 'correct': 'I **have to** go to work.',
+             'explanation': 'Para obligación, usa HAVE TO, no HAVE GOT'},
+            {'wrong': 'Do you have got a car?', 'correct': '**Have** you **got** a car? / Do you have a car?',
+             'explanation': 'No mezcles DO con HAVE GOT'},
+            {'wrong': 'She has got breakfast.', 'correct': 'She **has** breakfast.',
+             'explanation': 'Para acciones (eat breakfast), usa HAVE sin GOT'}
+        ],
+        
+        'tips': [
+            {'icon': '🇬🇧', 'title': 'UK vs US', 'content': 'HAVE GOT es más británico. HAVE es más americano.'},
+            {'icon': '⚡', 'title': 'Contracciones', 'content': "En habla informal: I've got, She's got, We've got."},
+            {'icon': '🎯', 'title': 'Solo posesión', 'content': 'HAVE GOT solo para posesión, no para acciones.'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con have got o has got.',
+                'questions': [
+                    {'prompt': 'I ___ a new phone.', 'answer': 'have got', 'hint': 'I = have got'},
+                    {'prompt': 'She ___ beautiful eyes.', 'answer': 'has got', 'hint': 'She = has got'},
+                    {'prompt': '___ you ___ any brothers?', 'answer': 'Have...got', 'hint': 'Pregunta: Have + sujeto + got'},
+                    {'prompt': 'We ___ a big house.', 'answer': "haven't got", 'hint': "Negativo: haven't got"},
+                    {'prompt': 'He ___ a lot of friends.', 'answer': 'has got', 'hint': 'He = has got'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 🎁 Have Got - Resumen
+
+| Forma | I/You/We/They | He/She/It |
+|-------|---------------|-----------|
+| ✅ Afirmativo | have got ('ve got) | has got ('s got) |
+| ❌ Negativo | haven't got | hasn't got |
+| ❓ Pregunta | Have...got? | Has...got? |
+
+### Ejemplos
+- ✅ I've got a car. (Tengo un carro)
+- ❌ She hasn't got time. (No tiene tiempo)
+- ❓ Have you got a pen? (¿Tienes un bolígrafo?)
+'''
+    },
+    
+    'there-is-are': {
+        'title': 'There is / There are',
+        'icon': '📍',
+        'difficulty': 'beginner',
+        'estimated_time': '15 min',
+        'description': 'Expresa existencia y ubicación con there is/are.',
+        
+        'theory': {
+            'introduction': '''
+**There is** y **There are** se usan para decir que algo **existe** o **está en un lugar**.
+- **There is** - Singular / Incontable
+- **There are** - Plural
+''',
+            'rules': [
+                {
+                    'title': '✅ Afirmativo',
+                    'rule': 'There is/are + sustantivo + lugar',
+                    'formula': 'There is (singular) / There are (plural)',
+                    'examples': [
+                        {'sentence': '**There is** a book on the table.', 'translation': 'Hay un libro en la mesa.'},
+                        {'sentence': '**There are** three cats in the garden.', 'translation': 'Hay tres gatos en el jardín.'},
+                        {'sentence': "**There's** some milk in the fridge.", 'translation': 'Hay leche en el refrigerador.'},
+                        {'sentence': '**There are** many people here.', 'translation': 'Hay muchas personas aquí.'}
+                    ]
+                },
+                {
+                    'title': '❌ Negativo',
+                    'rule': "There isn't/aren't + sustantivo",
+                    'formula': "There is not = There isn't | There are not = There aren't",
+                    'examples': [
+                        {'sentence': "**There isn't** any water.", 'translation': 'No hay agua.'},
+                        {'sentence': "**There aren't** any chairs.", 'translation': 'No hay sillas.'},
+                        {'sentence': "**There's no** time.", 'translation': 'No hay tiempo.'},
+                        {'sentence': '**There are no** problems.', 'translation': 'No hay problemas.'}
+                    ]
+                },
+                {
+                    'title': '❓ Preguntas',
+                    'rule': 'Is/Are there + sustantivo?',
+                    'formula': 'Is there...? / Are there...?',
+                    'examples': [
+                        {'sentence': '**Is there** a bank near here?', 'translation': '¿Hay un banco cerca de aquí?'},
+                        {'sentence': '**Are there** any questions?', 'translation': '¿Hay alguna pregunta?'},
+                        {'sentence': 'How many students **are there**?', 'translation': '¿Cuántos estudiantes hay?'},
+                        {'sentence': '**Is there** any coffee left?', 'translation': '¿Queda café?'}
+                    ]
+                },
+                {
+                    'title': '🔢 Some/Any con There is/are',
+                    'rule': 'SOME en afirmativo, ANY en negativo/pregunta',
+                    'formula': 'There is/are + some (✅) / any (❓❌)',
+                    'examples': [
+                        {'sentence': 'There are **some** apples. ✅'},
+                        {'sentence': "There aren't **any** apples. ❌"},
+                        {'sentence': 'Are there **any** apples? ❓'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'There is many people.', 'correct': 'There **are** many people.',
+             'explanation': 'PEOPLE es plural, usa ARE'},
+            {'wrong': 'Have a book on the table.', 'correct': '**There is** a book on the table.',
+             'explanation': 'Para existencia, usa THERE IS/ARE, no HAVE'},
+            {'wrong': 'There are some water.', 'correct': 'There **is** some water.',
+             'explanation': 'WATER es incontable, usa IS'}
+        ],
+        
+        'tips': [
+            {'icon': '🔢', 'title': 'Cuenta el sustantivo', 'content': '1 cosa = is. 2+ cosas = are.'},
+            {'icon': '💧', 'title': 'Incontables = is', 'content': 'Water, money, time siempre con IS.'},
+            {'icon': '📝', 'title': "There's", 'content': "En habla informal: There's = There is."}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con there is o there are.',
+                'questions': [
+                    {'prompt': '___ a dog in the park.', 'answer': 'There is', 'hint': 'A dog = singular'},
+                    {'prompt': '___ many cars on the street.', 'answer': 'There are', 'hint': 'Many cars = plural'},
+                    {'prompt': '___ any milk?', 'answer': 'Is there', 'hint': 'Pregunta + singular'},
+                    {'prompt': '___ no chairs in the room.', 'answer': 'There are', 'hint': 'Chairs = plural'},
+                    {'prompt': '___ some coffee in the cup.', 'answer': 'There is', 'hint': 'Coffee = incontable'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 📍 There is / There are
+
+| | Singular/Incontable | Plural |
+|--|---------------------|--------|
+| ✅ | There is / There's | There are |
+| ❌ | There isn't / There's no | There aren't / There are no |
+| ❓ | Is there...? | Are there...? |
+
+### Ejemplos
+- There **is** a cat. (singular)
+- There **is** some water. (incontable)
+- There **are** five books. (plural)
+'''
+    },
+    
+    'possessives': {
+        'title': 'Possessives',
+        'icon': '👤',
+        'difficulty': 'beginner',
+        'estimated_time': '20 min',
+        'description': 'Domina los adjetivos y pronombres posesivos en inglés.',
+        
+        'theory': {
+            'introduction': '''
+Los posesivos indican **pertenencia**. Hay dos tipos:
+- **Adjetivos posesivos**: van ANTES del sustantivo (my book)
+- **Pronombres posesivos**: REEMPLAZAN al sustantivo (It's mine)
+''',
+            'rules': [
+                {
+                    'title': '📝 Adjetivos Posesivos',
+                    'rule': 'Van ANTES del sustantivo, nunca solos',
+                    'formula': 'Possessive Adjective + Noun',
+                    'examples': [
+                        {'sentence': '**My** name is John.', 'translation': 'Mi nombre es John.'},
+                        {'sentence': 'Is this **your** bag?', 'translation': '¿Esta es tu bolsa?'},
+                        {'sentence': '**His** car is red.', 'translation': 'Su carro (de él) es rojo.'},
+                        {'sentence': '**Her** eyes are blue.', 'translation': 'Sus ojos (de ella) son azules.'},
+                        {'sentence': 'The cat loves **its** toy.', 'translation': 'El gato ama su juguete.'},
+                        {'sentence': '**Our** house is big.', 'translation': 'Nuestra casa es grande.'},
+                        {'sentence': '**Their** children are smart.', 'translation': 'Sus hijos (de ellos) son inteligentes.'}
+                    ]
+                },
+                {
+                    'title': '📌 Pronombres Posesivos',
+                    'rule': 'Van SOLOS, reemplazan sustantivo',
+                    'formula': 'Pronombre Posesivo (sin sustantivo)',
+                    'examples': [
+                        {'sentence': 'This book is **mine**.', 'translation': 'Este libro es mío.'},
+                        {'sentence': 'Is this **yours**?', 'translation': '¿Esto es tuyo?'},
+                        {'sentence': 'The red car is **his**.', 'translation': 'El carro rojo es de él.'},
+                        {'sentence': 'This seat is **hers**.', 'translation': 'Este asiento es de ella.'},
+                        {'sentence': 'That house is **ours**.', 'translation': 'Esa casa es nuestra.'},
+                        {'sentence': 'The kids are **theirs**.', 'translation': 'Los niños son de ellos.'}
+                    ]
+                },
+                {
+                    'title': '📊 Tabla Comparativa',
+                    'rule': 'Memoriza ambas formas',
+                    'formula': 'Sujeto - Adjetivo - Pronombre',
+                    'examples': [
+                        {'sentence': 'I - **my** - **mine**'},
+                        {'sentence': 'you - **your** - **yours**'},
+                        {'sentence': 'he - **his** - **his**'},
+                        {'sentence': 'she - **her** - **hers**'},
+                        {'sentence': 'it - **its** - (no tiene)'},
+                        {'sentence': 'we - **our** - **ours**'},
+                        {'sentence': 'they - **their** - **theirs**'}
+                    ]
+                },
+                {
+                    'title': "'S Posesivo",
+                    'rule': "Para nombres y sustantivos, agrega 'S",
+                    'formula': "Noun + 's + Noun",
+                    'examples': [
+                        {'sentence': "**John's** car is blue.", 'translation': 'El carro de John es azul.'},
+                        {'sentence': "This is **my mother's** house.", 'translation': 'Esta es la casa de mi madre.'},
+                        {'sentence': "**The dog's** name is Max.", 'translation': 'El nombre del perro es Max.'},
+                        {'sentence': "**Children's** toys are colorful.", 'translation': 'Los juguetes de los niños son coloridos.'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'This is mine book.', 'correct': 'This is **my** book.',
+             'explanation': 'Con sustantivo = adjetivo (my), sin sustantivo = pronombre (mine)'},
+            {'wrong': "The dog lost it's toy.", 'correct': 'The dog lost **its** toy.',
+             'explanation': "ITS (posesivo) no lleva apóstrofo. IT'S = it is"},
+            {'wrong': 'Is this book your?', 'correct': 'Is this book **yours**?',
+             'explanation': 'Sin sustantivo después = pronombre posesivo (yours)'}
+        ],
+        
+        'tips': [
+            {'icon': '📝', 'title': 'Adjetivo + Sustantivo', 'content': 'My, your, his, her, its, our, their + NOUN'},
+            {'icon': '🎯', 'title': 'Pronombre solo', 'content': 'Mine, yours, his, hers, ours, theirs = SIN sustantivo'},
+            {'icon': '⚠️', 'title': "Its vs It's", 'content': "ITS = de ello (posesivo). IT'S = it is (contracción)"}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con el posesivo correcto.',
+                'questions': [
+                    {'prompt': 'This is ___ (I) book.', 'answer': 'my', 'hint': 'Adjetivo + sustantivo = my'},
+                    {'prompt': 'Is this pen ___ (you)?', 'answer': 'yours', 'hint': 'Sin sustantivo = pronombre'},
+                    {'prompt': 'The cat is playing with ___ (it) toy.', 'answer': 'its', 'hint': 'Adjetivo posesivo de it'},
+                    {'prompt': 'This house is ___ (they).', 'answer': 'theirs', 'hint': 'Sin sustantivo = pronombre'},
+                    {'prompt': '___ (she) name is Maria.', 'answer': 'Her', 'hint': 'Adjetivo + sustantivo'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 👤 Posesivos
+
+| Sujeto | Adjetivo | Pronombre |
+|--------|----------|-----------|
+| I | my | mine |
+| you | your | yours |
+| he | his | his |
+| she | her | hers |
+| it | its | - |
+| we | our | ours |
+| they | their | theirs |
+
+### Regla
+- **Adjetivo** + sustantivo: This is **my** car.
+- **Pronombre** solo: This car is **mine**.
+- ITS (posesivo) ≠ IT'S (it is)
+'''
+    },
+    
+    'can-could-be-able': {
+        'title': 'Can, Could & Be Able To',
+        'icon': '💪',
+        'difficulty': 'beginner',
+        'estimated_time': '20 min',
+        'description': 'Expresa habilidad, posibilidad y permisos correctamente.',
+        
+        'theory': {
+            'introduction': '''
+**CAN** expresa habilidad y posibilidad en presente.
+**COULD** es el pasado de CAN o expresa posibilidad/cortesía.
+**BE ABLE TO** se usa para otros tiempos verbales.
+''',
+            'rules': [
+                {
+                    'title': '✅ CAN - Habilidad/Posibilidad (Presente)',
+                    'rule': 'Sujeto + CAN + verbo base',
+                    'formula': 'Subject + CAN + verb (infinitivo sin TO)',
+                    'examples': [
+                        {'sentence': 'I **can** swim.', 'translation': 'Puedo/Sé nadar.', 'use': 'Habilidad'},
+                        {'sentence': 'She **can** speak French.', 'translation': 'Ella sabe hablar francés.', 'use': 'Habilidad'},
+                        {'sentence': '**Can** I go now?', 'translation': '¿Puedo irme ahora?', 'use': 'Permiso'},
+                        {'sentence': 'It **can** be dangerous.', 'translation': 'Puede ser peligroso.', 'use': 'Posibilidad'},
+                        {'sentence': '**Can** you help me?', 'translation': '¿Puedes ayudarme?', 'use': 'Petición'}
+                    ]
+                },
+                {
+                    'title': '🕰️ COULD - Pasado/Cortesía',
+                    'rule': 'Pasado de CAN o petición cortés',
+                    'formula': 'Subject + COULD + verb',
+                    'examples': [
+                        {'sentence': 'I **could** swim when I was 5.', 'translation': 'Sabía nadar cuando tenía 5 años.', 'use': 'Habilidad pasada'},
+                        {'sentence': "She **couldn't** come yesterday.", 'translation': 'Ella no pudo venir ayer.', 'use': 'Incapacidad pasada'},
+                        {'sentence': '**Could** you help me, please?', 'translation': '¿Podría ayudarme, por favor?', 'use': 'Petición cortés'},
+                        {'sentence': 'It **could** rain later.', 'translation': 'Podría llover más tarde.', 'use': 'Posibilidad'}
+                    ]
+                },
+                {
+                    'title': '🔄 BE ABLE TO - Otros Tiempos',
+                    'rule': 'Para futuro, presente perfecto, etc.',
+                    'formula': 'BE + ABLE TO + verb',
+                    'examples': [
+                        {'sentence': 'I **will be able to** come tomorrow.', 'translation': 'Podré venir mañana.', 'use': 'Futuro'},
+                        {'sentence': 'She **has been able to** finish.', 'translation': 'Ha podido terminar.', 'use': 'Presente Perfecto'},
+                        {'sentence': 'I **was able to** escape.', 'translation': 'Pude escapar.', 'use': 'Logro específico'},
+                        {'sentence': "He **won't be able to** help.", 'translation': 'No podrá ayudar.', 'use': 'Futuro negativo'}
+                    ]
+                },
+                {
+                    'title': '⚠️ COULD vs WAS ABLE TO',
+                    'rule': 'COULD = habilidad general, WAS ABLE TO = logro específico',
+                    'formula': 'COULD (general) vs WAS ABLE TO (específico)',
+                    'examples': [
+                        {'sentence': 'I **could** play piano as a child.', 'note': 'Habilidad general'},
+                        {'sentence': 'After trying hard, I **was able to** pass.', 'note': 'Logro específico'},
+                        {'sentence': 'The door was locked, but I **was able to** open it.', 'note': 'Logro específico'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'I can to swim.', 'correct': 'I **can swim**.',
+             'explanation': 'CAN + verbo sin TO'},
+            {'wrong': 'She cans play guitar.', 'correct': 'She **can** play guitar.',
+             'explanation': 'CAN nunca cambia (no cans, no canned para modal)'},
+            {'wrong': 'I will can come tomorrow.', 'correct': 'I **will be able to** come tomorrow.',
+             'explanation': 'Usa BE ABLE TO para futuro'}
+        ],
+        
+        'tips': [
+            {'icon': '🎯', 'title': 'CAN = simple', 'content': 'Presente y habilidad general = CAN'},
+            {'icon': '🕰️', 'title': 'COULD = pasado/cortés', 'content': 'Habilidad pasada o petición educada = COULD'},
+            {'icon': '📅', 'title': 'BE ABLE TO = flexibilidad', 'content': 'Para futuro, perfecto, y otros tiempos = BE ABLE TO'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con can, could o be able to.',
+                'questions': [
+                    {'prompt': 'I ___ speak three languages.', 'answer': 'can', 'hint': 'Habilidad presente = can'},
+                    {'prompt': 'She ___ swim when she was 3.', 'answer': 'could', 'hint': 'Habilidad pasada = could'},
+                    {'prompt': '___ you help me, please?', 'answer': 'Could', 'hint': 'Petición cortés = could'},
+                    {'prompt': 'I will ___ finish tomorrow.', 'answer': 'be able to', 'hint': 'Futuro = will be able to'},
+                    {'prompt': 'He ___ come to the party last night.', 'answer': "couldn't", 'hint': "Pasado negativo = couldn't"}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 💪 CAN, COULD, BE ABLE TO
+
+| Modal | Uso | Ejemplo |
+|-------|-----|---------|
+| CAN | Presente, habilidad | I can swim. |
+| CAN | Permiso informal | Can I go? |
+| COULD | Pasado de can | I could swim as a child. |
+| COULD | Petición cortés | Could you help? |
+| BE ABLE TO | Futuro | I will be able to come. |
+| BE ABLE TO | Perfecto | I have been able to finish. |
+
+### Recuerda
+- CAN + verbo (sin TO)
+- CAN no cambia (no cans, no canning)
+- Futuro = will be able to (no will can)
+'''
+    },
+    
+    'subject-object-pronouns': {
+        'title': 'Subject & Object Pronouns',
+        'icon': '👥',
+        'difficulty': 'beginner',
+        'estimated_time': '15 min',
+        'description': 'Diferencia entre pronombres sujeto y objeto.',
+        
+        'theory': {
+            'introduction': '''
+Los **pronombres sujeto** realizan la acción (yo, tú, él...).
+Los **pronombres objeto** reciben la acción (me, te, lo...).
+
+**I** love **her**. = **Yo** la amo.
+''',
+            'rules': [
+                {
+                    'title': '👤 Pronombres Sujeto',
+                    'rule': 'Van ANTES del verbo, realizan la acción',
+                    'formula': 'Subject Pronoun + Verb',
+                    'examples': [
+                        {'sentence': '**I** am a student.', 'translation': 'Yo soy estudiante.'},
+                        {'sentence': '**You** are my friend.', 'translation': 'Tú eres mi amigo.'},
+                        {'sentence': '**He** works here.', 'translation': 'Él trabaja aquí.'},
+                        {'sentence': '**She** is beautiful.', 'translation': 'Ella es hermosa.'},
+                        {'sentence': '**It** is cold.', 'translation': 'Hace frío. (Está frío)'},
+                        {'sentence': '**We** are happy.', 'translation': 'Nosotros estamos felices.'},
+                        {'sentence': '**They** live in Paris.', 'translation': 'Ellos viven en París.'}
+                    ]
+                },
+                {
+                    'title': '🎯 Pronombres Objeto',
+                    'rule': 'Van DESPUÉS del verbo, reciben la acción',
+                    'formula': 'Verb + Object Pronoun',
+                    'examples': [
+                        {'sentence': 'Call **me** later.', 'translation': 'Llámame después.'},
+                        {'sentence': 'I love **you**.', 'translation': 'Te amo.'},
+                        {'sentence': 'She knows **him**.', 'translation': 'Ella lo conoce.'},
+                        {'sentence': 'We saw **her** yesterday.', 'translation': 'La vimos ayer.'},
+                        {'sentence': 'I broke **it**.', 'translation': 'Lo rompí.'},
+                        {'sentence': 'They visited **us**.', 'translation': 'Ellos nos visitaron.'},
+                        {'sentence': 'I helped **them**.', 'translation': 'Los ayudé.'}
+                    ]
+                },
+                {
+                    'title': '📊 Tabla Comparativa',
+                    'rule': 'Memoriza ambas formas',
+                    'formula': 'Sujeto - Objeto',
+                    'examples': [
+                        {'sentence': 'I - **me**'},
+                        {'sentence': 'you - **you**'},
+                        {'sentence': 'he - **him**'},
+                        {'sentence': 'she - **her**'},
+                        {'sentence': 'it - **it**'},
+                        {'sentence': 'we - **us**'},
+                        {'sentence': 'they - **them**'}
+                    ]
+                },
+                {
+                    'title': '🔄 Después de Preposiciones',
+                    'rule': 'Siempre usa pronombre OBJETO después de preposiciones',
+                    'formula': 'Preposition + Object Pronoun',
+                    'examples': [
+                        {'sentence': 'This gift is for **you**.', 'translation': 'Este regalo es para ti.'},
+                        {'sentence': "I'm thinking about **her**.", 'translation': 'Estoy pensando en ella.'},
+                        {'sentence': 'Come with **me**.', 'translation': 'Ven conmigo.'},
+                        {'sentence': "There's a message for **him**.", 'translation': 'Hay un mensaje para él.'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'Me am happy.', 'correct': '**I** am happy.',
+             'explanation': 'Antes del verbo = pronombre SUJETO'},
+            {'wrong': 'I love she.', 'correct': 'I love **her**.',
+             'explanation': 'Después del verbo = pronombre OBJETO'},
+            {'wrong': 'Between you and I.', 'correct': 'Between you and **me**.',
+             'explanation': 'Después de preposición = pronombre OBJETO'}
+        ],
+        
+        'tips': [
+            {'icon': '👤', 'title': 'Antes del verbo', 'content': 'Pronombre sujeto: I, you, he, she, it, we, they'},
+            {'icon': '🎯', 'title': 'Después del verbo', 'content': 'Pronombre objeto: me, you, him, her, it, us, them'},
+            {'icon': '📍', 'title': 'Después de preposición', 'content': 'Siempre objeto: for me, with her, to them'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Elige el pronombre correcto.',
+                'questions': [
+                    {'prompt': '___ am a teacher. (I/Me)', 'answer': 'I', 'hint': 'Antes del verbo = sujeto'},
+                    {'prompt': 'Call ___ tomorrow. (I/me)', 'answer': 'me', 'hint': 'Después del verbo = objeto'},
+                    {'prompt': '___ is my sister. (She/Her)', 'answer': 'She', 'hint': 'Antes del verbo = sujeto'},
+                    {'prompt': 'I saw ___ at the party. (they/them)', 'answer': 'them', 'hint': 'Después del verbo = objeto'},
+                    {'prompt': 'This is for ___. (he/him)', 'answer': 'him', 'hint': 'Después de preposición = objeto'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 👥 Pronombres Sujeto y Objeto
+
+| Sujeto | Objeto |
+|--------|--------|
+| I | me |
+| you | you |
+| he | him |
+| she | her |
+| it | it |
+| we | us |
+| they | them |
+
+### Regla
+- **Antes** del verbo = SUJETO: **I** love you.
+- **Después** del verbo = OBJETO: I love **you**.
+- **Después** de preposición = OBJETO: for **me**, with **her**
+'''
+    },
+    
+    'countable-uncountable': {
+        'title': 'Countable & Uncountable Nouns',
+        'icon': '🔢',
+        'difficulty': 'beginner',
+        'estimated_time': '20 min',
+        'description': 'Distingue entre sustantivos contables e incontables.',
+        
+        'theory': {
+            'introduction': '''
+En inglés, los sustantivos se dividen en:
+- **Contables**: Se pueden contar (one apple, two apples)
+- **Incontables**: NO se pueden contar (water, information)
+
+Esto afecta qué palabras usar: a/an, some, any, much, many, etc.
+''',
+            'rules': [
+                {
+                    'title': '🔢 Sustantivos Contables',
+                    'rule': 'Tienen singular y plural, usan a/an, many, few',
+                    'formula': 'a/an + singular | many/few + plural',
+                    'examples': [
+                        {'sentence': 'I have **a** book.', 'note': 'Singular + a/an'},
+                        {'sentence': 'There are **many** books.', 'note': 'Plural + many'},
+                        {'sentence': 'I have **a few** friends.', 'note': 'Plural + a few'},
+                        {'sentence': 'How **many** apples do you want?', 'note': 'Pregunta + many'}
+                    ]
+                },
+                {
+                    'title': '💧 Sustantivos Incontables',
+                    'rule': 'No tienen plural, usan much, little, some',
+                    'formula': 'much/little + incontable (NUNCA a/an)',
+                    'examples': [
+                        {'sentence': 'I need **some** water.', 'note': 'Nunca: a water'},
+                        {'sentence': "There isn't **much** money.", 'note': 'Negativo + much'},
+                        {'sentence': 'I have **a little** time.', 'note': 'A little = algo de'},
+                        {'sentence': 'How **much** sugar do you need?', 'note': 'Pregunta + much'}
+                    ]
+                },
+                {
+                    'title': '📋 Incontables Comunes',
+                    'rule': 'Memoriza los más usados',
+                    'formula': 'Categorías de incontables',
+                    'examples': [
+                        {'category': 'Líquidos', 'items': ['water', 'milk', 'coffee', 'tea', 'juice', 'oil']},
+                        {'category': 'Comida', 'items': ['bread', 'rice', 'pasta', 'meat', 'cheese', 'butter']},
+                        {'category': 'Materiales', 'items': ['wood', 'glass', 'paper', 'gold', 'plastic']},
+                        {'category': 'Abstractos', 'items': ['information', 'advice', 'news', 'homework', 'work']},
+                        {'category': 'Otros', 'items': ['money', 'furniture', 'luggage', 'weather', 'traffic']}
+                    ]
+                },
+                {
+                    'title': '📦 Cómo Contar Incontables',
+                    'rule': 'Usa contenedores o medidas',
+                    'formula': 'a/an + contenedor + of + incontable',
+                    'examples': [
+                        {'sentence': '**a glass of** water', 'translation': 'un vaso de agua'},
+                        {'sentence': '**a piece of** advice', 'translation': 'un consejo'},
+                        {'sentence': '**a slice of** bread', 'translation': 'una rebanada de pan'},
+                        {'sentence': '**a cup of** coffee', 'translation': 'una taza de café'},
+                        {'sentence': '**a bottle of** milk', 'translation': 'una botella de leche'}
+                    ]
+                }
+            ]
+        },
+        
+        'common_mistakes': [
+            {'wrong': 'I need an information.', 'correct': 'I need **(some) information** / **a piece of information**.',
+             'explanation': 'INFORMATION es incontable, no usa a/an'},
+            {'wrong': 'There are many furnitures.', 'correct': 'There is **much/a lot of furniture**.',
+             'explanation': 'FURNITURE es incontable, no tiene plural'},
+            {'wrong': 'I have few money.', 'correct': 'I have **little** money.',
+             'explanation': 'MONEY es incontable: little (no few)'}
+        ],
+        
+        'tips': [
+            {'icon': '🔢', 'title': '¿Se puede contar?', 'content': 'Si puedes decir "one, two, three...", es contable.'},
+            {'icon': '📦', 'title': 'Contenedores', 'content': 'Para contar incontables: a glass of, a piece of...'},
+            {'icon': '⚠️', 'title': 'NEWS es singular', 'content': 'The news IS good (no ARE). Es incontable.'}
+        ],
+        
+        'exercises': [
+            {
+                'type': 'fill_blank',
+                'instruction': 'Completa con much o many.',
+                'questions': [
+                    {'prompt': 'How ___ water do you need?', 'answer': 'much', 'hint': 'Water = incontable'},
+                    {'prompt': "There aren't ___ students today.", 'answer': 'many', 'hint': 'Students = contable'},
+                    {'prompt': "I don't have ___ time.", 'answer': 'much', 'hint': 'Time = incontable'},
+                    {'prompt': 'How ___ books did you read?', 'answer': 'many', 'hint': 'Books = contable'},
+                    {'prompt': "There isn't ___ traffic today.", 'answer': 'much', 'hint': 'Traffic = incontable'}
+                ]
+            }
+        ],
+        
+        'quick_reference': '''
+## 🔢 Contables vs Incontables
+
+| | Contables | Incontables |
+|--|-----------|-------------|
+| Singular | a/an | No |
+| Plural | -s/-es | No (no plural) |
+| Cantidad + | many, a few | much, a little |
+| Cantidad - | few | little |
+| Pregunta | How many? | How much? |
+
+### Incontables Comunes
+water, milk, money, information, advice, news, bread, rice, furniture, luggage, traffic, weather
+
+### Contar Incontables
+a glass of water, a piece of information, a slice of bread
+'''
     }
 }
 
