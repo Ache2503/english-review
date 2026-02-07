@@ -441,12 +441,12 @@
         border: 1px solid var(--border-color);
     }
 
-    /* =========================================================
-   FIX CONTRASTE AVANZADO - DARK MODE CON ALTO CONTRASTE
-   ========================================================= */
+/* =========================================================
+FIX CONTRASTE AVANZADO - DARK MODE PREMIUM (CORREGIDO)
+========================================================= */
     @media (prefers-color-scheme: dark) {
 
-        /* === CONTENEDOR DE CARDS === */
+        /* === CONTENEDOR DE CARDS (FIX REAL) === */
         .card {
             background: linear-gradient(
                 180deg,
@@ -455,39 +455,54 @@
             ) !important;
             border: 1px solid #2a3f5f !important;
             color: #f0f4f8 !important;
+            backdrop-filter: blur(6px);
+        }
+
+        /* === HEADER DE CARD === */
+        .card-header {
+            background-color: transparent !important;
+            border-bottom: 1px solid #2a3f5f !important;
         }
 
         /* === TITULOS EN CARDS === */
-        .card h5,
-        .card h4,
-        .card h3,
-        .card-title,
         .card h1,
         .card h2,
-        .card h6 {
+        .card h3,
+        .card h4,
+        .card h5,
+        .card h6,
+        .card-title {
             color: #ffffff !important;
             font-weight: 700;
             letter-spacing: 0.3px;
         }
 
-        /* === TEXTO NORMAL EN CARDS === */
+        /* === TEXTO NORMAL === */
         .card p,
         .card span,
         .card-text {
             color: #e0e8f0 !important;
         }
 
-        /* === LABELS Y TEXTO MUTED === */
+        /* === TEXTO MUTED === */
         .card small,
         .card .text-muted {
             color: #b8c8d8 !important;
             font-weight: 500;
         }
 
-        /* === NÚMEROS Y TEXTO FUERTE === */
+        /* === TEXTO FUERTE === */
         .card strong,
         .card .fw-bold {
             color: #f0f4f8 !important;
+        }
+
+        /* === EFECTO HOVER PREMIUM === */
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 
+                0 12px 25px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         /* === PROGRESS BAR === */
@@ -502,287 +517,8 @@
                 #38bdf8
             ) !important;
         }
-
-        /* === ALERTAS === */
-        .alert-success {
-            background-color: rgba(34, 197, 94, 0.15) !important;
-            border-color: #22c55e !important;
-            color: #86efac !important;
-        }
-
-        .alert-danger {
-            background-color: rgba(239, 68, 68, 0.15) !important;
-            border-color: #ef4444 !important;
-            color: #fca5a5 !important;
-        }
-
-        .alert-warning {
-            background-color: rgba(251, 191, 36, 0.15) !important;
-            border-color: #fbbf24 !important;
-            color: #fde047 !important;
-        }
-
-        .alert-info {
-            background-color: rgba(56, 189, 248, 0.15) !important;
-            border-color: #38bdf8 !important;
-            color: #7dd3fc !important;
-        }
-
-        /* === BUTTONS === */
-        .btn-primary {
-            background-color: #3b82f6 !important;
-            border-color: #3b82f6 !important;
-            color: white !important;
-        }
-
-        .btn-primary:hover {
-            background-color: #60a5fa !important;
-            border-color: #60a5fa !important;
-        }
-
-        .btn-success {
-            background-color: #22c55e !important;
-            border-color: #22c55e !important;
-            color: white !important;
-        }
-
-        .btn-danger {
-            background-color: #ef4444 !important;
-            border-color: #ef4444 !important;
-            color: white !important;
-        }
-
-        .btn-warning {
-            background-color: #fbbf24 !important;
-            border-color: #fbbf24 !important;
-            color: #000000 !important;
-        }
-
-        /* === BADGES === */
-        .badge-primary {
-            background-color: #3b82f6 !important;
-            color: white !important;
-        }
-
-        .badge-success {
-            background-color: #22c55e !important;
-            color: white !important;
-        }
-
-        .badge-danger {
-            background-color: #ef4444 !important;
-            color: white !important;
-        }
-
-        /* === TABLAS === */
-        .table {
-            color: #f0f4f8 !important;
-        }
-
-        .table thead th {
-            background-color: #1a2f4f !important;
-            color: #ffffff !important;
-            border-color: #2a3f5f !important;
-        }
-
-        .table tbody td {
-            border-color: #2a3f5f !important;
-            color: #e0e8f0 !important;
-        }
-
-        .table tbody tr:hover {
-            background-color: #1a2f4f !important;
-        }
-
-        /* === FORMULARIOS === */
-        .form-control,
-        .form-select,
-        textarea {
-            background-color: #1a2332 !important;
-            color: #f0f4f8 !important;
-            border-color: #2a3f5f !important;
-        }
-
-        .form-control::placeholder {
-            color: #a8b8cc !important;
-            opacity: 0.8;
-        }
-
-        .form-control:focus,
-        .form-select:focus,
-        textarea:focus {
-            background-color: #1a2332 !important;
-            color: #f0f4f8 !important;
-            border-color: #60a5fa !important;
-            box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25) !important;
-        }
-
-        label {
-            color: #f0f4f8 !important;
-        }
-
-        .form-check-input {
-            background-color: #1a2332 !important;
-            border-color: #2a3f5f !important;
-        }
-
-        .form-check-input:checked {
-            background-color: #3b82f6 !important;
-            border-color: #3b82f6 !important;
-        }
-
-        .form-check-label {
-            color: #f0f4f8 !important;
-        }
-
-        /* === BREADCRUMB === */
-        .breadcrumb-item {
-            color: #b8c8d8 !important;
-        }
-
-        .breadcrumb-item.active {
-            color: #a8b8cc !important;
-        }
-
-        .breadcrumb-item a {
-            color: #60a5fa !important;
-        }
-
-        .breadcrumb-item a:hover {
-            color: #93c5fd !important;
-        }
-
-        /* === ENLACES === */
-        a {
-            color: #60a5fa !important;
-        }
-
-        a:hover {
-            color: #93c5fd !important;
-        }
-
-        /* === HEADINGS === */
-        h1, h2, h3, h4, h5, h6 {
-            color: #ffffff !important;
-        }
-
-        /* === NAVBAR MEJORADO === */
-        .navbar {
-            background-color: #0a0e27 !important;
-            border-bottom-color: #2a3f5f !important;
-        }
-
-        .navbar-brand {
-            color: #ffffff !important;
-        }
-
-        .nav-link {
-            color: #f0f4f8 !important;
-        }
-
-        .nav-link:hover {
-            color: #ffffff !important;
-        }
-
-        .dropdown-menu {
-            background-color: #1a2332 !important;
-            border-color: #2a3f5f !important;
-        }
-
-        .dropdown-item {
-            color: #e0e8f0 !important;
-        }
-
-        .dropdown-item:hover,
-        .dropdown-item:focus {
-            background-color: #2a3f5f !important;
-            color: #ffffff !important;
-        }
-
-        .dropdown-divider {
-            border-color: #2a3f5f !important;
-        }
-
-        /* === FOOTER === */
-        footer {
-            background-color: #0a0e27 !important;
-            border-top-color: #2a3f5f !important;
-            color: #b8c8d8 !important;
-        }
-
-        footer h5 {
-            color: #ffffff !important;
-        }
-
-        footer a {
-            color: #60a5fa !important;
-        }
-
-        footer a:hover {
-            color: #93c5fd !important;
-        }
-
-        /* === MODALES === */
-        .modal-content {
-            background-color: #1a2332 !important;
-            border-color: #2a3f5f !important;
-            color: #f0f4f8 !important;
-        }
-
-        .modal-header {
-            border-bottom-color: #2a3f5f !important;
-        }
-
-        .modal-title {
-            color: #ffffff !important;
-        }
-
-        .modal-footer {
-            border-top-color: #2a3f5f !important;
-        }
-
-        .btn-close {
-            filter: invert(1);
-        }
-
-        /* === OTROS COMPONENTES === */
-        .list-group-item {
-            background-color: #1a2332 !important;
-            border-color: #2a3f5f !important;
-            color: #f0f4f8 !important;
-        }
-
-        .list-group-item:hover {
-            background-color: #2a3f5f !important;
-        }
-
-        .pagination .page-link {
-            background-color: #1a2332 !important;
-            border-color: #2a3f5f !important;
-            color: #f0f4f8 !important;
-        }
-
-        .pagination .page-link:hover {
-            background-color: #2a3f5f !important;
-            color: #ffffff !important;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #3b82f6 !important;
-            border-color: #3b82f6 !important;
-        }
-
-        code, pre {
-            background-color: #1a2332 !important;
-            color: #86efac !important;
-            border: 1px solid #2a3f5f !important;
-        }
-
-        .card-header {
-            background-color: transparent !important;
-            border-bottom-color: #2a3f5f !important;
-        }
     }
+
 
 </style>
 
@@ -826,6 +562,11 @@
                                 <i class="fas fa-chart-bar"></i> Estadísticas
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('games.game_list') }}">
+                                <i class="fas fa-gamepad"></i> Mini Juegos
+                            </a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle"></i> {{ current_user.username }}
@@ -850,6 +591,9 @@
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('flashcards.srs_overview') }}">
                                     <i class="fas fa-brain"></i> Repetición Espaciada
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('games.game_list') }}">
+                                    <i class="fas fa-gamepad"></i> Mini Juegos
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">

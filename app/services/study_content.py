@@ -5821,8 +5821,24 @@ def get_topic_exercises(topic_id):
     return []
 
 
-def check_exercise_answer(topic_id, exercise_index, question_index, user_answer):
-    """Verifica una respuesta de ejercicio."""
+def check_exercise_answer(topic_id, exercise_index, question_index, user_answer, user_id=None):
+    """
+    Verifica una respuesta de ejercicio y guarda el progreso en la BD.
+    
+    Args:
+        topic_id: ID del tema
+        exercise_index: Índice del ejercicio
+        question_index: Índice de la pregunta
+        user_answer: Respuesta del usuario
+        user_id: ID del usuario (para guardar progreso)
+    
+    Returns:
+        dict con resultado y datos de la respuesta
+    """
+    from app.extensions import db
+    from app.models import StudyExerciseResult, StudyProgress
+    from datetime import datetime
+    
     topic = STUDY_TOPICS.get(topic_id)
     if not topic:
         return {'correct': False, 'message': 'Tema no encontrado'}
@@ -5846,8 +5862,78 @@ def check_exercise_answer(topic_id, exercise_index, question_index, user_answer)
     
     is_correct = correct_answer == user_answer or correct_parts == user_parts
     
-    return {
+    result = {
         'correct': is_correct,
         'correct_answer': question.get('answer'),
         'explanation': question.get('explanation', question.get('hint', ''))
     }
+    
+    # Guardar resultado si el usuario está autenticado
+    if user_id:
+        try:
+            # Buscar o crear resultado del ejercicio
+            exercise_result = StudyExerciseResult.query.filter_by(
+                user_id=user_id,
+                topic_id=topic_id,
+                exercise_index=exercise_index,
+                question_index=question_index
+            ).first()
+            
+            if exercise_result:
+                # Actualizar intento
+                exercise_result.attempts += 1
+                exercise_result.is_correct = is_correct
+                exercise_result.user_answer = user_answer
+                exercise_result.completed_at = datetime.utcnow()
+            else:
+                # Crear nuevo resultado
+                exercise_result = StudyExerciseResult(
+                    user_id=user_id,
+                    topic_id=topic_id,
+                    exercise_index=exercise_index,
+                    question_index=question_index,
+                    user_answer=user_answer,
+                    is_correct=is_correct
+                )
+                db.session.add(exercise_result)
+            
+            # Actualizar progreso del tema
+            study_progress = StudyProgress.query.filter_by(
+                user_id=user_id,
+                topic_id=topic_id
+            ).first()
+            
+            if not study_progress:
+                # Crear nuevo progreso
+                study_progress = StudyProgress(
+                    user_id=user_id,
+                    topic_id=topic_id,
+                    exercises_attempted=1,
+                    exercises_correct=1 if is_correct else 0
+                )
+                db.session.add(study_progress)
+            else:
+                # Actualizar progreso
+                study_progress.exercises_attempted += 1
+                if is_correct:
+                    study_progress.exercises_correct += 1
+                study_progress.updated_at = datetime.utcnow()
+            
+            # Calcular tasa de éxito
+            study_progress.success_rate = study_progress.calculate_success_rate()
+            
+            # Guardar en BD
+            db.session.commit()
+            
+            # Agregar estadísticas al resultado
+            result['stats'] = {
+                'exercises_correct': study_progress.exercises_correct,
+                'exercises_attempted': study_progress.exercises_attempted,
+                'success_rate': study_progress.success_rate
+            }
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error al guardar progreso: {e}")
+    
+    return result

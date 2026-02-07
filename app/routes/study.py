@@ -41,7 +41,7 @@ def study_topic(topic_id):
 @study_bp.route('/api/check-answer', methods=['POST'])
 @login_required
 def check_answer():
-    """API para verificar respuestas de ejercicios."""
+    """API para verificar respuestas de ejercicios y guardar progreso."""
     data = request.get_json()
     
     topic_id = data.get('topic_id')
@@ -49,8 +49,49 @@ def check_answer():
     question_index = data.get('question_index', 0)
     user_answer = data.get('answer', '')
     
-    result = check_exercise_answer(topic_id, exercise_index, question_index, user_answer)
+    # Pasar user_id para guardar progreso
+    result = check_exercise_answer(
+        topic_id, 
+        exercise_index, 
+        question_index, 
+        user_answer,
+        user_id=current_user.id
+    )
+    
     return jsonify(result)
+
+
+@study_bp.route('/api/topic-stats/<topic_id>')
+@login_required
+def topic_stats(topic_id):
+    """API para obtener estadísticas de un tema."""
+    from app.models import StudyProgress
+    
+    stats = StudyProgress.query.filter_by(
+        user_id=current_user.id,
+        topic_id=topic_id
+    ).first()
+    
+    if not stats:
+        return jsonify({
+            'success': True,
+            'exercises_attempted': 0,
+            'exercises_correct': 0,
+            'success_rate': 0,
+            'is_completed': False,
+            'started_at': None,
+            'completed_at': None
+        })
+    
+    return jsonify({
+        'success': True,
+        'exercises_attempted': stats.exercises_attempted,
+        'exercises_correct': stats.exercises_correct,
+        'success_rate': stats.success_rate,
+        'is_completed': stats.is_completed,
+        'started_at': stats.started_at.isoformat() if stats.started_at else None,
+        'completed_at': stats.completed_at.isoformat() if stats.completed_at else None
+    })
 
 
 @study_bp.route('/quick-reference/<topic_id>')

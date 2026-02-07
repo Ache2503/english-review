@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}{{ reading.title }} - Reading Comprehension{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{{ reading.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-success">{{ reading.cefr_level }}</span>
+                        {% if reading.category %}
+                        <span class="badge bg-info">{{ reading.category }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="reading-content bg-light p-4 rounded mb-4" style="line-height: 1.8; font-size: 1.05em;">
+                        {{ reading.passage }}
+                    </div>
+
+                    <form id="comprehensionForm">
+                        {% for question in reading.questions %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <span class="badge bg-secondary">{{ loop.index }}</span>
+                                    {{ question.question }}
+                                </h6>
+
+                                {% if question.question_type == 'multiple_choice' %}
+                                    {% set options = question.wrong_answers + [question.correct_answer] %}
+                                    {% set options = options | shuffle %}
+                                    <div class="answer-options mt-3">
+                                        {% for option in options %}
+                                        <div class="form-check mb-2">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="radio" 
+                                                name="question_{{ question.id }}" 
+                                                value="{{ option }}"
+                                                id="option_{{ question.id }}_{{ loop.index }}">
+                                            <label class="form-check-label" for="option_{{ question.id }}_{{ loop.index }}">
+                                                {{ option }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elif question.question_type == 'true_false' %}
+                                    <div class="answer-options mt-3">
+                                        <div class="form-check mb-2">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="radio" 
+                                                name="question_{{ question.id }}" 
+                                                value="true"
+                                                id="true_{{ question.id }}">
+                                            <label class="form-check-label" for="true_{{ question.id }}">
+                                                True
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="radio" 
+                                                name="question_{{ question.id }}" 
+                                                value="false"
+                                                id="false_{{ question.id }}">
+                                            <label class="form-check-label" for="false_{{ question.id }}">
+                                                False
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <button type="button" class="btn btn-primary btn-lg" onclick="submitAnswers()">
+                            <i class="fas fa-paper-plane"></i> Submit Answers
+                        </button>
+                        <a href="{{ url_for('games.reading_list') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                            Back
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Reading Info</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Level:</strong> {{ reading.cefr_level }}</p>
+                    <p><strong>Category:</strong> {{ reading.category or 'General' }}</p>
+                    <p><strong>Word Count:</strong> {{ reading.word_count }}</p>
+                    <p><strong>Reading Time:</strong> ~{{ reading.reading_time_minutes }} minutes</p>
+                    <p><strong>Questions:</strong> {{ reading.questions|length }}</p>
+                    
+                    <hr>
+                    
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Tips:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Read the passage carefully</li>
+                                <li>Take your time with questions</li>
+                                <li>Reference back to the text if needed</li>
+                            </ul>
+                        </small>
+                    </div>
+
+                    <div id="timer" class="alert alert-warning">
+                        <strong>Time:</strong> <span id="timerText">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="modal fade" id="resultsModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Results</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <h2 id="resultScore" class="text-primary">0/0</h2>
+                        <p id="resultPercentage" class="text-muted">0% Correct</p>
+                    </div>
+
+                    <div id="resultDetails"></div>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ url_for('games.reading_list') }}" class="btn btn-primary">
+                        <i class="fas fa-list"></i> Back to Readings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .reading-content {
+        text-align: justify;
+    }
+
+    .answer-options {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .form-check {
+        padding-left: 0;
+    }
+
+    .form-check-input {
+        margin-right: 10px;
+    }
+</style>
+
+<script>
+let startTime = Date.now();
+let timerInterval = null;
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('timerText').textContent = 
+            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }, 1000);
+}
+
+async function submitAnswers() {
+    clearInterval(timerInterval);
+    const form = document.getElementById('comprehensionForm');
+    const formData = new FormData(form);
+    const totalTime = Math.floor((Date.now() - startTime) / 1000);
+
+    const answers = {};
+    const questionIds = [
+        {% for question in reading.questions %}
+        {{ question.id }},
+        {% endfor %}
+    ];
+
+    questionIds.forEach(qId => {
+        const selected = form.querySelector(`input[name="question_${qId}"]:checked`);
+        if (selected) {
+            answers[qId] = selected.value;
+        }
+    });
+
+    try {
+        const response = await fetch(`{{ url_for('games.submit_reading_answers', reading_id=reading.id) }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                answers: answers,
+                time_seconds: totalTime
+            })
+        });
+
+        const result = await response.json();
+
+        document.getElementById('resultScore').textContent = `${result.correct}/${result.total}`;
+        document.getElementById('resultPercentage').textContent = `${result.accuracy}% Correct`;
+
+        const resultDetails = document.getElementById('resultDetails');
+        resultDetails.innerHTML = `
+            <div class="alert alert-info">
+                <p><strong>Score:</strong> ${result.score}/100</p>
+                <p><strong>Accuracy:</strong> ${result.accuracy}%</p>
+                <p><strong>Time:</strong> ${Math.floor(totalTime / 60)}:${String(totalTime % 60).padStart(2, '0')}</p>
+            </div>
+        `;
+
+        const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
+        modal.show();
+    } catch (error) {
+        alert('Error submitting answers: ' + error);
+    }
+}
+
+// Start timer when page loads
+window.addEventListener('load', startTimer);
+</script>
+{% endblock %}

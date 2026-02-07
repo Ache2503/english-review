@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Reading Comprehension - English Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3">
+                <i class="fas fa-book-open"></i> Reading Comprehension
+            </h1>
+            <p class="text-muted">Improve your reading speed and comprehension!</p>
+        </div>
+    </div>
+
+    <!-- Readings List -->
+    <div id="readingsList">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Filter by Level:</label>
+                <select id="levelSelect" class="form-select" onchange="filterReadings()">
+                    <option value="">All Levels</option>
+                    <option value="A1">A1 - Beginner</option>
+                    <option value="A2">A2 - Elementary</option>
+                    <option value="B1">B1 - Intermediate</option>
+                    <option value="B2">B2 - Upper Intermediate</option>
+                    <option value="C1">C1 - Advanced</option>
+                    <option value="C2">C2 - Mastery</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-4" id="readingsContainer">
+            {% for reading in readings %}
+            <div class="col-md-6 reading-card" data-level="{{ reading.cefr_level }}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">{{ reading.title }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span class="badge bg-success">{{ reading.cefr_level }}</span>
+                            {% if reading.category %}
+                            <span class="badge bg-info">{{ reading.category }}</span>
+                            {% endif %}
+                            <span class="badge bg-secondary">{{ reading.word_count }} words</span>
+                        </div>
+                        
+                        <p class="text-muted small">
+                            <i class="fas fa-hourglass-half"></i>
+                            Estimated reading time: {{ reading.reading_time_minutes }} minutes
+                        </p>
+
+                        <div class="reading-preview text-muted small mb-3" style="max-height: 100px; overflow: hidden;">
+                            {{ reading.passage[:150] }}...
+                        </div>
+
+                        {% set user_stat = user_stats.get(reading.id, {}) %}
+                        {% if user_stat.completed %}
+                        <div class="alert alert-success py-2 px-3 mb-3">
+                            <i class="fas fa-check-circle"></i>
+                            Completed: {{ user_stat.accuracy }}% accuracy
+                        </div>
+                        {% endif %}
+
+                        <a href="{{ url_for('games.reading_detail', reading_id=reading.id) }}" class="btn btn-primary w-100">
+                            <i class="fas fa-play-circle"></i> Start Reading
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if readings|length == 0 %}
+        <div class="alert alert-info">
+            No readings available for this level.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function filterReadings() {
+    const selectedLevel = document.getElementById('levelSelect').value;
+    const cards = document.querySelectorAll('.reading-card');
+    
+    cards.forEach(card => {
+        if (!selectedLevel || card.dataset.level === selectedLevel) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

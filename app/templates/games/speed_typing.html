@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}Speed Typing - English Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3">
+                <i class="fas fa-keyboard"></i> Speed Typing
+            </h1>
+            <p class="text-muted">Type phrases quickly and accurately to improve your speed!</p>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="card mb-4" id="settingsPanel">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Select Level:</label>
+                    <select id="levelSelect" class="form-select">
+                        <option value="A1">A1 - Beginner</option>
+                        <option value="A2">A2 - Elementary</option>
+                        <option value="B1">B1 - Intermediate</option>
+                        <option value="B2">B2 - Upper Intermediate</option>
+                        <option value="C1">C1 - Advanced</option>
+                        <option value="C2">C2 - Mastery</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Category:</label>
+                    <select id="categorySelect" class="form-select">
+                        <option value="">All Categories</option>
+                        <option value="greetings">Greetings</option>
+                        <option value="common_phrases">Common Phrases</option>
+                        <option value="restaurant">Restaurant</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="idioms">Idioms</option>
+                        <option value="business">Business</option>
+                        <option value="education">Education</option>
+                    </select>
+                </div>
+            </div>
+            <button id="startBtn" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-play"></i> Start Typing
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Area -->
+    <div id="gameArea" class="d-none">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Phrase <span id="currentPhrase">1</span> of <span id="totalPhrases">10</span></span>
+                    <div>
+                        <span id="timer" class="badge bg-warning me-2">00:00</span>
+                        <span id="wpmBadge" class="badge bg-info me-2">WPM: 0</span>
+                        <span id="scoreDisplay" class="badge bg-success">Score: 0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Phrase Display -->
+                <div class="phrase-display alert alert-light border-2" style="font-size: 1.3em; text-align: center; padding: 20px;">
+                    <p id="phraseText" class="mb-0" style="font-weight: bold; color: #0066cc;"></p>
+                </div>
+
+                <!-- Hints -->
+                <div class="row g-2 mb-4">
+                    <div class="col-md-6">
+                        <div class="alert alert-info py-2 px-3 mb-0">
+                            <small>
+                                <i class="fas fa-volume-up"></i>
+                                <span id="pronunciationHint"></span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-secondary py-2 px-3 mb-0">
+                            <small>
+                                <i class="fas fa-book"></i>
+                                <span id="meaningHint"></span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typing Area -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Type the phrase:</label>
+                    <input 
+                        type="text" 
+                        id="typingInput" 
+                        class="form-control form-control-lg" 
+                        placeholder="Start typing here..."
+                        autocomplete="off">
+                    <small class="text-muted">Press Enter or click Submit to move to the next phrase</small>
+                </div>
+
+                <!-- Accuracy Display -->
+                <div id="accuracyDisplay" class="progress mb-3" style="height: 30px; display: none;">
+                    <div id="accuracyBar" class="progress-bar bg-success" role="progressbar" style="width: 0%">
+                        <span id="accuracyPercent">0%</span>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between">
+                    <button id="skipBtn" class="btn btn-outline-warning">
+                        <i class="fas fa-forward"></i> Skip
+                    </button>
+                    <button id="submitBtn" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane"></i> Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Card -->
+        <div id="feedbackCard" class="card d-none">
+            <div id="feedbackHeader" class="card-header"></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Your typing:</h6>
+                        <p id="yourText" class="font-monospace bg-light p-2 rounded"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Correct phrase:</h6>
+                        <p id="correctText" class="font-monospace bg-light p-2 rounded text-success"></p>
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <p class="mb-2">Accuracy</p>
+                        <h4 id="finalAccuracy" class="text-primary">0%</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">Words Per Minute</p>
+                        <h4 id="finalWPM" class="text-info">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="resultsArea" class="d-none">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-flag-checkered"></i> Game Complete!
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center mb-4">
+                    <div class="col-md-4">
+                        <h3 id="finalScore" class="text-primary">0</h3>
+                        <p class="text-muted">Total Score</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 id="avgWPM" class="text-info">0</h3>
+                        <p class="text-muted">Average WPM</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 id="avgAccuracy" class="text-success">0%</h3>
+                        <p class="text-muted">Average Accuracy</p>
+                    </div>
+                </div>
+
+                <div id="performanceChart" class="mb-4"></div>
+
+                <div class="text-center">
+                    <button id="playAgainBtn" class="btn btn-primary btn-lg me-2">
+                        <i class="fas fa-redo"></i> Play Again
+                    </button>
+                    <a href="{{ url_for('games.game_list') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-gamepad"></i> Back to Games
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .phrase-display {
+        font-family: 'Courier New', monospace;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #typingInput {
+        font-family: 'Courier New', monospace;
+        font-size: 1.1em;
+    }
+
+    #typingInput:focus {
+        border-color: #0066cc;
+        box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+    }
+</style>
+
+<script>
+let currentPhraseIndex = 0;
+let phrases = [];
+let scores = [];
+let startTime = 0;
+let timerInterval = null;
+let phraseStartTime = 0;
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('submitBtn').addEventListener('click', submitPhrase);
+document.getElementById('skipBtn').addEventListener('click', skipPhrase);
+document.getElementById('playAgainBtn').addEventListener('click', startGame);
+document.getElementById('typingInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') submitPhrase();
+});
+
+document.getElementById('typingInput').addEventListener('input', () => {
+    const typed = document.getElementById('typingInput').value;
+    const phrase = phrases[currentPhraseIndex].phrase;
+    
+    let correct = 0;
+    for (let i = 0; i < typed.length && i < phrase.length; i++) {
+        if (typed[i].toLowerCase() === phrase[i].toLowerCase()) {
+            correct++;
+        }
+    }
+    
+    const accuracy = (correct / phrase.length) * 100;
+    document.getElementById('accuracyBar').style.width = accuracy + '%';
+    document.getElementById('accuracyPercent').textContent = Math.round(accuracy) + '%';
+});
+
+async function startGame() {
+    const level = document.getElementById('levelSelect').value;
+    const category = document.getElementById('categorySelect').value;
+
+    try {
+        const url = `/games/speed-typing/get-phrases?level=${level}&category=${category}&count=10`;
+        const response = await fetch(url);
+        phrases = await response.json();
+
+        if (!phrases || phrases.length === 0) {
+            alert('No phrases found for this level/category');
+            return;
+        }
+
+        currentPhraseIndex = 0;
+        scores = [];
+        startTime = Date.now();
+
+        document.getElementById('settingsPanel').classList.add('d-none');
+        document.getElementById('gameArea').classList.remove('d-none');
+        document.getElementById('resultsArea').classList.add('d-none');
+        document.getElementById('feedbackCard').classList.add('d-none');
+
+        startTimer();
+        displayPhrase();
+        document.getElementById('typingInput').focus();
+    } catch (error) {
+        alert('Error loading phrases: ' + error);
+    }
+}
+
+function displayPhrase() {
+    const phrase = phrases[currentPhraseIndex];
+    document.getElementById('phraseText').textContent = phrase.phrase;
+    document.getElementById('pronunciationHint').textContent = phrase.pronunciation_hint;
+    document.getElementById('meaningHint').textContent = phrase.meaning;
+    document.getElementById('currentPhrase').textContent = currentPhraseIndex + 1;
+    document.getElementById('totalPhrases').textContent = phrases.length;
+
+    document.getElementById('typingInput').value = '';
+    document.getElementById('typingInput').focus();
+    document.getElementById('feedbackCard').classList.add('d-none');
+    document.getElementById('accuracyDisplay').style.display = 'none';
+
+    phraseStartTime = Date.now();
+}
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('timer').textContent = 
+            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }, 1000);
+}
+
+async function submitPhrase() {
+    const phrase = phrases[currentPhraseIndex];
+    const typed = document.getElementById('typingInput').value;
+    const timeSeconds = (Date.now() - phraseStartTime) / 1000;
+
+    try {
+        const response = await fetch('/games/speed-typing/submit-answer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                typing_id: phrase.id,
+                typed_text: typed,
+                time_seconds: timeSeconds
+            })
+        });
+
+        const result = await response.json();
+        scores.push(result);
+
+        showFeedback(result, phrase);
+
+        if (currentPhraseIndex < phrases.length - 1) {
+            setTimeout(() => {
+                currentPhraseIndex++;
+                displayPhrase();
+            }, 2000);
+        } else {
+            clearInterval(timerInterval);
+            setTimeout(showResults, 2000);
+        }
+    } catch (error) {
+        alert('Error submitting: ' + error);
+    }
+}
+
+function skipPhrase() {
+    scores.push({ is_correct: false, accuracy: 0, wpm: 0, score: 0 });
+    
+    if (currentPhraseIndex < phrases.length - 1) {
+        currentPhraseIndex++;
+        displayPhrase();
+    } else {
+        clearInterval(timerInterval);
+        showResults();
+    }
+}
+
+function showFeedback(result, phrase) {
+    const feedbackCard = document.getElementById('feedbackCard');
+    const header = document.getElementById('feedbackHeader');
+    
+    if (result.is_correct) {
+        header.className = 'card-header bg-success text-white';
+        header.innerHTML = '<i class="fas fa-check-circle"></i> Perfect!';
+    } else {
+        header.className = 'card-header bg-warning text-dark';
+        header.innerHTML = '<i class="fas fa-times-circle"></i> Good effort!';
+    }
+
+    document.getElementById('yourText').textContent = document.getElementById('typingInput').value;
+    document.getElementById('correctText').textContent = result.correct_phrase;
+    document.getElementById('finalAccuracy').textContent = result.accuracy.toFixed(1) + '%';
+    document.getElementById('finalWPM').textContent = result.wpm.toFixed(1);
+
+    feedbackCard.classList.remove('d-none');
+}
+
+function showResults() {
+    const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+    const avgWPM = scores.reduce((sum, s) => sum + s.wpm, 0) / scores.length;
+    const avgAccuracy = scores.reduce((sum, s) => sum + s.accuracy, 0) / scores.length;
+
+    document.getElementById('finalScore').textContent = Math.round(totalScore);
+    document.getElementById('avgWPM').textContent = avgWPM.toFixed(1);
+    document.getElementById('avgAccuracy').textContent = avgAccuracy.toFixed(1);
+
+    document.getElementById('gameArea').classList.add('d-none');
+    document.getElementById('resultsArea').classList.remove('d-none');
+}
+</script>
+{% endblock %}

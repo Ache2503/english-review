@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}Quick Quiz - English Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3">
+                <i class="fas fa-question-circle"></i> Quick Quiz
+            </h1>
+            <p class="text-muted">Test your English knowledge with quick questions!</p>
+        </div>
+    </div>
+
+    <!-- Level and Category Selection -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Select Level:</label>
+                    <select id="levelSelect" class="form-select">
+                        <option value="A1">A1 - Beginner</option>
+                        <option value="A2">A2 - Elementary</option>
+                        <option value="B1">B1 - Intermediate</option>
+                        <option value="B2">B2 - Upper Intermediate</option>
+                        <option value="C1">C1 - Advanced</option>
+                        <option value="C2">C2 - Mastery</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Category:</label>
+                    <select id="categorySelect" class="form-select">
+                        <option value="">All Categories</option>
+                        <option value="vocabulary">Vocabulary</option>
+                        <option value="grammar">Grammar</option>
+                        <option value="phrasal_verbs">Phrasal Verbs</option>
+                    </select>
+                </div>
+            </div>
+            <button id="startBtn" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-play"></i> Start Quiz
+            </button>
+        </div>
+    </div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="d-none">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">5</span></span>
+                    <div>
+                        <span id="timer" class="badge bg-warning">00:00</span>
+                        <span id="score" class="badge bg-success ms-2">Score: 0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-4">
+                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+
+                <h4 id="questionText" class="mb-4"></h4>
+
+                <div id="optionsContainer" class="row g-2 mb-4"></div>
+
+                <div class="d-flex justify-content-between">
+                    <button id="prevBtn" class="btn btn-outline-secondary" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button id="nextBtn" class="btn btn-outline-primary">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation Card -->
+        <div id="explanationCard" class="card mt-3 d-none">
+            <div class="card-header bg-info text-white">
+                <i class="fas fa-lightbulb"></i> Explanation
+            </div>
+            <div class="card-body">
+                <p id="explanationText"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="resultsArea" class="d-none">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-check-circle"></i> Quiz Complete!
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h3 id="finalScore" class="text-primary">0</h3>
+                        <p class="text-muted">Total Score</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 id="correctCount" class="text-success">0</h3>
+                        <p class="text-muted">Correct Answers</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 id="totalTime" class="text-info">0s</h3>
+                        <p class="text-muted">Time Taken</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div id="detailedResults"></div>
+
+                <div class="text-center mt-4">
+                    <button id="retryBtn" class="btn btn-primary btn-lg me-2">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                    <a href="{{ url_for('games.game_list') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-gamepad"></i> Back to Games
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .quiz-option {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .quiz-option:hover {
+        border-color: #0066cc;
+        background-color: #f0f4ff;
+    }
+
+    .quiz-option.selected {
+        border-color: #0066cc;
+        background-color: #e3f2fd;
+    }
+
+    .quiz-option.correct {
+        border-color: #28a745;
+        background-color: #e8f5e9;
+    }
+
+    .quiz-option.incorrect {
+        border-color: #dc3545;
+        background-color: #ffebee;
+    }
+
+    #timer {
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+</style>
+
+<script>
+let currentQuestionIndex = 0;
+let questions = [];
+let userAnswers = [];
+let startTime = 0;
+let timerInterval = null;
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('prevBtn').addEventListener('click', previousQuestion);
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+document.getElementById('retryBtn').addEventListener('click', startQuiz);
+
+async function startQuiz() {
+    const level = document.getElementById('levelSelect').value;
+    const category = document.getElementById('categorySelect').value;
+
+    try {
+        const url = `/games/quick-quiz/get-questions?level=${level}&category=${category}&count=10`;
+        const response = await fetch(url);
+        questions = await response.json();
+
+        if (!questions || questions.length === 0) {
+            alert('No questions found for this level/category');
+            return;
+        }
+
+        currentQuestionIndex = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        startTime = Date.now();
+
+        document.getElementById('levelSelect').parentElement.parentElement.parentElement.classList.add('d-none');
+        document.getElementById('startBtn').parentElement.classList.add('d-none');
+        document.getElementById('quizArea').classList.remove('d-none');
+        document.getElementById('resultsArea').classList.add('d-none');
+
+        startTimer();
+        displayQuestion();
+    } catch (error) {
+        alert('Error loading questions: ' + error);
+    }
+}
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('timer').textContent = 
+            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }, 1000);
+}
+
+function displayQuestion() {
+    const q = questions[currentQuestionIndex];
+    document.getElementById('questionText').textContent = q.question;
+    document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+    document.getElementById('totalQuestions').textContent = questions.length;
+
+    const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+    document.getElementById('progressBar').style.width = progressPercent + '%';
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+
+    q.options.forEach(option => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6';
+        col.innerHTML = `
+            <div class="quiz-option ${userAnswers[currentQuestionIndex] === option ? 'selected' : ''}"
+                 onclick="selectOption('${option}')">
+                ${option}
+            </div>
+        `;
+        container.appendChild(col);
+    });
+
+    document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+    document.getElementById('nextBtn').textContent = 
+        currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next';
+
+    document.getElementById('explanationCard').classList.add('d-none');
+}
+
+function selectOption(option) {
+    userAnswers[currentQuestionIndex] = option;
+    document.querySelectorAll('.quiz-option').forEach(el => {
+        el.classList.remove('selected', 'correct', 'incorrect');
+    });
+    event.target.closest('.quiz-option').classList.add('selected');
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion();
+    }
+}
+
+async function nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion();
+    } else {
+        await submitQuiz();
+    }
+}
+
+async function submitQuiz() {
+    clearInterval(timerInterval);
+    const totalTime = Math.floor((Date.now() - startTime) / 1000);
+
+    let totalScore = 0;
+    let correctCount = 0;
+    const results = [];
+
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const answer = userAnswers[i];
+        const isCorrect = answer && answer.toLowerCase() === q.correct_answer.toLowerCase();
+
+        if (isCorrect) correctCount++;
+
+        results.push({
+            question: q.question,
+            userAnswer: answer,
+            correct: q.correct_answer,
+            isCorrect: isCorrect,
+            explanation: q.explanation
+        });
+    }
+
+    totalScore = Math.round((correctCount / questions.length) * 100);
+
+    document.getElementById('finalScore').textContent = totalScore;
+    document.getElementById('correctCount').textContent = correctCount;
+    document.getElementById('totalTime').textContent = totalTime + 's';
+
+    let resultsHTML = '';
+    results.forEach((result, idx) => {
+        resultsHTML += `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6>Question ${idx + 1}: ${result.question}</h6>
+                    <p class="mb-2">Your answer: <strong>${result.userAnswer || 'Not answered'}</strong></p>
+                    <p class="mb-2">Correct answer: <strong class="text-success">${result.correct}</strong></p>
+                    ${result.isCorrect ? '<span class="badge bg-success">Correct</span>' : '<span class="badge bg-danger">Incorrect</span>'}
+                    ${result.explanation ? `<p class="mt-2 text-muted small">${result.explanation}</p>` : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById('detailedResults').innerHTML = resultsHTML;
+
+    document.getElementById('quizArea').classList.add('d-none');
+    document.getElementById('resultsArea').classList.remove('d-none');
+}
+</script>
+{% endblock %}

@@ -1371,3 +1371,268 @@ class UserGrammarProgress(db.Model):
     
     def __repr__(self):
         return f'<UserGrammarProgress User:{self.user_id} Topic:{self.grammar_topic}>'
+
+
+# ============================================================================
+# NUEVOS JUEGOS - QUICK QUIZ, READING, SPEED TYPING
+# ============================================================================
+
+class QuickQuiz(db.Model):
+    """Preguntas para Quick Quiz"""
+    __tablename__ = 'quick_quiz_questions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.String(500), nullable=False)
+    correct_answer = db.Column(db.String(200), nullable=False)
+    wrong_answers = db.Column(db.JSON, nullable=False)  # Lista de respuestas incorrectas
+    explanation = db.Column(db.Text)
+    category = db.Column(db.String(100))  # grammar, vocabulary, phrasal_verbs, etc.
+    cefr_level = db.Column(db.String(10))  # A1, A2, B1, B2, C1, C2
+    difficulty = db.Column(db.String(20), default='intermediate')  # easy, medium, hard
+    image_url = db.Column(db.String(500))  # Opcional: imagen para la pregunta
+    audio_url = db.Column(db.String(500))  # Opcional: audio para listening practice
+    is_active = db.Column(db.Boolean, default=True)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_quiz_level_category', 'cefr_level', 'category'),
+    )
+    
+    def get_options(self):
+        """Obtener todas las opciones mezcladas"""
+        import random
+        options = [self.correct_answer] + self.wrong_answers
+        random.shuffle(options)
+        return options
+    
+    def __repr__(self):
+        return f'<QuickQuiz {self.question[:50]}>'
+
+
+class UserQuizScore(db.Model):
+    """Puntuaciones de usuarios en Quick Quiz"""
+    __tablename__ = 'user_quiz_scores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quick_quiz_questions.id'), nullable=False)
+    
+    is_correct = db.Column(db.Boolean, nullable=False)
+    time_seconds = db.Column(db.Integer)
+    score = db.Column(db.Integer, default=0)
+    
+    played_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='quiz_scores')
+    quiz = db.relationship('QuickQuiz', backref='user_scores')
+    
+    __table_args__ = (
+        db.Index('idx_user_quiz', 'user_id', 'quiz_id'),
+    )
+    
+    def __repr__(self):
+        return f'<UserQuizScore User:{self.user_id} Quiz:{self.quiz_id}>'
+
+
+class ReadingComprehension(db.Model):
+    """Lecturas para comprensión lectora"""
+    __tablename__ = 'reading_comprehensions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(300), nullable=False)
+    passage = db.Column(db.Text, nullable=False)  # El texto a leer
+    passage_summary = db.Column(db.Text)  # Resumen del pasaje
+    cefr_level = db.Column(db.String(10), nullable=False)  # A1-C2
+    category = db.Column(db.String(100))  # Technology, History, Culture, etc.
+    word_count = db.Column(db.Integer)
+    reading_time_minutes = db.Column(db.Integer)
+    
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    questions = db.relationship('ReadingQuestion', backref='reading', cascade='all, delete-orphan')
+    
+    __table_args__ = (
+        db.Index('idx_reading_level', 'cefr_level'),
+    )
+    
+    def __repr__(self):
+        return f'<ReadingComprehension {self.title}>'
+
+
+class ReadingQuestion(db.Model):
+    """Preguntas sobre un texto de comprensión"""
+    __tablename__ = 'reading_questions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    reading_id = db.Column(db.Integer, db.ForeignKey('reading_comprehensions.id'), nullable=False, index=True)
+    
+    question = db.Column(db.String(500), nullable=False)
+    question_type = db.Column(db.String(50), default='multiple_choice')  # multiple_choice, true_false, short_answer
+    correct_answer = db.Column(db.String(500), nullable=False)
+    wrong_answers = db.Column(db.JSON)  # Para multiple choice
+    
+    question_order = db.Column(db.Integer, default=1)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<ReadingQuestion {self.id}>'
+
+
+class UserReadingScore(db.Model):
+    """Puntuaciones en lecturas"""
+    __tablename__ = 'user_reading_scores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    reading_id = db.Column(db.Integer, db.ForeignKey('reading_comprehensions.id'), nullable=False, index=True)
+    
+    correct_answers = db.Column(db.Integer, default=0)
+    total_questions = db.Column(db.Integer, default=0)
+    time_seconds = db.Column(db.Integer)
+    score = db.Column(db.Integer, default=0)  # Puntuación total
+    
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='reading_scores')
+    reading = db.relationship('ReadingComprehension', backref='user_scores')
+    
+    __table_args__ = (
+        db.Index('idx_user_reading', 'user_id', 'reading_id'),
+    )
+    
+    def accuracy_percentage(self):
+        """Porcentaje de aciertos"""
+        if self.total_questions == 0:
+            return 0
+        return (self.correct_answers / self.total_questions) * 100
+    
+    def __repr__(self):
+        return f'<UserReadingScore User:{self.user_id} Reading:{self.reading_id}>'
+
+
+class SpeedTyping(db.Model):
+    """Contenido para Speed Typing game"""
+    __tablename__ = 'speed_typing_content'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    phrase = db.Column(db.String(500), nullable=False)  # Frase a escribir
+    category = db.Column(db.String(100))  # common_phrases, idioms, grammar, vocabulary
+    cefr_level = db.Column(db.String(10))  # A1-C2
+    difficulty = db.Column(db.String(20), default='intermediate')  # easy, medium, hard
+    pronunciation_hint = db.Column(db.String(200))  # Pista de pronunciación
+    meaning = db.Column(db.Text)  # Significado/traducción
+    example_sentence = db.Column(db.Text)  # Oración de ejemplo
+    audio_url = db.Column(db.String(500))  # URL del audio
+    
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_typing_level', 'cefr_level'),
+    )
+    
+    def __repr__(self):
+        return f'<SpeedTyping {self.phrase[:40]}>'
+
+
+class UserTypingScore(db.Model):
+    """Puntuaciones en Speed Typing"""
+    __tablename__ = 'user_typing_scores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    typing_id = db.Column(db.Integer, db.ForeignKey('speed_typing_content.id'), nullable=False)
+    
+    typed_text = db.Column(db.String(500))  # Lo que escribió el usuario
+    is_correct = db.Column(db.Boolean, nullable=False)
+    time_seconds = db.Column(db.Float)
+    words_per_minute = db.Column(db.Float)  # WPM
+    accuracy_percentage = db.Column(db.Float)  # % de precisión (caracteres correctos)
+    score = db.Column(db.Integer, default=0)  # Puntuación total
+    
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='typing_scores')
+    typing = db.relationship('SpeedTyping', backref='user_scores')
+    
+    __table_args__ = (
+        db.Index('idx_user_typing', 'user_id'),
+    )
+    
+    def __repr__(self):
+        return f'<UserTypingScore User:{self.user_id} WPM:{self.words_per_minute}>'
+
+
+# ===== ESTUDIO INTENSIVO =====
+class StudyExerciseResult(db.Model):
+    """Modelo para guardar resultados de ejercicios de estudio"""
+    __tablename__ = 'study_exercise_results'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    topic_id = db.Column(db.String(100), nullable=False, index=True)  # ID del tema en JSON
+    exercise_index = db.Column(db.Integer, nullable=False)  # Índice del ejercicio
+    question_index = db.Column(db.Integer, nullable=False)  # Índice de pregunta
+    user_answer = db.Column(db.Text, nullable=False)
+    is_correct = db.Column(db.Boolean, nullable=False)
+    attempts = db.Column(db.Integer, default=1)
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='study_results')
+    
+    __table_args__ = (
+        db.Index('idx_user_topic_exercise', 'user_id', 'topic_id'),
+        db.UniqueConstraint('user_id', 'topic_id', 'exercise_index', 'question_index', 
+                           name='uq_study_exercise_result'),
+    )
+    
+    def __repr__(self):
+        return f'<StudyExerciseResult User:{self.user_id} Topic:{self.topic_id} Q:{self.question_index}>'
+
+
+class StudyProgress(db.Model):
+    """Modelo para rastrear progreso del usuario en temas de estudio"""
+    __tablename__ = 'study_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    topic_id = db.Column(db.String(100), nullable=False, index=True)  # ID del tema en JSON
+    
+    # Progreso
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
+    is_completed = db.Column(db.Boolean, default=False)
+    
+    # Estadísticas
+    exercises_attempted = db.Column(db.Integer, default=0)
+    exercises_correct = db.Column(db.Integer, default=0)
+    success_rate = db.Column(db.Float, default=0.0)  # Porcentaje de éxito
+    time_spent_minutes = db.Column(db.Float, default=0.0)
+    
+    # Última actualización
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    user = db.relationship('User', backref='study_progress')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'topic_id', name='uq_user_topic_study'),
+        db.Index('idx_user_study_progress', 'user_id'),
+    )
+    
+    def calculate_success_rate(self):
+        """Calcular tasa de éxito"""
+        if self.exercises_attempted == 0:
+            return 0.0
+        return (self.exercises_correct / self.exercises_attempted) * 100
+    
+    def mark_completed(self):
+        """Marcar tema como completado"""
+        self.is_completed = True
+        self.completed_at = datetime.utcnow()
+        self.success_rate = self.calculate_success_rate()
+    
+    def __repr__(self):
+        return f'<StudyProgress User:{self.user_id} Topic:{self.topic_id} Success:{self.success_rate}%>'

@@ -78,7 +78,7 @@
             <!-- Reglas -->
             {% for rule in topic.theory.rules %}
             <div class="card mb-4 rule-card">
-                <div class="card-header bg-light">
+                <div class="card-header">
                     <h5 class="mb-0">{{ rule.title }}</h5>
                 </div>
                 <div class="card-body">
@@ -94,7 +94,7 @@
 
                     <h6 class="mt-4 mb-3"><i class="fas fa-list me-2 text-primary"></i>Ejemplos:</h6>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table examples-table">
                             <tbody>
                                 {% for ex in rule.examples %}
                                 <tr>
@@ -575,271 +575,360 @@
 </div>
 
 <style>
-.rule-card {
-    border-left: 4px solid var(--bs-primary);
-}
-
-.mistake-card {
-    border-left: 4px solid var(--bs-danger);
-}
-
-.tip-card {
-    border-left: 4px solid var(--bs-warning);
-    transition: all 0.3s ease;
-}
-
-.tip-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.example-sentence strong {
-    color: var(--bs-primary);
-}
-
-.question-item.correct {
-    background-color: rgba(25, 135, 84, 0.1) !important;
-    border-left: 4px solid var(--bs-success);
-}
-
-.question-item.incorrect {
-    background-color: rgba(220, 53, 69, 0.1) !important;
-    border-left: 4px solid var(--bs-danger);
-}
-
-.feedback.correct {
-    color: var(--bs-success);
-}
-
-.feedback.incorrect {
-    color: var(--bs-danger);
-}
-
-.quick-reference-content {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
-.quick-reference-content table {
-    width: 100%;
-    margin-bottom: 1rem;
-    border-collapse: collapse;
-}
-
-.quick-reference-content th,
-.quick-reference-content td {
-    padding: 0.5rem;
-    border: 1px solid #dee2e6;
-}
-
-.quick-reference-content th {
-    background-color: #f8f9fa;
-}
-
-.quick-reference-content h2 {
-    font-size: 1.5rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    color: var(--bs-primary);
-}
-
-.quick-reference-content h3 {
-    font-size: 1.2rem;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.nav-pills .nav-link {
-    color: var(--bs-dark);
-}
-
-.nav-pills .nav-link.active {
-    background-color: var(--bs-primary);
-}
-
-@media print {
-    .nav-pills, .btn, .card-header button, nav, .breadcrumb {
-        display: none !important;
-    }
-    .tab-pane {
-        display: block !important;
-        opacity: 1 !important;
-    }
-}
-
-/* ===== DARK MODE STYLES ===== */
+/* ================================
+   TOPIC – DARK MODE PREMIUM
+================================ */
 @media (prefers-color-scheme: dark) {
-    
-    /* Card headers */
-    .card-header {
-        background-color: #1a2f4f !important;
-        border-bottom-color: #2a3f5f !important;
+
+    /* ===== BASE ===== */
+    body {
+        background-color: #0b1220;
+        color: #e6edf3;
     }
 
-    .card-header.bg-light {
-        background-color: #1a2f4f !important;
-    }
-
-    .card-header.bg-primary {
-        background-color: #0d47a1 !important;
-    }
-
-    /* Tables */
-    .table {
-        color: #f0f4f8;
-        border-color: #2a3f5f;
-    }
-
-    .table thead th {
-        background-color: #1a2f4f;
-        color: #ffffff;
-        border-bottom-color: #2a3f5f;
-    }
-
-    .table tbody td {
-        border-bottom-color: #2a3f5f;
-        color: #e0e8f0;
-    }
-
-    .table-striped tbody tr {
-        background-color: transparent;
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: rgba(26, 47, 79, 0.3);
-    }
-
-    /* Light backgrounds */
-    .bg-light {
-        background-color: #1a2332 !important;
-        color: #f0f4f8;
-    }
-
-    .bg-light p,
-    .bg-light div {
-        color: #e0e8f0;
-    }
-
-    /* Question items */
-    .question-item {
-        background-color: #1a2332 !important;
-        border-color: #2a3f5f !important;
-        color: #f0f4f8;
-    }
-
-    .question-item.correct {
-        background-color: rgba(34, 197, 94, 0.15) !important;
-        border-left-color: #22c55e !important;
-    }
-
-    .question-item.incorrect {
-        background-color: rgba(239, 68, 68, 0.15) !important;
-        border-left-color: #ef4444 !important;
-    }
-
-    /* Labels and inputs in dark mode */
-    .question-item label,
-    .question-item .answer-input {
-        color: #f0f4f8;
-    }
-
-    .answer-input {
-        background-color: #2a3f5f;
-        color: #f0f4f8;
-        border-color: #3a4f6f;
-    }
-
-    .answer-input:focus {
-        background-color: #2a3f5f;
-        color: #f0f4f8;
-        border-color: #60a5fa;
-    }
-
-    /* Reference section */
-    .quick-reference-content {
-        color: #f0f4f8;
-    }
-
-    .quick-reference-content table {
-        border-color: #2a3f5f;
-    }
-
-    .quick-reference-content th {
-        background-color: #1a2f4f;
-        color: #ffffff;
-        border-color: #2a3f5f;
-    }
-
-    .quick-reference-content td {
-        background-color: transparent;
-        color: #e0e8f0;
-        border-color: #2a3f5f;
-    }
-
-    /* Alert boxes */
-    .alert-info {
-        background-color: rgba(13, 110, 253, 0.15);
-        border-color: #0d6efd;
-        color: #93c5fd;
-    }
-
-    /* Formula/code boxes */
-    .bg-dark {
-        background-color: #0a0e27 !important;
-    }
-
-    /* Badges */
-    .badge.bg-white {
-        background-color: #2a3f5f !important;
-        color: #f0f4f8 !important;
-    }
-
-    /* Card bodies */
+    /* ===== TOPIC CARDS ===== */
+    .card,
     .card-body {
-        background-color: var(--bg-card);
-        color: var(--text-main);
+        background: linear-gradient(
+            180deg,
+            #111a2e 0%,
+            #0f172a 100%
+        );
+        color: #e6edf3;
+        border: 1px solid #263554;
+        border-radius: 0.75rem;
+        transition: transform .3s ease, box-shadow .3s ease;
     }
 
-    /* Rule/Mistake/Tip cards */
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 
+            0 12px 28px rgba(0,0,0,.45),
+            inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .card-header {
+        background-color: transparent !important;
+        border-bottom: 1px solid #263554;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* ===== RULE / TIP / MISTAKE ===== */
     .rule-card,
     .mistake-card,
     .tip-card {
-        background-color: var(--bg-card);
-        border-color: var(--border-color);
+        background: linear-gradient(
+            180deg,
+            #111a2e 0%,
+            #0f172a 100%
+        );
+        border-left: 5px solid;
+        border-radius: 0.75rem;
+        padding-left: 1rem;
+        transition: transform .3s ease, box-shadow .3s ease;
     }
 
-    /* Nav pills */
+    .rule-card {
+        border-left-color: #60a5fa;
+    }
+
+    .tip-card {
+        border-left-color: #facc15;
+    }
+
+    .mistake-card {
+        border-left-color: #ef4444;
+    }
+
+    .rule-card:hover,
+    .tip-card:hover,
+    .mistake-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.45);
+    }
+
+    /* ===== EXAMPLES ===== */
+    .example-sentence {
+        color: #93c5fd;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+
+    /* ===== QUESTIONS ===== */
+    .question-item {
+        background-color: #0f1c33 !important;
+        border: 1px solid #263554;
+        border-left: 4px solid #60a5fa;
+        color: #e6edf3;
+        border-radius: .5rem;
+    }
+
+    .question-item.correct {
+        background-color: rgba(34,197,94,.15) !important;
+        border-left-color: #22c55e;
+    }
+
+    .question-item.incorrect {
+        background-color: rgba(239,68,68,.15) !important;
+        border-left-color: #ef4444;
+    }
+
+    .feedback.correct {
+        color: #22c55e;
+        font-weight: 600;
+    }
+
+    .feedback.incorrect {
+        color: #ef4444;
+        font-weight: 600;
+    }
+
+    /* ===== INPUTS ===== */
+    .answer-input {
+        background-color: #0f1c33;
+        color: #e6edf3;
+        border: 1px solid #263554;
+    }
+
+    .answer-input:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 2px rgba(96,165,250,.3);
+    }
+
+    /* ===== TABLES ===== */
+    .table {
+        background-color: transparent;
+        color: #e6edf3;
+    }
+
+    .table thead th {
+        background-color: #0f1c33;
+        color: #ffffff;
+        border-color: #263554;
+    }
+
+    .table tbody tr:nth-of-type(odd) {
+        background-color: rgba(255,255,255,.04);
+    }
+
+    .table td,
+    .table th {
+        border-color: #263554;
+    }
+
+    /* ===== QUICK REFERENCE ===== */
+    .quick-reference-content th {
+        background-color: #0f1c33;
+        color: #ffffff;
+    }
+
+    .quick-reference-content td {
+        color: #e6edf3;
+    }
+
+    /* ===== ALERTS ===== */
+    .alert-info {
+        background-color: rgba(14,165,233,.15);
+        border-color: #0ea5e9;
+        color: #bae6fd;
+    }
+
+    /* ===== BADGES ===== */
+    .badge.bg-white {
+        background-color: #1b2945 !important;
+        color: #e6edf3 !important;
+        font-weight: 600;
+    }
+
+    /* ===== NAV PILLS ===== */
     .nav-pills .nav-link {
-        color: #e0e8f0;
+        color: #e6edf3;
+        border-radius: .5rem;
     }
 
     .nav-pills .nav-link:hover {
-        background-color: #2a3f5f;
+        background-color: #1b2945;
     }
 
-    /* Breadcrumb */
-    .breadcrumb {
-        background-color: transparent;
+    .nav-pills .nav-link.active {
+        background-color: #60a5fa;
+        color: #0b1220;
+        font-weight: 700;
     }
 
+    /* ===== BREADCRUMB ===== */
     .breadcrumb-item a {
         color: #60a5fa;
     }
 
     .breadcrumb-item.active {
-        color: #e0e8f0;
-    }
-
-    /* Example sentence styling */
-    .example-sentence {
-        color: #f0f4f8;
+        color: #8b92a1;
     }
 }
+
+/* ===============================
+   FIX REAL – TABLA DE EJEMPLOS
+================================ */
+@media (prefers-color-scheme: dark) {
+
+    /* Contenedor */
+    .rule-card .table-responsive {
+        background-color: #0f172a;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        border: 1px solid #263554;
+    }
+
+    /* Tabla base */
+    .examples-table {
+        background-color: #0f172a !important;
+        color: #e6edf3 !important;
+        margin-bottom: 0;
+    }
+
+    /* Filas */
+    .examples-table tbody tr {
+        background-color: transparent !important;
+        border-bottom: 1px solid #263554;
+    }
+
+    .examples-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    /* Celdas */
+    .examples-table td {
+        background-color: transparent !important;
+        color: #e6edf3 !important;
+        padding: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Rayado elegante (no blanco) */
+    .examples-table tbody tr:nth-of-type(odd) {
+        background-color: rgba(255,255,255,0.03) !important;
+    }
+
+    /* Texto */
+    .examples-table strong {
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .examples-table .text-muted {
+        color: #9aa4b2 !important;
+    }
+
+    .examples-table .text-primary {
+        color: #60a5fa !important;
+    }
+
+    .examples-table .text-success {
+        color: #22c55e !important;
+    }
+
+    .examples-table .text-danger {
+        color: #ef4444 !important;
+    }
+
+    .examples-table .text-info {
+        color: #38bdf8 !important;
+    }
+
+    /* Frases de ejemplo */
+    .example-sentence {
+        color: #93c5fd !important;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+    }
+}
+
+/* ===============================
+   FIX PREMIUM – ALERTAS EN DARK MODE
+================================ */
+@media (prefers-color-scheme: dark) {
+
+    .rule-card .alert {
+        background-color: #0f172a !important;
+        border: 1px solid #263554 !important;
+        color: #e6edf3 !important;
+        border-radius: 0.75rem;
+    }
+
+    /* ===== ALERT INFO ===== */
+    .rule-card .alert-info {
+        border-left: 4px solid #38bdf8 !important;
+        background-color: rgba(56,189,248,0.08) !important;
+        color: #bae6fd !important;
+    }
+
+    /* ===== ALERT SUCCESS ===== */
+    .rule-card .alert-success {
+        border-left: 4px solid #22c55e !important;
+        background-color: rgba(34,197,94,0.08) !important;
+        color: #bbf7d0 !important;
+    }
+
+    /* ===== ALERT WARNING ===== */
+    .rule-card .alert-warning {
+        border-left: 4px solid #facc15 !important;
+        background-color: rgba(250,204,21,0.10) !important;
+        color: #fef08a !important;
+    }
+
+    /* ===== ALERT DANGER ===== */
+    .rule-card .alert-danger {
+        border-left: 4px solid #ef4444 !important;
+        background-color: rgba(239,68,68,0.10) !important;
+        color: #fecaca !important;
+    }
+
+    /* ===== ALERT SECONDARY (NOTAS) ===== */
+    .rule-card .alert-secondary {
+        border-left: 4px solid #94a3b8 !important;
+        background-color: rgba(148,163,184,0.08) !important;
+        color: #e2e8f0 !important;
+    }
+
+    /* ===== TITULOS DENTRO DE ALERTAS ===== */
+    .rule-card .alert h6,
+    .rule-card .alert strong {
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+
+    /* ===== LISTAS DENTRO ===== */
+    .rule-card .alert ul,
+    .rule-card .alert li {
+        color: inherit !important;
+    }
+}
+
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let correctCount = 0;
     let incorrectCount = 0;
+    const topicId = '{{ topic.id }}';
+    
+    // Load initial statistics from API
+    function loadStatisticsFromAPI() {
+        fetch(`/study/api/topic-stats/${topicId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.success) {
+                    correctCount = data.exercises_correct || 0;
+                    incorrectCount = (data.exercises_attempted || 0) - correctCount;
+                    updateStats();
+                }
+            })
+            .catch(error => console.log('Error loading statistics:', error));
+    }
+    
+    // Load stats on page load
+    loadStatisticsFromAPI();
 
     function updateStats() {
         document.getElementById('correctCount').textContent = correctCount;
@@ -916,6 +1005,13 @@ document.addEventListener('DOMContentLoaded', function() {
             showFeedback(questionItem, data.correct, data.correct_answer, data.explanation);
             input.disabled = true;
             input.parentElement.querySelector('.check-answer-btn').disabled = true;
+            
+            // Update statistics from API response if available
+            if (data.stats) {
+                correctCount = data.stats.exercises_correct || 0;
+                incorrectCount = (data.stats.exercises_attempted || 0) - correctCount;
+                updateStats();
+            }
         });
     }
 
@@ -931,6 +1027,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 r.disabled = true;
             });
             
+            // Get question info from data attributes
+            const exerciseIdx = parseInt(this.dataset.exercise) || 0;
+            const questionIdx = parseInt(this.dataset.question) || 0;
+            
+            // Save to API
+            fetch('{{ url_for("study.check_answer") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    topic_id: topicId,
+                    exercise_index: exerciseIdx,
+                    question_index: questionIdx,
+                    answer: this.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update statistics from API response
+                if (data.stats) {
+                    correctCount = data.stats.exercises_correct || 0;
+                    incorrectCount = (data.stats.exercises_attempted || 0) - correctCount;
+                    updateStats();
+                }
+            })
+            .catch(error => console.log('Error saving answer:', error));
+            
             showFeedback(questionItem, isCorrect, this.dataset.correct, '');
         });
     });
@@ -945,6 +1069,34 @@ document.addEventListener('DOMContentLoaded', function() {
             this.parentElement.querySelectorAll('.classify-btn').forEach(b => {
                 b.disabled = true;
             });
+            
+            // Get question info from data attributes
+            const exerciseIdx = parseInt(this.dataset.exercise) || 0;
+            const questionIdx = parseInt(this.dataset.question) || 0;
+            
+            // Save to API
+            fetch('{{ url_for("study.check_answer") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    topic_id: topicId,
+                    exercise_index: exerciseIdx,
+                    question_index: questionIdx,
+                    answer: this.dataset.answer
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update statistics from API response
+                if (data.stats) {
+                    correctCount = data.stats.exercises_correct || 0;
+                    incorrectCount = (data.stats.exercises_attempted || 0) - correctCount;
+                    updateStats();
+                }
+            })
+            .catch(error => console.log('Error saving answer:', error));
             
             showFeedback(questionItem, isCorrect, this.dataset.correct, '');
             

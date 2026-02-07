@@ -447,3 +447,340 @@ def get_default_sentences(level):
         ]
     }
     return sentences_by_level.get(level, sentences_by_level['A1'])
+
+
+# ==========================================
+# QUICK QUIZ
+# ==========================================
+
+@games_bp.route('/quick-quiz')
+@login_required
+def quick_quiz():
+    """Página del juego Quick Quiz"""
+    level = request.args.get('level', 'A1')
+    category = request.args.get('category', '')
+    
+    return render_template(
+        'games/quick_quiz.html',
+        level=level,
+        category=category
+    )
+
+
+@games_bp.route('/quick-quiz/get-questions')
+@login_required
+def get_quiz_questions():
+    """Obtener preguntas de Quick Quiz"""
+    from app.models import QuickQuiz, UserQuizScore
+    
+    level = request.args.get('level', 'A1')
+    category = request.args.get('category', '')
+    count = int(request.args.get('count', 5))
+    
+    # Obtener preguntas
+    query = QuickQuiz.query.filter_by(cefr_level=level, is_active=True)
+    
+    if category:
+        query = query.filter_by(category=category)
+    
+    questions = query.all()
+    
+    if not questions:
+        return jsonify({'error': 'No questions found'}), 404
+    
+    # Seleccionar preguntas aleatorias
+    random.shuffle(questions)
+    selected = questions[:count]
+    
+    result = []
+    for q in selected:
+        result.append({
+            'id': q.id,
+            'question': q.question,
+            'options': q.get_options(),
+            'correct_answer': q.correct_answer,
+            'explanation': q.explanation,
+            'category': q.category
+        })
+    
+    return jsonify(result)
+
+
+@games_bp.route('/quick-quiz/submit-answer', methods=['POST'])
+@login_required
+def submit_quiz_answer():
+    """Enviar respuesta de Quick Quiz"""
+    from app.models import QuickQuiz, UserQuizScore
+    
+    data = request.get_json()
+    quiz_id = data.get('quiz_id')
+    answer = data.get('answer')
+    time_seconds = data.get('time_seconds', 0)
+    
+    quiz = QuickQuiz.query.get(quiz_id)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found'}), 404
+    
+    is_correct = answer.lower() == quiz.correct_answer.lower()
+    
+    # Calcular puntuación
+    score = 0
+    if is_correct:
+        if time_seconds < 5:
+            score = 50
+        elif time_seconds < 10:
+            score = 40
+        else:
+            score = 30
+    
+    # Guardar puntuación
+    quiz_score = UserQuizScore(
+        user_id=current_user.id,
+        quiz_id=quiz_id,
+        is_correct=is_correct,
+        time_seconds=time_seconds,
+        score=score
+    )
+    db.session.add(quiz_score)
+    db.session.commit()
+    
+    # Agregar puntos al usuario
+    if is_correct:
+        add_points(current_user, score, f'Quick Quiz - {quiz.category}')
+    
+    return jsonify({
+        'is_correct': is_correct,
+        'correct_answer': quiz.correct_answer,
+        'explanation': quiz.explanation,
+        'score': score
+    })
+
+
+# ==========================================
+# READING COMPREHENSION
+# ==========================================
+
+@games_bp.route('/reading')
+@login_required
+def reading_list():
+    """Lista de lecturas disponibles"""
+    from app.models import ReadingComprehension, UserReadingScore
+    
+    level = request.args.get('level', '')
+    
+    query = ReadingComprehension.query.filter_by(is_active=True)
+    
+    if level:
+        query = query.filter_by(cefr_level=level)
+    
+    readings = query.all()
+    
+    # Estadísticas del usuario
+    user_stats = {}
+    for reading in readings:
+        score = UserReadingScore.query.filter_by(
+            user_id=current_user.id,
+            reading_id=reading.id
+        ).first()
+        
+        user_stats[reading.id] = {
+            'completed': score is not None,
+            'score': score.score if score else 0,
+            'accuracy': round(score.accuracy_percentage(), 1) if score else 0
+        }
+    
+    return render_template(
+        'games/reading_list.html',
+        readings=readings,
+        user_stats=user_stats,
+        selected_level=level
+    )
+
+
+@games_bp.route('/reading/<int:reading_id>')
+@login_required
+def reading_detail(reading_id):
+    """Detalle de una lectura"""
+    from app.models import ReadingComprehension
+    
+    reading = ReadingComprehension.query.get_or_404(reading_id)
+    
+    return render_template(
+        'games/reading_detail.html',
+        reading=reading
+    )
+
+
+@games_bp.route('/reading/<int:reading_id>/submit', methods=['POST'])
+@login_required
+def submit_reading_answers(reading_id):
+    """Enviar respuestas de comprensión lectora"""
+    from app.models import ReadingComprehension, UserReadingScore, ReadingQuestion
+    
+    reading = ReadingComprehension.query.get_or_404(reading_id)
+    data = request.get_json()
+    answers = data.get('answers', {})
+    time_seconds = data.get('time_seconds', 0)
+    
+    # Verificar respuestas
+    correct = 0
+    total = 0
+    
+    for question_id, user_answer in answers.items():
+        question = ReadingQuestion.query.get(question_id)
+        if question:
+            total += 1
+            if user_answer.lower() == question.correct_answer.lower():
+                correct += 1
+    
+    # Calcular puntuación
+    accuracy = (correct / total * 100) if total > 0 else 0
+    base_score = int((accuracy / 100) * 100)
+    
+    # Bonus por velocidad
+    if time_seconds < reading.reading_time_minutes * 60:
+        base_score += 20
+    
+    score = min(base_score, 100)
+    
+    # Guardar resultado
+    reading_score = UserReadingScore(
+        user_id=current_user.id,
+        reading_id=reading_id,
+        correct_answers=correct,
+        total_questions=total,
+        time_seconds=time_seconds,
+        score=int(score)
+    )
+    db.session.add(reading_score)
+    db.session.commit()
+    
+    # Agregar puntos
+    add_points(current_user, int(score), f'Reading Comprehension - {reading.category}')
+    
+    return jsonify({
+        'correct': correct,
+        'total': total,
+        'accuracy': round(accuracy, 1),
+        'score': int(score)
+    })
+
+
+# ==========================================
+# SPEED TYPING
+# ==========================================
+
+@games_bp.route('/speed-typing')
+@login_required
+def speed_typing():
+    """Página del juego Speed Typing"""
+    level = request.args.get('level', 'A1')
+    category = request.args.get('category', '')
+    
+    return render_template(
+        'games/speed_typing.html',
+        level=level,
+        category=category
+    )
+
+
+@games_bp.route('/speed-typing/get-phrases')
+@login_required
+def get_typing_phrases():
+    """Obtener frases para Speed Typing"""
+    from app.models import SpeedTyping
+    
+    level = request.args.get('level', 'A1')
+    category = request.args.get('category', '')
+    count = int(request.args.get('count', 10))
+    
+    query = SpeedTyping.query.filter_by(cefr_level=level, is_active=True)
+    
+    if category:
+        query = query.filter_by(category=category)
+    
+    phrases = query.all()
+    
+    if not phrases:
+        return jsonify({'error': 'No phrases found'}), 404
+    
+    # Seleccionar frases aleatorias
+    random.shuffle(phrases)
+    selected = phrases[:count]
+    
+    result = []
+    for phrase in selected:
+        result.append({
+            'id': phrase.id,
+            'phrase': phrase.phrase,
+            'pronunciation_hint': phrase.pronunciation_hint,
+            'meaning': phrase.meaning,
+            'example_sentence': phrase.example_sentence
+        })
+    
+    return jsonify(result)
+
+
+@games_bp.route('/speed-typing/submit-answer', methods=['POST'])
+@login_required
+def submit_typing_answer():
+    """Enviar respuesta de Speed Typing"""
+    from app.models import SpeedTyping, UserTypingScore
+    import difflib
+    
+    data = request.get_json()
+    typing_id = data.get('typing_id')
+    typed_text = data.get('typed_text', '')
+    time_seconds = data.get('time_seconds', 0)
+    
+    typing = SpeedTyping.query.get(typing_id)
+    if not typing:
+        return jsonify({'error': 'Phrase not found'}), 404
+    
+    # Calcular precisión
+    original = typing.phrase.lower()
+    typed = typed_text.lower()
+    
+    # Usar SequenceMatcher para calcular similitud
+    matcher = difflib.SequenceMatcher(None, original, typed)
+    accuracy = matcher.ratio() * 100
+    
+    is_correct = typed == original
+    
+    # Calcular WPM (palabras por minuto)
+    word_count = len(typed.split())
+    minutes = time_seconds / 60 if time_seconds > 0 else 0.016
+    wpm = word_count / minutes if minutes > 0 else 0
+    
+    # Calcular puntuación
+    score = 0
+    if is_correct:
+        score = int(100 * (time_seconds / 10))  # Bonus por velocidad
+        score = min(100, max(30, score))
+    else:
+        score = int(accuracy)
+    
+    # Guardar resultado
+    typing_score = UserTypingScore(
+        user_id=current_user.id,
+        typing_id=typing_id,
+        typed_text=typed_text,
+        is_correct=is_correct,
+        time_seconds=time_seconds,
+        words_per_minute=round(wpm, 1),
+        accuracy_percentage=round(accuracy, 1),
+        score=score
+    )
+    db.session.add(typing_score)
+    db.session.commit()
+    
+    # Agregar puntos
+    add_points(current_user, score, f'Speed Typing - {typing.category}')
+    
+    return jsonify({
+        'is_correct': is_correct,
+        'correct_phrase': typing.phrase,
+        'accuracy': round(accuracy, 1),
+        'wpm': round(wpm, 1),
+        'score': score
+    })

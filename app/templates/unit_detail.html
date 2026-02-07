@@ -81,61 +81,61 @@
 <ul class="nav nav-tabs mb-4" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" 
-                data-bs-target="#overview" type="button" role="tab">
+                data-bs-target="#overview" type="button" role="tab" aria-selected="true">
             <i class="fas fa-home"></i> Resumen
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="grammar-tab" data-bs-toggle="tab" 
-                data-bs-target="#grammar" type="button" role="tab">
+                data-bs-target="#grammar" type="button" role="tab" aria-selected="false">
             <i class="fas fa-pen-fancy"></i> Gramática
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="vocabulary-tab" data-bs-toggle="tab" 
-                data-bs-target="#vocabulary" type="button" role="tab">
+                data-bs-target="#vocabulary" type="button" role="tab" aria-selected="false">
             <i class="fas fa-book-open"></i> Vocabulario
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="writing-tab" data-bs-toggle="tab" 
-                data-bs-target="#writing" type="button" role="tab">
+                data-bs-target="#writing" type="button" role="tab" aria-selected="false">
             <i class="fas fa-pencil-alt"></i> Escritura
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="sentence-tab" data-bs-toggle="tab" 
-                data-bs-target="#sentence" type="button" role="tab">
+                data-bs-target="#sentence" type="button" role="tab" aria-selected="false">
             <i class="fas fa-keyboard"></i> Oraciones
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="quiz-tab" data-bs-toggle="tab" 
-                data-bs-target="#quiz" type="button" role="tab">
+                data-bs-target="#quiz" type="button" role="tab" aria-selected="false">
             <i class="fas fa-list-check"></i> Quiz
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="reading-tab" data-bs-toggle="tab" 
-                data-bs-target="#reading" type="button" role="tab">
+                data-bs-target="#reading" type="button" role="tab" aria-selected="false">
             <i class="fas fa-book"></i> Lecturas
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="flashcards-tab" data-bs-toggle="tab" 
-                data-bs-target="#flashcards" type="button" role="tab">
+                data-bs-target="#flashcards" type="button" role="tab" aria-selected="false">
             <i class="fas fa-clone"></i> Flashcards
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="structures-tab" data-bs-toggle="tab" 
-                data-bs-target="#structures" type="button" role="tab">
+                data-bs-target="#structures" type="button" role="tab" aria-selected="false">
             <i class="fas fa-sitemap"></i> Estructuras
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="explanations-tab" data-bs-toggle="tab" 
-                data-bs-target="#explanations" type="button" role="tab">
+                data-bs-target="#explanations" type="button" role="tab" aria-selected="false">
             <i class="fas fa-graduation-cap"></i> Explicaciones
         </button>
     </li>
@@ -364,4 +364,110 @@
         </div>
     </div>
 </div>
+
+<style>
+/* ================================
+   UNIT DETAIL TABS - LIGHT MODE
+================================ */
+
+.nav-tabs {
+    border-bottom: 3px solid #0d47a1;
+    gap: 0.5rem;
+}
+
+.nav-tabs .nav-link {
+    color: #424242;
+    background-color: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-bottom: -2px;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #eeeeee;
+    color: #0d47a1;
+    border-color: #bbdefb;
+    transform: translateY(-2px);
+    text-decoration: underline;
+    text-decoration-color: #0d47a1;
+    text-decoration-thickness: 2px;
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+    color: #ffffff;
+    border-color: #0d47a1;
+    border-bottom-color: #0d47a1;
+    box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
+    font-weight: 600;
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.nav-tabs .nav-link.active i {
+    animation: slideInIcon 0.3s ease;
+}
+
+@keyframes slideInIcon {
+    0% {
+        transform: translateX(-5px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.tab-content {
+    background-color: #ffffff;
+    border: 2px solid #0d47a1;
+    border-radius: 0 8px 8px 8px;
+    padding: 2rem;
+    margin-top: -2px;
+    box-shadow: 0 2px 8px rgba(13, 71, 161, 0.1);
+}
+
+/* ================================
+   DARK MODE TABS
+================================ */
+@media (prefers-color-scheme: dark) {
+    .nav-tabs {
+        border-bottom-color: #3b82f6;
+    }
+
+    .nav-tabs .nav-link {
+        color: #e6edf3;
+        background-color: #1a2332;
+        border-color: #263554;
+    }
+
+    .nav-tabs .nav-link:hover {
+        background-color: #222d42;
+        color: #60a5fa;
+        border-color: #3b82f6;
+    }
+
+    .nav-tabs .nav-link.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: #ffffff;
+        border-color: #3b82f6;
+        border-bottom-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .tab-content {
+        background-color: #111a2e;
+        border-color: #3b82f6;
+        color: #e6edf3;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+    }
+}
+</style>
 {% endblock %}

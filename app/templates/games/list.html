@@ -153,6 +153,82 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Quick Quiz -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-info">
+                <div class="card-body text-center">
+                    <div class="display-4 text-info mb-3">🎯</div>
+                    <h5 class="card-title">Quick Quiz</h5>
+                    <p class="card-text text-muted small">Preguntas rápidas sobre vocabulario y gramática</p>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Jugar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('games.quick_quiz', level='A1') }}">A1 - Beginner</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.quick_quiz', level='A2') }}">A2 - Elementary</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.quick_quiz', level='B1') }}">B1 - Intermediate</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.quick_quiz', level='B2') }}">B2 - Upper Int.</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-question-circle"></i> 22 preguntas
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reading Comprehension -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-dark">
+                <div class="card-body text-center">
+                    <div class="display-4 text-dark mb-3">📖</div>
+                    <h5 class="card-title">Reading</h5>
+                    <p class="card-text text-muted small">Mejora tu velocidad y comprensión lectora</p>
+                    
+                    <a href="{{ url_for('games.reading_list') }}" class="btn btn-dark">
+                        Leer
+                    </a>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-book"></i> 4 lecturas
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Speed Typing -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-secondary">
+                <div class="card-body text-center">
+                    <div class="display-4 text-secondary mb-3">⚡</div>
+                    <h5 class="card-title">Speed Typing</h5>
+                    <p class="card-text text-muted small">Escribe frases rápidamente y con precisión</p>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Jugar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('games.speed_typing', level='A1') }}">A1 - Beginner</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.speed_typing', level='A2') }}">A2 - Elementary</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.speed_typing', level='B1') }}">B1 - Intermediate</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('games.speed_typing', level='B2') }}">B2 - Upper Int.</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-keyboard"></i> 23 frases
+                    </small>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Stats Summary -->
