@@ -1,10 +1,21 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash
 from app.extensions import db
 from app.models import User
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+def send_welcome_email_if_enabled(user):
+    """Enviar email de bienvenida si está habilitado"""
+    try:
+        if current_app.config.get('MAIL_ENABLED'):
+            from app.services.email_service import send_welcome_email
+            send_welcome_email(user)
+            return True
+    except Exception as e:
+        current_app.logger.error(f"Error enviando email de bienvenida: {e}")
+    return False
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -50,6 +61,9 @@ def register():
         
         db.session.add(user)
         db.session.commit()
+        
+        # Enviar email de bienvenida
+        send_welcome_email_if_enabled(user)
         
         flash('¡Registro exitoso! Por favor inicia sesión.', 'success')
         return redirect(url_for('auth.login'))

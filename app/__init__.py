@@ -30,11 +30,23 @@ def create_app(config_name='development'):
     """Factory function para crear la aplicación Flask"""
     app = Flask(__name__)
     
-    # Cargar variables de entorno
-    load_dotenv()
+    # Cargar variables de entorno PRIMERO
+    load_dotenv(override=True)
     
     # Cargar configuración
     app.config.from_object(config[config_name])
+    
+    # Cargar configuraciones adicionales desde variables de entorno
+    # para Flask-Mail
+    import os
+    app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+    app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
+    app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False').lower() == 'true'
+    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME')
+    app.config['MAIL_ENABLED'] = os.environ.get('MAIL_ENABLED', 'False').lower() == 'true'
     
     # Inicializar caché
     cache.init_app(app)
