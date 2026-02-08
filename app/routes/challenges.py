@@ -239,8 +239,25 @@ def add_points(user_id, points, source, description=None):
     user_points = UserPoints.query.filter_by(user_id=user_id).first()
     
     if not user_points:
-        user_points = UserPoints(user_id=user_id)
+        user_points = UserPoints(
+            user_id=user_id,
+            total_points=0,
+            weekly_points=0,
+            monthly_points=0,
+            experience=0,
+            level=1
+        )
         db.session.add(user_points)
+    
+    # Asegurar que los valores no sean None
+    if user_points.total_points is None:
+        user_points.total_points = 0
+    if user_points.weekly_points is None:
+        user_points.weekly_points = 0
+    if user_points.monthly_points is None:
+        user_points.monthly_points = 0
+    if user_points.experience is None:
+        user_points.experience = 0
     
     user_points.total_points += points
     user_points.weekly_points += points

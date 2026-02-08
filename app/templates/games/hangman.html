@@ -237,9 +237,35 @@ function checkLose() {
     }
 }
 
-function showResult(won) {
+async function saveScore(won) {
+    try {
+        const response = await fetch('/games/hangman/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                score: guessedLetters.filter(l => word.includes(l)).length * 10,
+                level: level,
+                won: won,
+                attempts_left: 6 - wrongGuesses,
+                word_length: word.length
+            })
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error saving score:', error);
+        return null;
+    }
+}
+
+async function showResult(won) {
     document.getElementById('game-area').classList.add('d-none');
     document.getElementById('game-results').classList.remove('d-none');
+    
+    // Guardar puntuación
+    const result = await saveScore(won);
     
     if (won) {
         document.getElementById('result-emoji').textContent = '🎉';
@@ -250,6 +276,14 @@ function showResult(won) {
     }
     
     document.getElementById('result-word').textContent = `La palabra era: ${word.toUpperCase()}`;
+    
+    // Mostrar puntos ganados
+    if (result && result.points_earned) {
+        const pointsDiv = document.createElement('div');
+        pointsDiv.className = 'mt-3 alert alert-success';
+        pointsDiv.innerHTML = `<i class="fas fa-star me-2"></i>+${result.points_earned} puntos ganados`;
+        document.getElementById('game-results').insertBefore(pointsDiv, document.querySelector('.mt-4'));
+    }
 }
 </script>
 {% endblock %}

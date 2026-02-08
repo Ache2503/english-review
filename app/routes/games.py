@@ -204,6 +204,50 @@ def check_hangman_letter():
     })
 
 
+@games_bp.route('/hangman/submit', methods=['POST'])
+@login_required
+def submit_hangman():
+    """Guardar resultado de hangman"""
+    data = request.get_json()
+    score = data.get('score', 0)
+    level = data.get('level', 'A1')
+    won = data.get('won', False)
+    attempts_left = data.get('attempts_left', 0)
+    word_length = data.get('word_length', 0)
+    
+    # Calcular puntos: más puntos si ganó y con más intentos restantes
+    if won:
+        bonus_points = attempts_left * 10  # 10 puntos por cada intento no usado
+        total_score = score + bonus_points + word_length * 5
+    else:
+        total_score = score
+    
+    # Guardar puntuación
+    game_score = UserGameScore(
+        user_id=current_user.id,
+        game_type='hangman',
+        level=level,
+        score=total_score,
+        words_completed=1 if won else 0
+    )
+    db.session.add(game_score)
+    
+    # Dar puntos al usuario
+    points = total_score // 10
+    if won:
+        points += 5  # Bonus por ganar
+    add_points(current_user.id, points, 'game', f'Hangman - {level}')
+    
+    db.session.commit()
+    
+    return jsonify({
+        'success': True, 
+        'points_earned': points,
+        'total_score': total_score,
+        'won': won
+    })
+
+
 # ==========================================
 # MEMORY MATCH
 # ==========================================
@@ -546,13 +590,51 @@ def submit_quiz_answer():
     
     # Agregar puntos al usuario
     if is_correct:
-        add_points(current_user, score, f'Quick Quiz - {quiz.category}')
+        add_points(current_user.id, score, 'game', f'Quick Quiz - {quiz.category}')
     
     return jsonify({
         'is_correct': is_correct,
         'correct_answer': quiz.correct_answer,
         'explanation': quiz.explanation,
         'score': score
+    })
+
+
+@games_bp.route('/quick-quiz/submit-final', methods=['POST'])
+@login_required
+def submit_quiz_final():
+    """Guardar resultado final del Quick Quiz"""
+    data = request.get_json()
+    score = data.get('score', 0)
+    level = data.get('level', 'A1')
+    correct_count = data.get('correct_count', 0)
+    total_questions = data.get('total_questions', 5)
+    time_seconds = data.get('time_seconds', 0)
+    
+    # Guardar puntuación en UserGameScore
+    game_score = UserGameScore(
+        user_id=current_user.id,
+        game_type='quick_quiz',
+        level=level,
+        score=score,
+        time_seconds=time_seconds,
+        words_completed=correct_count
+    )
+    db.session.add(game_score)
+    
+    # Calcular puntos a dar al usuario
+    points = correct_count * 5  # 5 puntos por cada respuesta correcta
+    if correct_count == total_questions:
+        points += 10  # Bonus por responder todas correctamente
+    
+    add_points(current_user.id, points, 'game', f'Quick Quiz - {level}')
+    
+    db.session.commit()
+    
+    return jsonify({
+        'success': True,
+        'points_earned': points,
+        'total_score': score
     })
 
 
@@ -656,7 +738,7 @@ def submit_reading_answers(reading_id):
     db.session.commit()
     
     # Agregar puntos
-    add_points(current_user, int(score), f'Reading Comprehension - {reading.category}')
+    add_points(current_user.id, int(score), 'game', f'Reading Comprehension - {reading.category}')
     
     return jsonify({
         'correct': correct,
@@ -775,7 +857,7 @@ def submit_typing_answer():
     db.session.commit()
     
     # Agregar puntos
-    add_points(current_user, score, f'Speed Typing - {typing.category}')
+    add_points(current_user.id, score, 'game', f'Speed Typing - {typing.category}')
     
     return jsonify({
         'is_correct': is_correct,

@@ -297,6 +297,34 @@ async function submitQuiz() {
 
     totalScore = Math.round((correctCount / questions.length) * 100);
 
+    // Guardar puntuación en el servidor
+    try {
+        const response = await fetch('/games/quick-quiz/submit-final', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                score: totalScore,
+                level: document.getElementById('levelSelect').value,
+                correct_count: correctCount,
+                total_questions: questions.length,
+                time_seconds: totalTime
+            })
+        });
+        const saveResult = await response.json();
+        
+        // Mostrar puntos ganados
+        if (saveResult && saveResult.points_earned) {
+            const pointsHTML = `<div class="alert alert-success mt-3">
+                <i class="fas fa-star me-2"></i>+${saveResult.points_earned} puntos ganados
+            </div>`;
+            document.getElementById('resultsArea').querySelector('.card-body').insertAdjacentHTML('afterbegin', pointsHTML);
+        }
+    } catch (error) {
+        console.error('Error saving quiz result:', error);
+    }
+
     document.getElementById('finalScore').textContent = totalScore;
     document.getElementById('correctCount').textContent = correctCount;
     document.getElementById('totalTime').textContent = totalTime + 's';
