@@ -13,6 +13,13 @@ import random
 games_bp = Blueprint('games', __name__, url_prefix='/games')
 
 
+def complete_daily_challenge():
+    """Marcar el reto diario como completado"""
+    if current_user.is_authenticated:
+        current_user.daily_challenge_completed = True
+        db.session.commit()
+
+
 @games_bp.route('/')
 @login_required
 def game_list():
@@ -120,6 +127,7 @@ def submit_word_scramble():
     level = data.get('level', 'A1')
     time_seconds = data.get('time_seconds', 0)
     words_completed = data.get('words_completed', 0)
+    from_daily = data.get('from_daily', False)
     
     # Guardar puntuación
     game_score = UserGameScore(
@@ -135,6 +143,10 @@ def submit_word_scramble():
     # Dar puntos
     points = score // 10 + words_completed
     add_points(current_user.id, points, 'game', f'Word Scramble - {level}')
+    
+    # Completar reto diario si aplica
+    if from_daily:
+        complete_daily_challenge()
     
     db.session.commit()
     
@@ -214,6 +226,7 @@ def submit_hangman():
     won = data.get('won', False)
     attempts_left = data.get('attempts_left', 0)
     word_length = data.get('word_length', 0)
+    from_daily = data.get('from_daily', False)
     
     # Calcular puntos: más puntos si ganó y con más intentos restantes
     if won:
@@ -237,6 +250,10 @@ def submit_hangman():
     if won:
         points += 5  # Bonus por ganar
     add_points(current_user.id, points, 'game', f'Hangman - {level}')
+    
+    # Completar reto diario si aplica
+    if from_daily:
+        complete_daily_challenge()
     
     db.session.commit()
     
@@ -307,6 +324,7 @@ def submit_memory():
     score = data.get('score', 0)
     level = data.get('level', 'A1')
     time_seconds = data.get('time_seconds', 0)
+    from_daily = data.get('from_daily', False)
     
     game_score = UserGameScore(
         user_id=current_user.id,
@@ -319,6 +337,9 @@ def submit_memory():
     
     points = score + max(0, (120 - time_seconds) // 10)
     add_points(current_user.id, points, 'game', f'Memory Match - {level}')
+    
+    if from_daily:
+        complete_daily_challenge()
     
     db.session.commit()
     
@@ -376,6 +397,7 @@ def submit_fill_gaps():
     level = data.get('level', 'A1')
     correct = data.get('correct', 0)
     total = data.get('total', 0)
+    from_daily = data.get('from_daily', False)
     
     game_score = UserGameScore(
         user_id=current_user.id,
@@ -388,6 +410,9 @@ def submit_fill_gaps():
     
     points = correct * 5
     add_points(current_user.id, points, 'game', f'Fill the Gaps - {level}')
+    
+    if from_daily:
+        complete_daily_challenge()
     
     db.session.commit()
     
@@ -610,6 +635,7 @@ def submit_quiz_final():
     correct_count = data.get('correct_count', 0)
     total_questions = data.get('total_questions', 5)
     time_seconds = data.get('time_seconds', 0)
+    from_daily = data.get('from_daily', False)
     
     # Guardar puntuación en UserGameScore
     game_score = UserGameScore(
@@ -628,6 +654,9 @@ def submit_quiz_final():
         points += 10  # Bonus por responder todas correctamente
     
     add_points(current_user.id, points, 'game', f'Quick Quiz - {level}')
+    
+    if from_daily:
+        complete_daily_challenge()
     
     db.session.commit()
     
@@ -703,6 +732,7 @@ def submit_reading_answers(reading_id):
     data = request.get_json()
     answers = data.get('answers', {})
     time_seconds = data.get('time_seconds', 0)
+    from_daily = data.get('from_daily', False)
     
     # Verificar respuestas
     correct = 0
@@ -739,6 +769,9 @@ def submit_reading_answers(reading_id):
     
     # Agregar puntos
     add_points(current_user.id, int(score), 'game', f'Reading Comprehension - {reading.category}')
+    
+    if from_daily:
+        complete_daily_challenge()
     
     return jsonify({
         'correct': correct,
@@ -814,6 +847,8 @@ def submit_typing_answer():
     typing_id = data.get('typing_id')
     typed_text = data.get('typed_text', '')
     time_seconds = data.get('time_seconds', 0)
+    from_daily = data.get('from_daily', False)
+    is_last = data.get('is_last', False)
     
     typing = SpeedTyping.query.get(typing_id)
     if not typing:
@@ -858,6 +893,10 @@ def submit_typing_answer():
     
     # Agregar puntos
     add_points(current_user.id, score, 'game', f'Speed Typing - {typing.category}')
+    
+    # Completar reto diario si es el último y viene del daily challenge
+    if from_daily and is_last:
+        complete_daily_challenge()
     
     return jsonify({
         'is_correct': is_correct,

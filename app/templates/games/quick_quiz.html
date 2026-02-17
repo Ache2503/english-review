@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/games/games.css') }}">
+{% endblock %}
+
 {% block title %}Quick Quiz - English Learning{% endblock %}
 
 {% block content %}
@@ -127,41 +131,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .quiz-option {
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        padding: 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .quiz-option:hover {
-        border-color: #0066cc;
-        background-color: #f0f4ff;
-    }
-
-    .quiz-option.selected {
-        border-color: #0066cc;
-        background-color: #e3f2fd;
-    }
-
-    .quiz-option.correct {
-        border-color: #28a745;
-        background-color: #e8f5e9;
-    }
-
-    .quiz-option.incorrect {
-        border-color: #dc3545;
-        background-color: #ffebee;
-    }
-
-    #timer {
-        font-size: 1.1em;
-        font-weight: bold;
-    }
-</style>
 
 <script>
 let currentQuestionIndex = 0;
@@ -296,6 +265,9 @@ async function submitQuiz() {
     }
 
     totalScore = Math.round((correctCount / questions.length) * 100);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromDaily = urlParams.get('from_daily') === 'true';
 
     // Guardar puntuación en el servidor
     try {
@@ -309,7 +281,8 @@ async function submitQuiz() {
                 level: document.getElementById('levelSelect').value,
                 correct_count: correctCount,
                 total_questions: questions.length,
-                time_seconds: totalTime
+                time_seconds: totalTime,
+                from_daily: fromDaily
             })
         });
         const saveResult = await response.json();

@@ -3,6 +3,15 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
+# Tabla de asociación para User-Badge (muchos a muchos)
+user_badges = db.Table(
+    'user_badges',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('badge_id', db.Integer, db.ForeignKey('badges.id'), primary_key=True),
+    db.Column('earned_at', db.DateTime, default=datetime.utcnow)
+)
+
+
 class User(UserMixin, db.Model):
     """Modelo de usuario con seguimiento de progreso"""
     __tablename__ = 'users'
@@ -16,10 +25,14 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
+    last_login_date = db.Column(db.Date, nullable=True)  # Para el reto diario
+    daily_challenge_completed = db.Column(db.Boolean, default=False)  # Si completó el reto de hoy
     
     # Relaciones
     progress = db.relationship('UserProgress', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     
+    badges_earned = db.relationship('Badge', secondary=user_badges, backref='owners')
+
     def set_password(self, password):
         """Hashear y guardar contraseña"""
         self.password_hash = generate_password_hash(password)
@@ -559,6 +572,7 @@ class UserQuizSubmission(db.Model):
     def __repr__(self):
         return f'<UserQuizSubmission {self.id} Quiz:{self.quiz_id}>'
 
+
 class Reading(db.Model):
     """Modelo para lecturas con extracción de oraciones"""
     __tablename__ = 'readings'
@@ -624,9 +638,13 @@ class Badge(db.Model):
     color = db.Column(db.String(20), default='primary')  # Color bootstrap (primary, success, warning, etc)
     badge_type = db.Column(db.String(50), nullable=False)  # Tipo: completion, writing, reading, quiz, streak, perfect
     criteria = db.Column(db.String(200))  # Criterio de obtención (para referencia)
+    is_active = db.Column(db.Boolean, default=True)
+    order = db.Column(db.Integer, default=0)
     
     def __repr__(self):
         return f'<Badge {self.name}>'
+
+
 class UnitExplanation(db.Model):
     """Modelo para explicaciones detalladas de cada unidad"""
     __tablename__ = 'unit_explanations'
@@ -658,15 +676,6 @@ class TopicExplanation(db.Model):
         return f'<TopicExplanation Topic:{self.topic_id} {self.section_title}>'
 
 
-# Tabla de asociación para User-Badge (muchos a muchos)
-user_badges = db.Table(
-    'user_badges',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-    db.Column('badge_id', db.Integer, db.ForeignKey('badges.id'), primary_key=True),
-    db.Column('earned_at', db.DateTime, default=datetime.utcnow)
-)
-
-
 # Conversational Practice Models
 class Conversation(db.Model):
     __tablename__ = 'conversations'
@@ -678,6 +687,7 @@ class Conversation(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     lines = db.relationship('ConversationLine', backref='conversation', lazy='dynamic', cascade='all, delete-orphan')
+
 
 class ConversationLine(db.Model):
     __tablename__ = 'conversation_lines'

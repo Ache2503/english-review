@@ -1,40 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Historial de Escritura - English Learning Platform{% endblock %}
-
-{% block extra_head %}
-<style>
-    .pattern-card {
-        border-left: 4px solid;
-        transition: transform 0.2s;
-    }
-    .pattern-card:hover {
-        transform: translateX(5px);
-    }
-    .pattern-card.high { border-left-color: #dc3545; }
-    .pattern-card.medium { border-left-color: #ffc107; }
-    .pattern-card.low { border-left-color: #28a745; }
-    .timeline-entry {
-        position: relative;
-        padding-left: 30px;
-        border-left: 2px solid #dee2e6;
-    }
-    .timeline-entry::before {
-        content: '';
-        position: absolute;
-        left: -6px;
-        top: 0;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #0d6efd;
-    }
-    .progress-trend {
-        height: 4px;
-        border-radius: 2px;
-    }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/writing/writing.css') }}">
 {% endblock %}
+
+{% block title %}Historial de Escritura - English Learning Platform{% endblock %}
 
 {% block content %}
 <div class="container py-4">

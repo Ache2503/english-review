@@ -179,6 +179,9 @@ function selectOption(selected, correct, button) {
 async function endGame() {
     const score = Math.round((correctCount / sentences.length) * 100);
     
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromDaily = urlParams.get('from_daily') === 'true';
+    
     // Save score
     await fetch('/games/fill-gaps/submit', {
         method: 'POST',
@@ -187,7 +190,8 @@ async function endGame() {
             score: score,
             level: level,
             correct: correctCount,
-            total: sentences.length
+            total: sentences.length,
+            from_daily: fromDaily
         })
     });
     

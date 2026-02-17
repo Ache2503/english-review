@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/explanations/explanations.css') }}">
+{% endblock %}
+
 {% block title %}{{ unit.title }} - Explicación Detallada{% endblock %}
 
 {% block content %}
@@ -116,22 +120,4 @@
         </a>
     </div>
 </div>
-
-<style>
-    .content-text {
-        line-height: 1.8;
-        white-space: pre-wrap;
-    }
-    
-    .accordion-button:not(.collapsed) {
-        background-color: #e7f3ff;
-        color: #0c5aa0;
-    }
-    
-    .btn-block {
-        display: block;
-        width: 100%;
-        text-align: left;
-    }
-</style>
 {% endblock %}

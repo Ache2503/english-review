@@ -1,548 +1,217 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard - English Learning{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="mb-3">
-            <i class="fas fa-chart-line"></i> Bienvenido, {{ user.full_name }}!
-        </h1>
-        <p class="text-muted">Aquí puedes ver tu progreso y continuar aprendiendo.</p>
+
+<div class="dashboard-container dashboard-animate">
+
+<!-- ================= HEADER ================= -->
+
+<div class="dashboard-header mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">
+            Bienvenido, {{ user.full_name }}
+        </h2>
+        <p class="text-muted mb-0">
+            Continúa mejorando tu inglés 🚀
+        </p>
     </div>
 </div>
 
-<!-- Banner de Práctica Conversacional -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
-            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
-                <div class="banner-icon-exam">
-                    <span class="display-4">🏆</span>
-                </div>
-                <div class="flex-grow-1">
-                    <h4 class="mb-1 text-white fw-bold">🎯 Sistema de Unidades con Desafíos</h4>
-                    <p class="mb-0 text-white opacity-75">
-                        Completa gramática, vocabulario y ejercicios. ¡Pasa el desafío para desbloquear la siguiente unidad!
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ url_for('unit_challenge.units_overview') }}" class="btn btn-warning btn-lg px-4 shadow fw-bold">
-                        <i class="fas fa-trophy"></i> Ver Unidades
-                    </a>
-                </div>
+<!-- ================= KPI CARDS ================= -->
+
+<div class="row g-4 mb-4">
+
+    <!-- Progreso -->
+    <div class="col-md-3">
+        <div class="dashboard-kpi-card">
+            <div class="kpi-icon bg-primary-subtle text-primary">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">
+                    {{ "%.1f"|format(user_progress.percentage) }}%
+                </h4>
+                <small class="text-muted">Progreso total</small>
             </div>
         </div>
     </div>
+
+    <!-- Unidades -->
+    <div class="col-md-3">
+        <div class="dashboard-kpi-card">
+            <div class="kpi-icon bg-success-subtle text-success">
+                <i class="fas fa-book"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">
+                    {{ user_progress.completed_units }}
+                </h4>
+                <small class="text-muted">Unidades completadas</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Racha -->
+    <div class="col-md-3">
+        <div class="dashboard-kpi-card">
+            <div class="kpi-icon bg-danger-subtle text-danger">
+                <i class="fas fa-fire"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">
+                    {% if streak %}{{ streak.current_streak }}{% else %}0{% endif %}
+                </h4>
+                <small class="text-muted">Días en racha</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="col-md-3">
+        <div class="dashboard-kpi-card">
+            <div class="kpi-icon bg-warning-subtle text-warning">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">
+                    {{ user.badges_earned|length }}
+                </h4>
+                <small class="text-muted">Badges obtenidos</small>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Banner de Modo Examen -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="exam-study-banner card border-0 overflow-hidden">
-            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
-                <div class="banner-icon-exam">
-                    <span class="display-4">📚</span>
-                </div>
-                <div class="flex-grow-1">
-                    <h4 class="mb-1 text-dark fw-bold">🎯 ¡Modo Examen - Estudio Intensivo!</h4>
-                    <p class="mb-0 text-dark opacity-75">
-                        9 temas de gramática completos con teoría, ejercicios, tips y referencia rápida para tu examen.
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ url_for('study.study_home') }}" class="btn btn-dark btn-lg px-4 shadow">
-                        <i class="fas fa-graduation-cap"></i> Estudiar Ahora
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- ================= ACCIONES RÁPIDAS ================= -->
 
-<!-- Banner de Conversaciones -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="conversation-banner card border-0 overflow-hidden">
-            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
-                <div class="banner-icon">
-                    <span class="display-4">💬</span>
-                </div>
-                <div class="flex-grow-1">
-                    <h4 class="mb-1 text-white fw-bold">¡Practica Conversaciones en Inglés!</h4>
-                    <p class="mb-0 text-white-50">
-                        Mejora tu inglés hablado con 11 escenarios interactivos: tienda, restaurante, hotel y más.
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ url_for('conversation.list') }}" class="btn btn-light btn-lg px-4 shadow-sm">
-                        <i class="fas fa-play-circle"></i> Comenzar
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="dashboard-section mb-5">
+    <h5 class="fw-bold mb-3">Acciones rápidas</h5>
 
-<!-- Banner de Gramática -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="grammar-banner card border-0 overflow-hidden">
-            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-4">
-                <div class="banner-icon-grammar">
-                    <span class="display-4">📚</span>
-                </div>
-                <div class="flex-grow-1">
-                    <h4 class="mb-1 text-white fw-bold">¡Aprende Gramática Inglesa!</h4>
-                    <p class="mb-0 text-white-50">
-                        Domina verbos, tiempos, artículos y más con explicaciones claras, tablas y ejercicios.
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ url_for('grammar.index') }}" class="btn btn-light btn-lg px-4 shadow-sm">
-                        <i class="fas fa-book-open"></i> Explorar
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <div class="row g-4">
 
-<!-- Banner de Repetición Espaciada (SRS) -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="srs-banner card border-0 overflow-hidden h-100">
-            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-3">
-                <div class="banner-icon-srs">
-                    <span class="display-5">🧠</span>
-                </div>
-                <div class="flex-grow-1">
-                    <h5 class="mb-1 text-white fw-bold">Repetición Espaciada</h5>
-                    <p class="mb-0 text-white-50 small">
-                        Memoriza vocabulario de forma científica
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ url_for('flashcards.srs_overview') }}" class="btn btn-light px-3 shadow-sm">
-                        <i class="fas fa-brain"></i> Estudiar
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="stats-banner card border-0 overflow-hidden h-100">
-            <div class="card-body p-4 d-flex align-items-center flex-wrap gap-3">
-                <div class="banner-icon-stats">
-                    <span class="display-5">📊</span>
-                </div>
-                <div class="flex-grow-1">
-                    <h5 class="mb-1 text-white fw-bold">Mis Estadísticas</h5>
-                    <p class="mb-0 text-white-50 small">
-                        Analiza tu progreso con gráficos detallados
-                    </p>
-                </div>
-                <div>
-                    <a href="{{ url_for('stats.index') }}" class="btn btn-light px-3 shadow-sm">
-                        <i class="fas fa-chart-line"></i> Ver
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-/* Banner de Estudio Intensivo/Examen */
-.exam-study-banner {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    border-radius: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 3px solid #f59e0b !important;
-}
-
-.exam-study-banner:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
-}
-
-.banner-icon-exam {
-    width: 70px;
-    height: 70px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: pulse-exam 1.5s infinite;
-}
-
-@keyframes pulse-exam {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-    50% { transform: scale(1.08); box-shadow: 0 0 20px 10px rgba(245, 158, 11, 0.2); }
-}
-
-.conversation-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.conversation-banner:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.banner-icon {
-    width: 70px;
-    height: 70px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: pulse-banner 2s infinite;
-}
-
-@keyframes pulse-banner {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-.conversation-banner .btn-light:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-/* Banner de Gramática */
-.grammar-banner {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    border-radius: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.grammar-banner:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
-}
-
-.banner-icon-grammar {
-    width: 70px;
-    height: 70px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: pulse-banner 2s infinite;
-}
-
-.grammar-banner .btn-light:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-/* Banner de SRS */
-.srs-banner {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border-radius: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.srs-banner:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
-}
-
-.banner-icon-srs {
-    width: 50px;
-    height: 50px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Banner de Estadísticas */
-.stats-banner {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    border-radius: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stats-banner:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
-}
-
-.banner-icon-stats {
-    width: 50px;
-    height: 50px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-</style>
-
-<!-- Progress Summary -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-chart-pie"></i> Tu Progreso General
-                </h5>
-                <h2 class="mb-3">{{ "%.1f"|format(user_progress.percentage) }}%</h2>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" 
-                         style="width: {{ user_progress.percentage }}%;" 
-                         aria-valuenow="{{ user_progress.percentage }}" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100">
-                    </div>
-                </div>
-                <small class="text-muted mt-2 d-block">
-                    {{ user_progress.completed_units }} de {{ user_progress.total_units }} unidades completadas
-                </small>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-calendar"></i> Información del Usuario
-                </h5>
-                <p class="mb-2">
-                    <strong>Usuario:</strong> @{{ user.username }}
-                </p>
-                <p class="mb-2">
-                    <strong>Email:</strong> {{ user.email }}
-                </p>
-                <p class="mb-2">
-                    <strong>Miembro desde:</strong> {{ user.created_at.strftime('%d/%m/%Y') }}
-                </p>
-                <a href="{{ url_for('dashboard.progress') }}" class="btn btn-sm btn-outline-primary mt-2">
-                    <i class="fas fa-chart-bar"></i> Ver Progreso Detallado
-                </a>
-                    <a href="{{ url_for('errors.my_errors') }}" class="btn btn-sm btn-outline-warning mt-2">
-                        <i class="fas fa-exclamation-triangle"></i> Ver Banco de Errores
-                    </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Streak Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card bg-light">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title mb-1"><i class="fas fa-fire"></i> Racha de Estudio</h5>
-                        {% if streak %}
-                            <p class="mb-0">Actual: <strong>{{ streak.current_streak }}</strong> días</p>
-                            <small class="text-muted">Récord: {{ streak.longest_streak }} días</small>
-                        {% else %}
-                            <p class="mb-0">Aún no tienes racha registrada.</p>
-                        {% endif %}
-                    </div>
-                    <div style="font-size: 2.5em;">🔥</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Badges Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-trophy"></i> Mis Logros (Badges)
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {% if user.badges_earned %}
-                        {% for badge in user.badges_earned | slice(3) %}
-                        <div class="col-md-4 text-center mb-3">
-                            <div style="font-size: 2.5em;">{{ badge.icon }}</div>
-                            <small class="text-muted">{{ badge.name }}</small>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="col-12">
-                        <p class="text-muted text-center mb-0">
-                            <i class="fas fa-star"></i> Completa ejercicios para desbloquear badges
-                        </p>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="text-center mt-3 pt-3 border-top">
-                    <a href="{{ url_for('badges.my_badges') }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-trophy"></i> Ver Todos mis Logros
-                    </a>
-                    <a href="{{ url_for('badges.all_badges') }}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-list"></i> Ver Todos los Badges
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Units List - Acordeón por Nivel CEFR -->
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">
-                <i class="fas fa-book"></i> Mis Unidades
-            </h2>
-            <a href="{{ url_for('unit_challenge.units_overview') }}" class="btn btn-warning">
-                <i class="fas fa-trophy"></i> Ver Sistema de Desafíos
+        <div class="col-md-4">
+            <a href="{{ url_for('conversation.list') }}" class="dashboard-action-card">
+                <i class="fas fa-comments"></i>
+                <span>Practicar Conversación</span>
             </a>
         </div>
+
+        <div class="col-md-4">
+            <a href="{{ url_for('grammar.index') }}" class="dashboard-action-card">
+                <i class="fas fa-pen-fancy"></i>
+                <span>Estudiar Gramática</span>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="{{ url_for('unit_challenge.units_overview') }}" class="dashboard-action-card">
+                <i class="fas fa-trophy"></i>
+                <span>Ver Desafíos</span>
+            </a>
+        </div>
+
     </div>
 </div>
 
-{% set levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] %}
-{% set level_colors = {'A1': 'success', 'A2': 'info', 'B1': 'primary', 'B2': 'warning', 'C1': 'danger', 'C2': 'dark'} %}
-{% set level_names = {'A1': 'Beginner', 'A2': 'Elementary', 'B1': 'Intermediate', 'B2': 'Upper-Intermediate', 'C1': 'Advanced', 'C2': 'Mastery'} %}
-{% set level_icons = {'A1': 'seedling', 'A2': 'leaf', 'B1': 'tree', 'B2': 'mountain', 'C1': 'crown', 'C2': 'gem'} %}
+<!-- ================= UNIDADES ================= -->
+<div class="dashboard-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">Mis Unidades</h5>
+    </div>
 
-<div class="accordion mb-4" id="dashboardUnitsAccordion">
-    {% for level in levels %}
-    
-    {% set ns = namespace(completed=0, total=0) %}
-    {% for item in units %}
-        {% if level in item.unit.title %}
-            {% set ns.total = ns.total + 1 %}
-            {% if item.progress.completed %}
-                {% set ns.completed = ns.completed + 1 %}
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-    
-    {% if ns.total > 0 %}
-    <div class="accordion-item border-0 shadow-sm mb-2">
-        <h2 class="accordion-header" id="dashHeading{{ level }}">
-            <button class="accordion-button {% if loop.index > 1 %}collapsed{% endif %} bg-{{ level_colors[level] }} {% if level != 'B2' %}text-white{% else %}text-dark{% endif %}" 
-                    type="button" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#dashCollapse{{ level }}" 
-                    aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}" 
-                    aria-controls="dashCollapse{{ level }}">
-                <div class="d-flex align-items-center justify-content-between w-100 me-3">
-                    <div>
-                        <i class="fas fa-{{ level_icons[level] }} me-2"></i>
-                        <strong>{{ level }}</strong> - {{ level_names[level] }}
+    <div class="accordion dashboard-accordion" id="dashboardUnitsAccordion">
+        {% for item in units %}
+        <div class="accordion-item {% if item.is_locked %}unit-locked{% endif %}">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        {% if not item.is_locked %}
+                            data-bs-toggle="collapse"
+                            data-bs-target="#unit{{ item.unit.id }}"
+                        {% else %}
+                            disabled
+                        {% endif %}>
+                    
+                    {{ item.unit.title }}
+
+                    {% if item.is_locked %}
+                        <i class="fas fa-lock ms-2 text-warning"></i>
+                    {% endif %}
+                </button>
+            </h2>
+
+
+            <div id="unit{{ item.unit.id }}"
+                 class="accordion-collapse collapse"
+                 data-bs-parent="#dashboardUnitsAccordion">
+
+                <div class="accordion-body">
+
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            Progreso: {{ item.progress.progress_percentage|int }}%
+                        </small>
                     </div>
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-light text-dark">{{ ns.total }} unidades</span>
-                        {% if ns.completed > 0 %}
-                        <span class="badge bg-dark">
-                            <i class="fas fa-check"></i> {{ ns.completed }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </div>
-            </button>
-        </h2>
-        <div id="dashCollapse{{ level }}" 
-             class="accordion-collapse collapse {% if loop.index == 1 %}show{% endif %}" 
-             aria-labelledby="dashHeading{{ level }}" 
-             data-bs-parent="#dashboardUnitsAccordion">
-            <div class="accordion-body p-0">
-                <div class="list-group list-group-flush">
-                    {% for item in units %}
-                        {% if level in item.unit.title %}
-                        <div class="list-group-item list-group-item-action py-3 
-                            {% if item.progress.completed %}list-group-item-success{% endif %}">
-                            <div class="row align-items-center">
-                                <!-- Número de unidad -->
-                                <div class="col-auto">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center 
-                                        {% if item.progress.completed %}bg-success{% else %}bg-{{ level_colors[level] }}{% endif %} text-white" 
-                                        style="width: 40px; height: 40px; font-weight: bold; font-size: 0.9rem;">
-                                        {% if item.progress.completed %}
-                                            <i class="fas fa-check"></i>
-                                        {% else %}
-                                            {{ item.unit.unit_number }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                
-                                <!-- Título -->
-                                <div class="col">
-                                    <h6 class="mb-1">
-                                        {{ item.unit.title.split(': ')[-1] if ': ' in item.unit.title else item.unit.title }}
-                                    </h6>
-                                    <div class="d-flex gap-3 text-muted small">
-                                        <span><i class="fas fa-bookmark"></i> {{ item.topics_count }} tópicos</span>
-                                        <span><i class="fas fa-pen-fancy"></i> {{ item.grammar_count }}</span>
-                                        <span><i class="fas fa-language"></i> {{ item.vocabulary_count }}</span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Progreso -->
-                                <div class="col-auto d-none d-md-block" style="width: 120px;">
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar bg-{{ level_colors[level] }}" 
-                                             role="progressbar" 
-                                             style="width: {{ item.progress.progress_percentage }}%">
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">{{ item.progress.progress_percentage|int }}%</small>
-                                </div>
-                                
-                                <!-- Acciones -->
-                                <div class="col-auto">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}" 
-                                           class="btn btn-outline-primary" title="Ver unidad">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ url_for('units.view_grammar', unit_id=item.unit.id) }}" 
-                                           class="btn btn-outline-info" title="Gramática">
-                                            <i class="fas fa-pen-fancy"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success"
+                             style="width: {{ item.progress.progress_percentage }}%;">
                         </div>
-                        {% endif %}
-                    {% endfor %}
+                    </div>
+
+                    <a href="{{ url_for('units.view_unit', unit_id=item.unit.id) }}"
+                       class="btn btn-sm btn-outline-primary">
+                        Continuar
+                    </a>
+
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endif %}
-    {% endfor %}
 </div>
 
-<style>
-/* Estilos para el acordeón del dashboard */
-#dashboardUnitsAccordion .accordion-button:not(.collapsed) {
-    box-shadow: none;
-}
+</div>
 
-#dashboardUnitsAccordion .accordion-button.text-white::after {
-    filter: brightness(0) invert(1);
-}
+<!-- ================= DAILY CHALLENGE MODAL ================= -->
+{% if show_daily_challenge and daily_challenge %}
+<div class="modal fade" id="dailyChallengeModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-trophy me-2"></i>¡Reto Diario!
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <i class="fas fa-gamepad fa-3x text-primary"></i>
+                </div>
+                <h4>¡Es hora de un reto!</h4>
+                <p class="text-muted">
+                    Completa el juego <strong>{{ daily_challenge.game.title }}</strong> para ganar puntos extra.
+                </p>
+                <p class="small text-muted">
+                    {{ daily_challenge.game.description }}
+                </p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <a href="{{ daily_challenge.url }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-play me-2"></i>¡Jugar Ahora!
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-#dashboardUnitsAccordion .accordion-button:focus {
-    box-shadow: none;
-}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var dailyModal = new bootstrap.Modal(document.getElementById('dailyChallengeModal'));
+    dailyModal.show();
+});
+</script>
+{% endif %}
 
-#dashboardUnitsAccordion .list-group-item:hover {
-    background-color: #f8f9fa;
-}
-</style>
 {% endblock %}

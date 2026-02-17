@@ -1,0 +1,97 @@
+/* =====================================================
+   MÓDULO: HOME
+   Archivo: modules/home/home.css
+   Estilos exclusivos del index
+===================================================== */
+
+/* ===== HERO SECTION ===== */
+.home-hero {
+    padding: clamp(3rem, 6vw, 5rem) 0;
+    position: relative;
+}
+
+/* Fondo decorativo suave */
+.home-hero::before {
+    content: "";
+    position: absolute;
+    top: -80px;
+    right: -120px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,102,204,0.15) 0%, transparent 70%);
+    z-index: 0;
+}
+
+/* Asegura que el contenido quede encima */
+.home-hero > div {
+    position: relative;
+    z-index: 1;
+}
+
+/* Título principal */
+.home-hero-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.2;
+}
+
+.home-hero-title span {
+    color: var(--color-primary);
+}
+
+/* Texto */
+.home-hero p {
+    font-size: 1.1rem;
+    max-width: 540px;
+}
+
+/* ===== CARD DE CARACTERÍSTICAS ===== */
+.home-feature-card {
+    background-color: var(--bg-card);
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+
+.home-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.home-feature-icon {
+    color: #00cc99;
+}
+
+/* ===== LISTA DE CARACTERÍSTICAS ===== */
+.home-feature-list i {
+    color: #00cc99;
+    margin-right: 0.5rem;
+}
+
+/* ===== SECCIÓN NIVELES ===== */
+.home-level-title {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+}
+
+/* ===== UNIT CARDS ===== */
+.unit-card {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    transition: transform var(--transition-fast),
+                box-shadow var(--transition-fast),
+                border-color var(--transition-fast);
+}
+
+.unit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+
+/* Texto muted controlado por sistema */
+.unit-card .text-muted {
+    color: var(--text-muted) !important;
+}

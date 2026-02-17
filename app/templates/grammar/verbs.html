@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/grammar/grammar.css') }}">
+{% endblock %}
+
 {% block title %}Buscador de Verbos - Grammar{% endblock %}
 
 {% block content %}
@@ -153,7 +157,7 @@
               </div>
             </div>
             {% if verb.example_sentence %}
-            <div class="verb-example mt-3 p-2 bg-light rounded">
+            <div class="verb-example mt-3 p-2 rounded">
               <small class="text-primary">{{ verb.example_sentence }}</small>
               {% if verb.example_translation %}
               <br><small class="text-muted">{{ verb.example_translation }}</small>
@@ -216,225 +220,6 @@
     </div>
   </div>
 </div>
-
-<style>
-.verb-icon-large {
-  font-size: 3rem;
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-card {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  text-align: center;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-/* Estilos del dropdown de búsqueda */
-.search-container {
-  position: relative;
-}
-
-.search-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-top: none;
-  border-radius: 0 0 0.5rem 0.5rem;
-  max-height: 400px;
-  overflow-y: auto;
-  z-index: 1050;
-  display: none;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.search-dropdown.show {
-  display: block;
-}
-
-.dropdown-verb-item {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.dropdown-verb-item:last-child {
-  border-bottom: none;
-}
-
-.dropdown-verb-item:hover {
-  background: #f8f9fa;
-}
-
-.dropdown-verb-item .verb-name {
-  font-weight: 600;
-  color: #667eea;
-  font-size: 1.1rem;
-}
-
-.dropdown-verb-item .verb-translation {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.dropdown-verb-item .verb-conjugations {
-  font-size: 0.85rem;
-  color: #888;
-  margin-top: 0.25rem;
-}
-
-.dropdown-no-results {
-  padding: 1rem;
-  text-align: center;
-  color: #888;
-}
-
-.selected-verb-card {
-  border: 2px solid #667eea;
-}
-
-.selected-verb-card .verb-detail-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.selected-verb-card .verb-detail-infinitive {
-  font-size: 2rem;
-  color: #667eea;
-}
-
-.selected-verb-card .conjugation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.selected-verb-card .conjugation-item {
-  background: #f8f9fa;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  text-align: center;
-}
-
-.selected-verb-card .conjugation-label {
-  font-size: 0.75rem;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.selected-verb-card .conjugation-value {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.verb-card {
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 1rem;
-  padding: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.verb-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  border-color: #667eea;
-}
-
-.verb-infinitive {
-  color: #667eea;
-}
-
-.speak-btn {
-  color: #667eea;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.speak-btn:hover {
-  transform: scale(1.2);
-}
-
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.bg-gradient-purple {
-  background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
-}
-
-.practice-verb {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 0.5rem;
-}
-
-/* Dark mode */
-[data-bs-theme="dark"] .search-dropdown {
-  background: #2d2d2d;
-  border-color: #444;
-}
-
-[data-bs-theme="dark"] .dropdown-verb-item {
-  border-color: #444;
-}
-
-[data-bs-theme="dark"] .dropdown-verb-item:hover {
-  background: #383838;
-}
-
-[data-bs-theme="dark"] .dropdown-verb-item .verb-translation,
-[data-bs-theme="dark"] .dropdown-verb-item .verb-conjugations {
-  color: #aaa;
-}
-
-[data-bs-theme="dark"] .selected-verb-card .conjugation-item {
-  background: #333;
-}
-
-[data-bs-theme="dark"] .selected-verb-card .conjugation-value {
-  color: #eee;
-}
-
-[data-bs-theme="dark"] .verb-card {
-  background: #2d2d2d;
-  border-color: #444;
-}
-
-[data-bs-theme="dark"] .verb-card:hover {
-  border-color: #667eea;
-}
-
-[data-bs-theme="dark"] .practice-verb,
-[data-bs-theme="dark"] .verb-example {
-  background: #333 !important;
-}
-</style>
 
 <script>
 // Text to Speech

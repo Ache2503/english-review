@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/units/units.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="topic-hero mb-5">
+    <div class="container position-relative" style="z-index: 1;">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <a href="{{ url_for('units.view_unit', unit_id=topic.unit_id) }}" class="text-decoration-none text-info mb-3 d-inline-block">
+                    <i class="fas fa-arrow-left me-2"></i> Volver a la Unidad
+                </a>
+                <h1 class="display-4 fw-bold text-white mb-2">{{ topic.title }}</h1>
+                <p class="lead text-light opacity-75 mb-0" style="max-width: 600px;">
+                    {{ topic.description }}
+                </p>
+            </div>
+            <div class="d-none d-md-block text-white opacity-25">
+                <i class="fas fa-comments fa-6x"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row">
+        
+        <div class="col-lg-8">
+            
+            <ul class="nav nav-pills mb-4" id="topicTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold" id="lesson-tab" data-bs-toggle="pill" data-bs-target="#lesson" type="button" role="tab">
+                        <i class="fas fa-book-open me-2"></i>Lección
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" id="examples-tab" data-bs-toggle="pill" data-bs-target="#examples" type="button" role="tab">
+                        <i class="fas fa-comment-dots me-2"></i>Ejemplos Reales
+                    </button>
+                </li>
+                {% if grammar_rules %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" id="grammar-tab" data-bs-toggle="pill" data-bs-target="#grammar" type="button" role="tab">
+                        <i class="fas fa-spell-check me-2"></i>Reglas
+                    </button>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="tab-content" id="topicTabsContent">
+                
+                <div class="tab-pane fade show active" id="lesson" role="tabpanel">
+                    
+                    <div class="glass-card p-4 mb-4 text-light">
+                        <h4 class="fw-bold mb-3 text-white">¿De qué trata este tema?</h4>
+                        <div class="fs-5 lh-lg opacity-90">
+                            {{ topic.detailed_explanation | safe }}
+                        </div>
+                    </div>
+
+                    {% if topic.key_concepts %}
+                    <div class="row g-3">
+                        {% for concept in topic.key_concepts %}
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 h-100 d-flex align-items-center">
+                                <div class="feature-icon bg-success bg-opacity-25 text-success">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-white">{{ concept }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="tab-pane fade" id="examples" role="tabpanel">
+                    <div class="glass-card p-4 mb-4">
+                        <h5 class="text-muted mb-4 text-uppercase small fw-bold ls-1">Conversación de práctica</h5>
+                        
+                        {% if topic.examples %}
+                            {% for ex in topic.examples %}
+                            <div class="d-flex {{ 'justify-content-end' if loop.index is even else 'justify-content-start' }}">
+                                <div class="chat-bubble {{ 'chat-right' if loop.index is even else 'chat-left' }}">
+                                    {% if ex is mapping %}
+                                        <strong>{{ ex.english }}</strong><br>
+                                        <small class="opacity-75">{{ ex.spanish }}</small>
+                                    {% else %}
+                                        {{ ex }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-wind fa-2x mb-3"></i>
+                                <p>No hay ejemplos cargados para este tema aún.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="grammar" role="tabpanel">
+                    {% for rule in grammar_rules %}
+                    <div class="glass-card p-0 mb-4 overflow-hidden">
+                        <div class="p-3 bg-primary bg-opacity-10 border-bottom border-secondary">
+                            <h5 class="mb-0 text-info fw-bold">{{ rule.topic }}</h5>
+                        </div>
+                        <div class="p-4 text-light">
+                            <div class="mb-3">
+                                <span class="badge bg-primary mb-2">Regla</span>
+                                <p class="fs-5">{{ rule.rule }}</p>
+                            </div>
+                            
+                            {% if rule.example %}
+                            <div class="alert alert-dark border border-secondary d-flex align-items-center">
+                                <i class="fas fa-lightbulb text-warning me-3 fa-lg"></i>
+                                <div>
+                                    <strong>Ejemplo:</strong> {{ rule.example }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="sticky-top" style="top: 2rem;">
+                
+                {% if topic.tips %}
+                <div class="card bg-warning bg-opacity-10 border-warning border-opacity-25 mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning fw-bold mb-3">
+                            <i class="fas fa-star me-2"></i>Pro Tips
+                        </h5>
+                        <ul class="list-unstyled mb-0">
+                            {% for tip in topic.tips %}
+                            <li class="mb-3 d-flex text-light opacity-90">
+                                <i class="fas fa-angle-right text-warning me-2 mt-1"></i>
+                                <span>{{ tip }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if topic.common_mistakes %}
+                <div class="card bg-danger bg-opacity-10 border-danger border-opacity-25">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger fw-bold mb-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>No digas esto...
+                        </h5>
+                        <ul class="list-unstyled mb-0">
+                            {% for mistake in topic.common_mistakes %}
+                            <li class="mb-3 d-flex text-light opacity-90">
+                                <i class="fas fa-times text-danger me-2 mt-1"></i>
+                                <span>{{ mistake }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

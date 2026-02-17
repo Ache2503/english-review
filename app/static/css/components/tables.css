@@ -1,0 +1,91 @@
+/* =====================================================
+   COMPONENTE: TABLES
+   Archivo: components/tables.css
+   Sistema de tablas adaptable a dark mode
+===================================================== */
+
+/* ===== TABLA BASE ===== */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+    border-collapse: collapse;
+    transition:
+        background-color var(--transition-normal),
+        color var(--transition-normal);
+}
+
+/* ===== HEADER ===== */
+.table thead {
+    background-color: var(--bg-secondary);
+}
+
+.table th {
+    font-weight: 600;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+/* ===== CELDAS ===== */
+.table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* ===== FILAS ===== */
+.table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+/* Hover */
+.table-hover tbody tr:hover {
+    background-color: var(--border-color);
+}
+
+/* ===== TABLA STRIPED ===== */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* ===== TABLA CON BORDES ===== */
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid var(--border-color);
+}
+
+/* ===== TABLA COMPACTA ===== */
+.table-sm th,
+.table-sm td {
+    padding: 0.4rem;
+}
+
+/* ===== RESPONSIVE ===== */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ===== ESTADOS DE FILA ===== */
+.table-success {
+    background-color: rgba(34, 197, 94, 0.15);
+}
+
+.table-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+.table-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+}
+
+.table-info {
+    background-color: rgba(14, 165, 233, 0.15);
+}
+
+/* ===== ACCIONES EN CELDAS ===== */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}

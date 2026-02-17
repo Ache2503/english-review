@@ -2,34 +2,8 @@
 
 {% block title %}{{ exam.title }} - Examen en Progreso{% endblock %}
 
-{% block extra_head %}
-<style>
-    .question-nav .btn {
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        line-height: 40px;
-    }
-    .question-nav .answered {
-        background-color: var(--bs-success);
-        color: white;
-    }
-    .question-nav .current {
-        background-color: var(--bs-primary);
-        color: white;
-    }
-    .sticky-top-exam {
-        position: sticky;
-        top: 80px;
-    }
-    .timer-warning {
-        animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/exams/exams.css') }}">
 {% endblock %}
 
 {% block content %}

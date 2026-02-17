@@ -1,39 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Practicar Idioms - English Learning Platform{% endblock %}
-
-{% block extra_head %}
-<style>
-    .idiom-card {
-        transition: transform 0.3s ease;
-    }
-    .idiom-card:hover {
-        transform: translateY(-5px);
-    }
-    .option-btn {
-        transition: all 0.2s ease;
-    }
-    .option-btn:hover {
-        transform: scale(1.02);
-    }
-    .option-btn.correct {
-        background-color: var(--bs-success) !important;
-        color: white !important;
-    }
-    .option-btn.incorrect {
-        background-color: var(--bs-danger) !important;
-        color: white !important;
-    }
-    .shake {
-        animation: shake 0.5s;
-    }
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/idioms/idioms.css') }}">
 {% endblock %}
+
+{% block title %}Practicar Idioms - English Learning Platform{% endblock %}
 
 {% block content %}
 <div class="container py-4">

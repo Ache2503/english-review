@@ -1,0 +1,89 @@
+/* ============================================================================
+   EXPLANATIONS - Estilos para explicaciones de unidades y temas
+   ============================================================================ */
+
+/* ===== CONTENT TEXT ===== */
+.content-text {
+    line-height: 1.8;
+    white-space: pre-wrap;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== ACCORDION ===== */
+.explanation-accordion .accordion-button:not(.collapsed) {
+    background-color: #e7f3ff;
+    color: #0c5aa0;
+}
+
+.explanation-accordion .accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.125);
+}
+
+/* ===== TOPIC EXPLANATION ===== */
+.explanation-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.explanation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.explanation-section {
+    margin-bottom: 1.5rem;
+}
+
+.explanation-title {
+    color: var(--primary-color, #0d6efd);
+    font-weight: 600;
+}
+
+/* ===== UNIT EXPLANATION ===== */
+.unit-explanation-header {
+    background: linear-gradient(135deg, var(--primary-color, #0d6efd) 0%, var(--info-color, #0dcaf0) 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.unit-action-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.unit-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .explanation-accordion .accordion-button:not(.collapsed) {
+        background-color: rgba(13, 110, 253, 0.2);
+        color: #6ea8fe;
+    }
+
+    .explanation-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .explanation-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .content-text {
+        line-height: 1.6;
+    }
+
+    .unit-explanation-header {
+        padding: 1.5rem;
+    }
+}

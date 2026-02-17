@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/flashcards/flashcards.css') }}">
+{% endblock %}
+
 {% block title %}Modo de Estudio SRS{% if unit %} - {{ unit.title }}{% endif %}{% endblock %}
 
 {% block content %}
@@ -157,53 +161,6 @@
         </div>
     </div>
 </div>
-
-<style>
-.flashcard-srs {
-    min-height: 350px;
-    border-radius: 15px;
-    transition: transform 0.3s ease;
-}
-
-.flashcard-srs:hover {
-    transform: translateY(-5px);
-}
-
-.btn-lg {
-    min-width: 80px;
-}
-
-.flashcard-back .btn-lg {
-    flex-direction: column;
-    padding: 15px 20px;
-}
-
-.flashcard-back .btn-lg small {
-    font-size: 0.7rem;
-    margin-top: 5px;
-}
-
-kbd {
-    background: #333;
-    border-radius: 3px;
-    padding: 2px 6px;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.card-animate {
-    animation: slideIn 0.3s ease;
-}
-</style>
 
 <script>
 // Datos de las tarjetas

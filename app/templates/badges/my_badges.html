@@ -22,7 +22,7 @@
                     <h2 class="mb-0">{{ total_earned }} / {{ total_badges }}</h2>
                     <div class="progress mt-3" style="height: 25px;">
                         <div class="progress-bar" role="progressbar" 
-                             style="width: {{ (total_earned / total_badges * 100) | int }}%;"
+                             style="width: {{ (total_earned / total_badges * 100) | int if total_badges > 0 else 0 }}%;"
                              aria-valuenow="{{ total_earned }}" 
                              aria-valuemin="0" 
                              aria-valuemax="{{ total_badges }}">

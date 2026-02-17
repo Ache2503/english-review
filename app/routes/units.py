@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Unit, UserProgress, GrammarRule, VocabularyCategory, WritingPractice, UnitExtra
+from app.models import Unit, UserProgress, GrammarRule, VocabularyCategory, WritingPractice, UnitExtra, Topic, TopicExplanation
 from app.services.unit_unlock import UnitUnlockSystem
 
 units_bp = Blueprint('units', __name__, url_prefix='/units')
@@ -72,7 +72,7 @@ def view_grammar(unit_id):
     unlock_system = UnitUnlockSystem(current_user.id)
     unlock_system.mark_section_complete(unit_id, 'grammar')
     
-    return render_template('grammar_view.html',
+    return render_template('grammar/grammar_view.html',
                            unit=unit,
                            grammar_rules=grammar_rules)
 
@@ -236,3 +236,31 @@ def mark_complete(unit_id):
     
     flash(f'🎉 ¡Unidad {unit.unit_number} completada! La siguiente unidad ha sido desbloqueada.', 'success')
     return redirect(url_for('unit_challenge.units_overview'))
+
+@units_bp.route('/topic/<int:topic_id>')
+@login_required
+def topic_detail(topic_id):
+    """Ver detalles de un tema específico dentro de una unidad"""
+    # 1. Obtener el tópico
+    topic = Topic.query.get_or_404(topic_id)
+    
+    # 2. Verificar si la unidad a la que pertenece está desbloqueada
+    unlock_system = UnitUnlockSystem(current_user.id)
+    if not unlock_system.is_unit_unlocked(topic.unit_id):
+        flash('🔒 Debes desbloquear esta unidad primero.', 'warning')
+        return redirect(url_for('unit_challenge.units_overview'))
+
+    # 3. Obtener explicaciones extra si existen
+    explanations = topic.explanations.order_by(TopicExplanation.order).all()
+    
+    # 4. Buscar reglas gramaticales relacionadas por coincidencia de nombre
+    # (Buscamos reglas que pertenezcan a la misma unidad y tengan el mismo título de tópico)
+    grammar_rules = GrammarRule.query.filter_by(
+        unit_id=topic.unit_id, 
+        topic=topic.title 
+    ).all()
+
+    return render_template('units/topic_detail.html', 
+                           topic=topic, 
+                           explanations=explanations,
+                           grammar_rules=grammar_rules)

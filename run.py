@@ -1,4 +1,4 @@
-from app import create_app, db
+from app import create_app
 import os
 
 app = create_app(os.environ.get('FLASK_ENV', 'development'))
@@ -6,6 +6,7 @@ app = create_app(os.environ.get('FLASK_ENV', 'development'))
 @app.shell_context_processor
 def make_shell_context():
     """Contexto de shell interactivo"""
+    from app.extensions import db
     return {'db': db}
 
 if __name__ == '__main__':

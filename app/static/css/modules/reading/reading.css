@@ -1,0 +1,156 @@
+/* ============================================================================
+   READING - Estilos para lecturas y ejercicios de comprensión
+   ============================================================================ */
+
+/* ===== READING LIST ===== */
+.reading-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reading-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+.reading-title {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.reading-description {
+    color: var(--text-muted, #6c757d);
+    font-size: 0.95rem;
+}
+
+.reading-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+}
+
+.reading-badge {
+    margin-right: 5px;
+}
+
+/* ===== READING VIEW ===== */
+.reading-content {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.reading-paragraph {
+    margin-bottom: 1.5rem;
+}
+
+.reading-highlight {
+    background-color: rgba(255, 193, 7, 0.3);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+.reading-progress {
+    background-color: #e9ecef;
+    height: 8px;
+    border-radius: 4px;
+}
+
+.reading-progress-bar {
+    transition: width 0.3s ease;
+}
+
+/* ===== SENTENCE EXERCISE ===== */
+.sentence-input {
+    font-size: 1.05em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sentence-input:focus {
+    border-color: var(--primary-color, #0d6efd);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.sentence-correct {
+    border-color: var(--bs-success, #28a745);
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.sentence-incorrect {
+    border-color: var(--bs-danger, #dc3545);
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* ===== SUBMISSION DETAIL ===== */
+.submission-alert {
+    border-radius: 5px;
+}
+
+.submission-score {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.submission-score.excellent {
+    color: var(--bs-success, #28a745);
+}
+
+.submission-score.good {
+    color: var(--bs-warning, #ffc107);
+}
+
+.submission-score.needs-practice {
+    color: var(--bs-danger, #dc3545);
+}
+
+/* ===== READING HISTORY ===== */
+.history-item {
+    transition: background-color 0.2s ease;
+}
+
+.history-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.history-date {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+}
+
+.history-score {
+    font-weight: 600;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .reading-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .reading-content {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .reading-progress {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .history-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .reading-content {
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .submission-score {
+        font-size: 2rem;
+    }
+}

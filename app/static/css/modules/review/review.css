@@ -1,0 +1,229 @@
+/* ============================================================================
+   REVIEW - Estilos para sesiones de repaso
+   ============================================================================ */
+
+/* ===== REVIEW CARD ===== */
+.review-card {
+    transition: transform 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+}
+
+.review-card.correct {
+    border-left: 4px solid var(--bs-success, #28a745);
+}
+
+.review-card.incorrect {
+    border-left: 4px solid var(--bs-danger, #dc3545);
+}
+
+/* ===== ANSWER INPUT ===== */
+.answer-input {
+    font-size: 1.25rem;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.answer-input:focus {
+    border-color: var(--primary-color, #0d6efd);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.answer-input.correct {
+    border-color: var(--bs-success, #28a745);
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.answer-input.incorrect {
+    border-color: var(--bs-danger, #dc3545);
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* ===== FEEDBACK ===== */
+.feedback-correct {
+    background-color: #d4edda;
+    border-color: #28a745;
+}
+
+.feedback-incorrect {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+}
+
+.feedback-message {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.feedback-message.correct {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 4px solid var(--bs-success, #28a745);
+    color: var(--bs-success, #28a745);
+}
+
+.feedback-message.incorrect {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 4px solid var(--bs-danger, #dc3545);
+    color: var(--bs-danger, #dc3545);
+}
+
+/* ===== HINT ===== */
+.hint-text {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.hint-text:hover {
+    opacity: 1;
+}
+
+.hint-reveal {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== MASTERY INDICATOR ===== */
+.mastery-indicator {
+    width: 100%;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.mastery-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #20c997);
+    transition: width 0.5s ease;
+}
+
+.mastery-level {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.mastery-level.low {
+    color: var(--bs-danger, #dc3545);
+}
+
+.mastery-level.medium {
+    color: var(--bs-warning, #ffc107);
+}
+
+.mastery-level.high {
+    color: var(--bs-success, #28a745);
+}
+
+/* ===== REVIEW STATS ===== */
+.review-stat-card {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color, #0d6efd) 0%, var(--info-color, #0dcaf0) 100%);
+    color: white;
+}
+
+.review-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.review-stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* ===== REVIEW DASHBOARD ===== */
+.review-dashboard-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.review-topic {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.review-progress-bar {
+    height: 8px;
+    border-radius: 4px;
+}
+
+/* ===== REVIEW RESULTS ===== */
+.review-results-header {
+    text-align: center;
+    padding: 2rem;
+}
+
+.review-score {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+.review-score.excellent {
+    color: var(--bs-success, #28a745);
+}
+
+.review-score.good {
+    color: var(--bs-warning, #ffc107);
+}
+
+.review-score.needs-practice {
+    color: var(--bs-danger, #dc3545);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.pulse {
+    animation: pulse 0.3s ease;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .review-dashboard-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .feedback-correct {
+        background-color: rgba(40, 167, 69, 0.2);
+    }
+
+    .feedback-incorrect {
+        background-color: rgba(220, 53, 69, 0.2);
+    }
+
+    .mastery-indicator {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .review-score {
+        font-size: 3rem;
+    }
+
+    .answer-input {
+        font-size: 1.1rem;
+    }
+
+    .review-stat-value {
+        font-size: 1.5rem;
+    }
+}

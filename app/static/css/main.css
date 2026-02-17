@@ -1,0 +1,52 @@
+/* ==========================
+   CORE
+========================== */
+@import url("core/variables.css");
+@import url("core/reset.css");
+@import url("core/layout.css");
+
+/* ==========================
+    THEMES
+@import url("themes/dark-mode.css");
+
+/* ==========================
+    COMPONENTS
+========================== */
+@import url("components/cards.css");
+@import url("components/forms.css");
+@import url("components/buttons.css");
+@import url("components/navbar.css");
+@import url("components/tables.css");
+@import url("components/alerts.css");
+@import url("components/footer.css");
+
+
+/* ==========================
+   MODULES (se agregarán después)
+========================== */
+@import url("modules/auth/auth.css");
+@import url("modules/badges/badges.css");
+@import url("modules/challenge/challenge.css");
+@import url("modules/challenges/challenges.css");
+@import url("modules/conversation/conversation.css");
+@import url("modules/drills/drills.css");
+@import url("modules/dashboard/dashboard.css");
+@import url("modules/errors/errors.css");
+@import url("modules/exams/exams.css");
+@import url("modules/explanations/explanations.css");
+@import url("modules/flashcards/flashcards.css");
+@import url("modules/games/games.css");
+@import url("modules/grammar/grammar.css");
+@import url("modules/idioms/idioms.css");
+@import url("modules/progress/progress.css");
+@import url("modules/quizz/quizz.css");
+@import url("modules/reading/reading.css");
+@import url("modules/reports/reports.css");
+@import url("modules/review/review.css");
+@import url("modules/sentences/sentences.css");
+@import url("modules/stats/stats.css");
+@import url("modules/study/study.css");
+@import url("modules/units/units.css");
+@import url("modules/vocabulary/vocabulary.css");
+@import url("modules/writing/writing.css");
+@import url("modules/home/home.css");

@@ -3,40 +3,7 @@
 {% block title %}Desafío - {{ unit.title }}{% endblock %}
 
 {% block extra_css %}
-<style>
-    .question-card {
-        transition: all 0.3s ease;
-    }
-    .question-card:hover {
-        transform: translateY(-2px);
-    }
-    .option-label {
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .option-label:hover {
-        background-color: rgba(13, 110, 253, 0.1);
-    }
-    input[type="radio"]:checked + .option-label {
-        background-color: rgba(13, 110, 253, 0.2);
-        border-color: #0d6efd !important;
-    }
-    .timer {
-        font-family: monospace;
-        font-size: 1.5rem;
-    }
-    .timer.warning {
-        color: #ffc107;
-    }
-    .timer.danger {
-        color: #dc3545;
-        animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/challenge/challenge.css') }}">
 {% endblock %}
 
 {% block content %}

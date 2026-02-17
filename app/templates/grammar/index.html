@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/grammar/grammar.css') }}">
+{% endblock %}
+
 {% block title %}Grammar Topics - English Learning{% endblock %}
 
 {% block content %}
@@ -203,140 +207,6 @@
     </a>
   </div>
 </div>
-
-<style>
-/* Estadísticas */
-.stat-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-weight: 500;
-}
-
-.stat-number {
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.stat-label {
-  font-size: 0.85rem;
-}
-
-/* Filtros */
-.filter-bar {
-  text-align: center;
-}
-
-.search-box {
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.search-box .input-group {
-  border-radius: 50px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.search-box .form-control {
-  border: none;
-}
-
-/* Headers de nivel */
-.level-header {
-  padding: 1rem 1.5rem;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
-  border-left: 5px solid;
-}
-
-.level-header.beginner { border-color: #28a745; background: linear-gradient(135deg, rgba(40,167,69,0.1), rgba(40,167,69,0.05)); }
-.level-header.intermediate { border-color: #ffc107; background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,193,7,0.05)); }
-.level-header.advanced { border-color: #dc3545; background: linear-gradient(135deg, rgba(220,53,69,0.1), rgba(220,53,69,0.05)); }
-
-.level-header h2 {
-  margin-bottom: 0.25rem;
-  font-size: 1.5rem;
-}
-
-.level-icon {
-  margin-right: 0.5rem;
-}
-
-/* Tarjetas de temas */
-.topic-icon {
-  font-size: 2.5rem;
-  line-height: 1;
-}
-
-.topic-hover {
-  transition: all 0.3s ease;
-  border-radius: 1rem;
-}
-
-.topic-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
-}
-
-.topic-hover .card-title {
-  color: #333;
-  transition: color 0.2s;
-}
-
-.topic-hover:hover .card-title {
-  color: #2563eb;
-}
-
-/* Ocultar elementos filtrados */
-.topic-card.hidden,
-.level-section.hidden {
-  display: none !important;
-}
-
-/* Animaciones */
-.topic-card {
-  animation: fadeInUp 0.5s ease-out;
-  animation-fill-mode: both;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsive */
-@media (max-width: 576px) {
-  .topic-icon {
-    font-size: 2rem;
-  }
-  
-  .level-header h2 {
-    font-size: 1.25rem;
-  }
-}
-
-/* Dark mode */
-[data-theme="dark"] .level-header {
-  background: linear-gradient(135deg, rgba(45,55,72,0.8), rgba(26,32,44,0.8));
-}
-
-[data-theme="dark"] .topic-hover {
-  background: #2d3748;
-}
-
-[data-theme="dark"] .topic-hover .card-title {
-  color: #e2e8f0;
-}
-
-[data-theme="dark"] .search-box .form-control,
-[data-theme="dark"] .search-box .input-group-text {
-  background: #2d3748;
-  color: #e2e8f0;
-}
-</style>
 
 <script>
 function filterTopics(level) {

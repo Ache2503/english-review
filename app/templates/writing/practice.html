@@ -1,57 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Práctica de Escritura - English Learning Platform{% endblock %}
-
-{% block extra_head %}
-<style>
-    .prompt-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 1rem;
-        transition: transform 0.3s;
-    }
-    .prompt-card:hover {
-        transform: scale(1.02);
-    }
-    .prompt-card.selected {
-        box-shadow: 0 0 0 4px rgba(255,255,255,0.5), 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .writing-guidelines {
-        font-size: 0.9rem;
-    }
-    .writing-guidelines li {
-        margin-bottom: 0.5rem;
-    }
-    .level-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 0.8rem;
-    }
-    .word-goal {
-        height: 8px;
-        border-radius: 4px;
-        background: #e9ecef;
-        overflow: hidden;
-    }
-    .word-goal-fill {
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.3s ease;
-    }
-    .timer-display {
-        font-family: 'Courier New', monospace;
-        font-size: 1.5rem;
-    }
-    .vocabulary-hint {
-        background: #fff3cd;
-        border-left: 3px solid #ffc107;
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        font-size: 0.9rem;
-    }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/writing/writing.css') }}">
 {% endblock %}
+
+{% block title %}Práctica de Escritura - English Learning Platform{% endblock %}
 
 {% block content %}
 <div class="container py-4">

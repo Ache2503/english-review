@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/study/study.css') }}">
+{% endblock %}
+
 {% block title %}📚 Estudio Intensivo - Prepárate para tu Examen{% endblock %}
 
 {% block content %}
@@ -131,27 +135,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.topic-card {
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.topic-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-color: var(--bs-primary);
-}
-
-.display-4 {
-    font-size: 3.5rem;
-}
-
-@media (max-width: 768px) {
-    .display-4 {
-        font-size: 2.5rem;
-    }
-}
-</style>
 {% endblock %}

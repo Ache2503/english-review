@@ -1,0 +1,72 @@
+/* ============================================================================
+   ERRORS - Estilos para página de errores
+   ============================================================================ */
+
+/* ===== ERROR LIST ===== */
+.error-item {
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.error-item:hover {
+    transform: translateX(4px);
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.error-source {
+    font-weight: 500;
+}
+
+.error-message {
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    word-break: break-word;
+}
+
+.error-context {
+    font-style: italic;
+}
+
+.error-rule {
+    font-family: monospace;
+    color: #0d6efd;
+}
+
+.error-date {
+    white-space: nowrap;
+}
+
+/* ===== EMPTY STATE ===== */
+.error-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.error-empty-icon {
+    font-size: 4rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .error-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .error-message {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .error-rule {
+        color: #6ea8fe;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .error-date {
+        font-size: 0.75rem;
+    }
+}

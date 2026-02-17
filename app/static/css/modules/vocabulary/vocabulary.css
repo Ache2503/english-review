@@ -1,0 +1,155 @@
+/* ============================================================================
+   VOCABULARY - Estilos para vocabulario
+   ============================================================================ */
+
+/* ===== VOCABULARY CARD ===== */
+.vocab-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vocab-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.vocab-category {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.vocab-category-description {
+    color: var(--text-muted, #6c757d);
+}
+
+/* ===== VOCABULARY ITEM ===== */
+.vocab-item {
+    transition: background-color 0.2s ease;
+}
+
+.vocab-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.vocab-word {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color, #0d6efd);
+}
+
+.vocab-definition {
+    color: var(--text-muted, #6c757d);
+    font-size: 0.9rem;
+}
+
+.vocab-example {
+    font-style: italic;
+    color: var(--text-muted, #6c757d);
+    font-size: 0.85rem;
+}
+
+/* ===== VOCABULARY LIST ===== */
+.vocab-list-item {
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.vocab-list-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-left-color: var(--primary-color, #0d6efd);
+}
+
+.vocab-list-word {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.vocab-list-definition {
+    color: var(--text-secondary, #6c757d);
+}
+
+.vocab-list-example {
+    font-style: italic;
+    color: var(--text-muted, #6c757d);
+}
+
+/* ===== VOCABULARY PRACTICE ===== */
+.vocab-practice-card {
+    transition: transform 0.3s ease;
+}
+
+.vocab-practice-card:hover {
+    transform: translateY(-5px);
+}
+
+.vocab-practice-word {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color, #0d6efd);
+}
+
+/* ===== VOCABULARY FLASHCARD ===== */
+.vocab-flashcard {
+    min-height: 200px;
+    perspective: 1000px;
+}
+
+.vocab-flashcard-front,
+.vocab-flashcard-back {
+    transition: transform 0.5s ease;
+    backface-visibility: hidden;
+}
+
+.vocab-flashcard.flipped .vocab-flashcard-front {
+    transform: rotateY(180deg);
+}
+
+.vocab-flashcard.flipped .vocab-flashcard-back {
+    transform: rotateY(0deg);
+}
+
+.vocab-flashcard-back {
+    transform: rotateY(180deg);
+}
+
+/* ===== VOCABULARY STATS ===== */
+.vocab-stat-card {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.vocab-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.vocab-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .vocab-card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .vocab-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .vocab-list-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .vocab-practice-word {
+        font-size: 1.5rem;
+    }
+
+    .vocab-stat-value {
+        font-size: 1.5rem;
+    }
+}

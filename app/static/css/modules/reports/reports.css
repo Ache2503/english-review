@@ -1,0 +1,228 @@
+/* ============================================================================
+   REPORTS - Estilos para reportes y estadísticas
+   ============================================================================ */
+
+/* ===== REPORT CARD ===== */
+.report-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.report-title {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.report-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.report-label {
+    font-size: 0.9rem;
+    color: var(--text-muted, #6c757d);
+}
+
+/* ===== STAT CARD ===== */
+.stat-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card .stat-icon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    opacity: 0.3;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.stat-card .stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* ===== CHART CONTAINER ===== */
+.chart-container {
+    position: relative;
+    height: 300px;
+    padding: 1rem;
+    background: var(--bg-card, white);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== ACHIEVEMENTS ===== */
+.achievement-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.achievement-badge:hover {
+    transform: scale(1.1);
+}
+
+.badge-icon {
+    line-height: 1;
+}
+
+.achievement-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.achievement-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.achievement-title {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.achievement-description {
+    font-size: 0.9rem;
+    color: var(--text-muted, #6c757d);
+}
+
+.achievement-unlocked {
+    border: 2px solid var(--bs-success, #28a745);
+}
+
+.achievement-locked {
+    opacity: 0.5;
+    filter: grayscale(0.5);
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+    position: relative;
+    padding-left: 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 3rem;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bs-primary, #0d6efd);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--bs-primary, #0d6efd);
+}
+
+.timeline-item.completed::before {
+    background: var(--bs-success, #28a745);
+    box-shadow: 0 0 0 2px var(--bs-success, #28a745);
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+}
+
+/* ===== WEEKLY SUMMARY ===== */
+.summary-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--primary-color, #0d6efd) 0%, var(--info-color, #0dcaf0) 100%);
+    color: white;
+}
+
+.summary-value {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.summary-label {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* ===== DETAILED REPORT ===== */
+.detail-section {
+    margin-bottom: 2rem;
+}
+
+.detail-section-title {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color, #dee2e6);
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .report-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .chart-container {
+        background: var(--bg-card, #1a2332);
+    }
+
+    .timeline::before {
+        background: #30363d;
+    }
+
+    .achievement-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .report-value {
+        font-size: 2rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .summary-value {
+        font-size: 2rem;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+}

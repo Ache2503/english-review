@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/grammar/grammar.css') }}">
+{% endblock %}
+
 {% block title %}Mis Oraciones - Gramática{% endblock %}
 
 {% block content %}
@@ -136,71 +140,4 @@
     </div>
   </div>
 </div>
-
-<style>
-.stat-card {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-icon {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 2rem;
-  opacity: 0.3;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.sentence-item {
-  transition: all 0.3s;
-}
-
-.sentence-item:hover {
-  background: rgba(102, 126, 234, 0.05);
-}
-
-.sentence-item.border-warning {
-  border-width: 2px !important;
-  background: rgba(255, 193, 7, 0.05);
-}
-
-.speak-btn {
-  color: #667eea;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.speak-btn:hover {
-  transform: scale(1.2);
-}
-
-/* Dark mode */
-[data-bs-theme="dark"] .sentence-item:hover {
-  background: rgba(102, 126, 234, 0.1);
-}
-</style>
-
-<script>
-function speak(text) {
-  if ('speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.9;
-    speechSynthesis.speak(utterance);
-  }
-}
-</script>
 {% endblock %}

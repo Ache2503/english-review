@@ -1,0 +1,278 @@
+/* ============================================================================
+   WRITING - Estilos para práctica de escritura
+   ============================================================================ */
+
+/* ===== WRITING AREA ===== */
+.writing-area {
+    min-height: 300px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.writing-area:focus {
+    border-color: var(--primary-color, #0d6efd);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* ===== FEEDBACK PANEL ===== */
+.feedback-panel {
+    position: sticky;
+    top: 20px;
+}
+
+/* ===== ERROR HIGHLIGHT ===== */
+.error-highlight {
+    background-color: #fff3cd;
+    border-bottom: 2px wavy #ffc107;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.error-highlight.grammar {
+    background-color: #f8d7da;
+    border-bottom-color: #dc3545;
+}
+
+.error-highlight.spelling {
+    background-color: #cce5ff;
+    border-bottom-color: #0d6efd;
+}
+
+.error-highlight.style {
+    background-color: #d4edda;
+    border-bottom-color: #28a745;
+}
+
+/* ===== LIVE STATS ===== */
+.live-stats {
+    font-size: 0.9rem;
+    color: var(--text-muted, #6c757d);
+}
+
+/* ===== SCORE CIRCLE ===== */
+.score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto;
+}
+
+.score-circle.excellent {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.score-circle.good {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: white;
+}
+
+.score-circle.needs-practice {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+/* ===== ERROR LIST ITEM ===== */
+.error-list-item {
+    border-left: 3px solid;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    transition: transform 0.2s ease;
+}
+
+.error-list-item:hover {
+    transform: translateX(4px);
+}
+
+.error-list-item.high {
+    border-left-color: #dc3545;
+}
+
+.error-list-item.medium {
+    border-left-color: #ffc107;
+}
+
+.error-list-item.low {
+    border-left-color: #28a745;
+}
+
+/* ===== PROMPT CARD ===== */
+.prompt-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.prompt-card:hover {
+    transform: scale(1.02);
+}
+
+.prompt-card.selected {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== WRITING GUIDELINES ===== */
+.writing-guidelines {
+    font-size: 0.9rem;
+}
+
+.writing-guidelines li {
+    margin-bottom: 0.5rem;
+}
+
+/* ===== LEVEL BADGE ===== */
+.level-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+}
+
+/* ===== WORD GOAL ===== */
+.word-goal {
+    height: 8px;
+    border-radius: 4px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.word-goal-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* ===== TIMER DISPLAY ===== */
+.timer-display {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.timer-display.warning {
+    color: #ffc107;
+}
+
+.timer-display.danger {
+    color: #dc3545;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ===== VOCABULARY HINT ===== */
+.vocabulary-hint {
+    background: #fff3cd;
+    border-left: 3px solid #ffc107;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+}
+
+/* ===== PATTERN CARD ===== */
+.pattern-card {
+    border-left: 4px solid;
+    transition: transform 0.2s ease;
+}
+
+.pattern-card:hover {
+    transform: translateX(5px);
+}
+
+.pattern-card.high {
+    border-left-color: #dc3545;
+}
+
+.pattern-card.medium {
+    border-left-color: #ffc107;
+}
+
+.pattern-card.low {
+    border-left-color: #28a745;
+}
+
+/* ===== TIMELINE ENTRY ===== */
+.timeline-entry {
+    position: relative;
+    padding-left: 30px;
+    border-left: 2px solid #dee2e6;
+}
+
+.timeline-entry::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #0d6efd;
+}
+
+/* ===== PROGRESS TREND ===== */
+.progress-trend {
+    height: 4px;
+    border-radius: 2px;
+}
+
+/* ===== WRITING HISTORY ===== */
+.writing-history-item {
+    transition: background-color 0.2s ease;
+}
+
+.writing-history-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .error-list-item {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .writing-history-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .vocabulary-hint {
+        background: rgba(255, 193, 7, 0.15);
+    }
+
+    .word-goal {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .timeline-entry {
+        border-left-color: #30363d;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .writing-area {
+        min-height: 200px;
+        font-size: 1rem;
+    }
+
+    .score-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.25rem;
+    }
+
+    .timer-display {
+        font-size: 1.25rem;
+    }
+}

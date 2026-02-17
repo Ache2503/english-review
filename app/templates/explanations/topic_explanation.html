@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/explanations/explanations.css') }}">
+{% endblock %}
+
 {% block title %}{{ topic.title }} - Explicación Detallada{% endblock %}
 
 {% block content %}
@@ -154,21 +158,4 @@
         </a>
     </div>
 </div>
-
-<style>
-    .content-text {
-        line-height: 1.8;
-        white-space: pre-wrap;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .accordion-button:not(.collapsed) {
-        background-color: #e7f3ff;
-        color: #0c5aa0;
-    }
-    
-    .card {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-</style>
 {% endblock %}

@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/reports/reports.css') }}">
+{% endblock %}
+
 {% block title %}Reportes de Progreso - English Learning Platform{% endblock %}
 
 {% block content %}
@@ -191,18 +195,6 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_head %}
-<style>
-    .hover-card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
-    }
-</style>
 {% endblock %}
 
 {% block extra_js %}

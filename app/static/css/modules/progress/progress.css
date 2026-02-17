@@ -1,0 +1,214 @@
+/* ============================================================================
+   PROGRESS - Estilos para seguimiento de progreso
+   ============================================================================ */
+
+/* ===== PROGRESS OVERVIEW ===== */
+.progress-overview {
+    padding: 1.5rem;
+}
+
+.progress-percentage {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.progress-percentage.completed {
+    color: var(--bs-success, #28a745);
+}
+
+.progress-percentage.in-progress {
+    color: var(--bs-warning, #ffc107);
+}
+
+.progress-percentage.start {
+    color: var(--bs-secondary, #6c757d);
+}
+
+/* ===== UNIT PROGRESS CARD ===== */
+.unit-progress-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.unit-progress-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.unit-progress-header {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+}
+
+.unit-progress-title {
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.unit-progress-bar {
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.unit-progress-bar .progress-bar {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.unit-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.unit-status-badge.completed {
+    background-color: var(--bs-success, #28a745);
+    color: white;
+}
+
+.unit-status-badge.in-progress {
+    background-color: var(--bs-warning, #ffc107);
+    color: #333;
+}
+
+.unit-status-badge.not-started {
+    background-color: var(--bs-secondary, #6c757d);
+    color: white;
+}
+
+/* ===== PROGRESS STATS ===== */
+.progress-stat-card {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--primary-color, #0d6efd) 0%, var(--info-color, #0dcaf0) 100%);
+    color: white;
+}
+
+.progress-stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.progress-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+/* ===== PROGRESS CHART ===== */
+.progress-chart {
+    padding: 1rem;
+    background: var(--bg-card, white);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chart-bar-container {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 0;
+}
+
+.chart-bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+    min-width: 20px;
+}
+
+.chart-bar:hover {
+    opacity: 0.8;
+}
+
+.chart-label {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted, #6c757d);
+    margin-top: 0.5rem;
+}
+
+/* ===== PROGRESS TIMELINE ===== */
+.progress-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.progress-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color, #dee2e6);
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bs-primary, #0d6efd);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--bs-primary, #0d6efd);
+}
+
+.timeline-item.completed::before {
+    background: var(--bs-success, #28a745);
+    box-shadow: 0 0 0 2px var(--bs-success, #28a745);
+}
+
+.timeline-item.current::before {
+    background: var(--bs-warning, #ffc107);
+    box-shadow: 0 0 0 2px var(--bs-warning, #ffc107);
+    animation: pulse 2s infinite;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .unit-progress-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .progress-chart {
+        background: var(--bg-card, #1a2332);
+    }
+
+    .chart-label {
+        color: var(--text-muted, #a8b8cc);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .progress-percentage {
+        font-size: 2rem;
+    }
+
+    .progress-stat-value {
+        font-size: 2rem;
+    }
+
+    .unit-progress-bar {
+        height: 16px;
+    }
+
+    .unit-progress-bar .progress-bar {
+        font-size: 0.65rem;
+        line-height: 16px;
+    }
+}

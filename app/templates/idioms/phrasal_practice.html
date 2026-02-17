@@ -1,30 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Practicar Phrasal Verbs - English Learning Platform{% endblock %}
-
-{% block extra_head %}
-<style>
-    .pv-card {
-        transition: transform 0.3s ease;
-    }
-    .pv-card:hover {
-        transform: translateY(-5px);
-    }
-    .option-btn {
-        transition: all 0.2s ease;
-    }
-    .option-btn.correct {
-        background-color: var(--bs-success) !important;
-        color: white !important;
-        border-color: var(--bs-success) !important;
-    }
-    .option-btn.incorrect {
-        background-color: var(--bs-danger) !important;
-        color: white !important;
-        border-color: var(--bs-danger) !important;
-    }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/idioms/idioms.css') }}">
 {% endblock %}
+
+{% block title %}Practicar Phrasal Verbs - English Learning Platform{% endblock %}
 
 {% block content %}
 <div class="container py-4">

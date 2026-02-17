@@ -1,0 +1,163 @@
+/* =====================================================
+   MÓDULO: AUTH
+   Archivo: modules/auth/auth.css
+   Estilos exclusivos para login y registro
+===================================================== */
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+
+.auth-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 4rem) 1rem;
+}
+
+/* =====================================================
+   CARD DE AUTENTICACIÓN
+===================================================== */
+
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: var(--radius-lg);
+
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-lg);
+
+    margin: 0 auto;
+
+    /* Animación inicial */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: authFadeUp 0.5s ease forwards;
+
+    transition:
+        background-color var(--transition-normal),
+        box-shadow var(--transition-normal),
+        transform var(--transition-fast);
+}
+
+/* =====================================================
+   TÍTULO
+===================================================== */
+
+.auth-card h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* =====================================================
+   ICONO SUPERIOR
+===================================================== */
+
+.auth-icon {
+    font-size: 2rem;
+    color: var(--color-primary);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* =====================================================
+   INPUTS INTERACTIVOS
+===================================================== */
+
+.auth-card .form-control {
+    border-radius: var(--radius-md);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+/* Cuando haces focus */
+.auth-card .form-control:focus,
+.auth-card .form-control:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.20);
+    transform: translateY(-1px);
+}
+
+/* 🔥 Cuando el usuario ya escribió algo */
+.auth-card .form-control:not(:placeholder-shown) {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.10);
+}
+
+/* =====================================================
+   BOTÓN INTERACTIVO
+===================================================== */
+
+.auth-card .btn {
+    width: 100%;
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.auth-card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.auth-card .btn:active {
+    transform: translateY(0);
+}
+
+/* =====================================================
+   LINK SECUNDARIO
+===================================================== */
+
+.auth-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.auth-link a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    color: var(--color-primary-hover);
+}
+
+/* =====================================================
+   ANIMACIÓN
+===================================================== */
+
+@keyframes authFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =====================================================
+   ACCESIBILIDAD
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-card {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    .auth-card .form-control,
+    .auth-card .btn {
+        transition: none !important;
+    }
+}

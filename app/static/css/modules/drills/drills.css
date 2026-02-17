@@ -1,0 +1,195 @@
+/* ============================================================================
+   DRILLS - Estilos para Grammar Drills
+   ============================================================================ */
+
+/* ===== DRILL LIST ===== */
+.drill-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.drill-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.drill-level-a1,
+.drill-level-a2 {
+    border-left: 4px solid #28a745;
+}
+
+.drill-level-b1,
+.drill-level-b2 {
+    border-left: 4px solid #0d6efd;
+}
+
+.drill-level-c1,
+.drill-level-c2 {
+    border-left: 4px solid #dc3545;
+}
+
+.drill-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.drill-timer {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== DRILL TAKE ===== */
+.drill-progress {
+    transition: width 0.3s ease;
+}
+
+.drill-timer-warning {
+    animation: pulse 1 color: #ffcs infinite;
+   107 !important;
+}
+
+.drill-timer-danger {
+    animation: pulse 0.5s infinite;
+    color: #dc3545 !important;
+}
+
+.drill-question {
+    transition: opacity 0.2s ease;
+}
+
+.drill-option {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.drill-option:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.drill-option.selected {
+    background-color: rgba(255, 193, 7, 0.2);
+    border-color: #ffc107;
+}
+
+.drill-option.correct {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: #28a745;
+}
+
+.drill-option.incorrect {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+}
+
+.drill-input {
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.drill-input:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+/* ===== DRILL RESULTS ===== */
+.drill-score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.drill-score-circle.passed {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.drill-score-circle.failed {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+.drill-result-stat {
+    min-width: 100px;
+}
+
+.drill-explanation {
+    background-color: rgba(23, 162, 184, 0.1);
+    border-left: 3px solid #17a2b8;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+/* ===== ERROR TRACKER ===== */
+.error-card {
+    transition: transform 0.2s ease;
+}
+
+.error-card:hover {
+    transform: translateX(4px);
+}
+
+.error-category-grammar {
+    border-left: 4px solid #dc3545;
+}
+
+.error-category-vocabulary {
+    border-left: 4px solid #ffc107;
+}
+
+.error-category-pronunciation {
+    border-left: 4px solid #17a2b8;
+}
+
+.error-pattern {
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.error-count {
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .drill-option:hover {
+        background-color: rgba(255, 193, 7, 0.15);
+    }
+
+    .drill-option.selected {
+        background-color: rgba(255, 193, 7, 0.25);
+    }
+
+    .drill-input:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15);
+    }
+
+    .drill-explanation {
+        background-color: rgba(23, 162, 184, 0.15);
+    }
+
+    .error-pattern {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .drill-score-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .drill-result-stat {
+        min-width: 80px;
+    }
+}

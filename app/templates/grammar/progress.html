@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/grammar/grammar.css') }}">
+{% endblock %}
+
 {% block title %}Mi Progreso en Gramática{% endblock %}
 
 {% block content %}
@@ -147,55 +151,4 @@
   </div>
   {% endif %}
 </div>
-
-<style>
-.stat-card {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.stat-icon {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 2rem;
-  opacity: 0.3;
-}
-
-.stat-number {
-  font-size: 2.5rem;
-  font-weight: bold;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.bg-gradient-success {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.bg-gradient-warning {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.progress {
-  border-radius: 10px;
-  margin: 0 auto;
-}
-
-.progress-bar {
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-</style>
 {% endblock %}

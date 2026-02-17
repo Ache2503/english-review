@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/reports/reports.css') }}">
+{% endblock %}
+
 {% block title %}Logros - English Learning Platform{% endblock %}
 
 {% block content %}
@@ -164,25 +168,4 @@
         </a>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_head %}
-<style>
-    .badge-icon {
-        line-height: 1;
-    }
-    .timeline::before {
-        content: '';
-        position: absolute;
-        left: 19px;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: #e9ecef;
-    }
-    .timeline {
-        position: relative;
-        padding-left: 0;
-    }
-</style>
 {% endblock %}

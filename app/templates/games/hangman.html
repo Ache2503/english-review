@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/games/games.css') }}">
+{% endblock %}
+
 {% block title %}Hangman - Mini Juegos{% endblock %}
 
 {% block content %}
@@ -64,12 +68,6 @@
         </div>
     </div>
 </div>
-
-<style>
-.letter-spacing-3 { letter-spacing: 1rem; }
-.letter-btn { width: 40px; height: 40px; margin: 3px; font-weight: bold; }
-.letter-btn:disabled { opacity: 0.4; }
-</style>
 
 <script>
 const level = '{{ level }}';
@@ -239,6 +237,9 @@ function checkLose() {
 
 async function saveScore(won) {
     try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromDaily = urlParams.get('from_daily') === 'true';
+        
         const response = await fetch('/games/hangman/submit', {
             method: 'POST',
             headers: {
@@ -249,7 +250,8 @@ async function saveScore(won) {
                 level: level,
                 won: won,
                 attempts_left: 6 - wrongGuesses,
-                word_length: word.length
+                word_length: word.length,
+                from_daily: fromDaily
             })
         });
         const data = await response.json();

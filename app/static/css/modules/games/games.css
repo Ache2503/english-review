@@ -1,0 +1,372 @@
+/* ============================================================================
+   GAMES - Estilos para mini juegos
+   ============================================================================ */
+
+/* ===== QUICK QUIZ ===== */
+.quiz-option {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quiz-option:hover {
+    border-color: #0066cc;
+    background-color: #f0f4ff;
+}
+
+.quiz-option.selected {
+    border-color: #0066cc;
+    background-color: #e3f2fd;
+}
+
+.quiz-option.correct {
+    border-color: #28a745;
+    background-color: #e8f5e9;
+}
+
+.quiz-option.incorrect {
+    border-color: #dc3545;
+    background-color: #ffebee;
+}
+
+.quiz-timer {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* ===== HANGMAN ===== */
+.letter-spacing-3 {
+    letter-spacing: 1rem;
+}
+
+.letter-btn {
+    width: 40px;
+    height: 40px;
+    margin: 3px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.letter-btn:hover:not(:disabled) {
+    transform: scale(1.1);
+}
+
+.letter-btn:disabled {
+    opacity: 0.4;
+}
+
+.hangman-display {
+    font-family: monospace;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    white-space: pre;
+}
+
+/* ===== SPEED TYPING ===== */
+.phrase-display {
+    font-family: 'Courier New', monospace;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.typing-input {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1em;
+}
+
+.typing-input:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+}
+
+.typing-correct {
+    color: #28a745;
+}
+
+.typing-incorrect {
+    color: #dc3545;
+    text-decoration: underline;
+}
+
+.typing-pending {
+    color: #6c757d;
+}
+
+/* ===== READING DETAIL ===== */
+.reading-content {
+    text-align: justify;
+    line-height: 1.8;
+}
+
+.answer-options {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.answer-options .form-check {
+    padding-left: 0;
+}
+
+.answer-options .form-check-input {
+    margin-right: 10px;
+}
+
+/* ===== MEMORY ===== */
+.memory-card {
+    width: 120px;
+    height: 80px;
+    cursor: pointer;
+    perspective: 1000px;
+    transition: transform 0.2s ease;
+}
+
+.memory-card:hover {
+    transform: scale(1.02);
+}
+
+.memory-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
+
+.memory-card.flipped .memory-card-inner {
+    transform: rotateY(180deg);
+}
+
+.memory-card-front,
+.memory-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.memory-card-front {
+    background: linear-gradient(135deg, #198754, #20c997);
+    color: white;
+    font-size: 1.5rem;
+}
+
+.memory-card-back {
+    background: white;
+    border: 2px solid #198754;
+    transform: rotateY(180deg);
+    padding: 5px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.memory-card.matched {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ===== WORD SCRAMBLE ===== */
+.letter-spacing-2 {
+    letter-spacing: 0.5rem;
+}
+
+.scrambled-word {
+    font-family: monospace;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.5rem;
+}
+
+.scramble-letter {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    margin: 5px;
+    font-weight: bold;
+    font-size: 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.scramble-letter:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.scramble-letter.correct {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.scramble-letter.incorrect {
+    background: #f8d7da;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+/* ===== FILL GAPS ===== */
+.gap-word {
+    display: inline-block;
+    min-width: 80px;
+    padding: 0.25rem 0.5rem;
+    border-bottom: 2px solid #0d6efd;
+    background: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.gap-word:hover {
+    background: #e9ecef;
+    border-color: #0a58ca;
+}
+
+.gap-word.filled {
+    border-color: #28a745;
+    background: #d4edda;
+}
+
+.gap-word.incorrect {
+    border-color: #dc3545;
+    background: #f8d7da;
+}
+
+/* ===== GAME CARD ===== */
+.game-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.game-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.game-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ===== GAME TIMER ===== */
+.game-timer {
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.game-timer.warning {
+    color: #ffc107;
+    animation: pulse 1s infinite;
+}
+
+.game-timer.danger {
+    color: #dc3545;
+    animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ===== GAME RESULTS ===== */
+.game-result {
+    text-align: center;
+    padding: 2rem;
+}
+
+.game-score {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+.game-score.excellent {
+    color: #28a745;
+}
+
+.game-score.good {
+    color: #ffc107;
+}
+
+.game-score.needs-practice {
+    color: #dc3545;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .quiz-option:hover {
+        background-color: rgba(0, 102, 204, 0.15);
+    }
+
+    .quiz-option.selected {
+        background-color: rgba(0, 102, 204, 0.25);
+    }
+
+    .answer-options {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .memory-card-back {
+        background: #1a1a1a;
+        border-color: #28a745;
+    }
+
+    .scramble-letter {
+        background: #2a2a2a;
+        border-color: #444;
+    }
+
+    .scramble-letter:hover {
+        background: #333;
+        border-color: #555;
+    }
+
+    .gap-word {
+        background: #2a2a2a;
+    }
+
+    .gap-word:hover {
+        background: #333;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .memory-card {
+        width: 80px;
+        height: 60px;
+    }
+
+    .scrambled-word {
+        font-size: 1.5rem;
+    }
+
+    .scramble-letter {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .game-score {
+        font-size: 3rem;
+    }
+}

@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/reading/reading.css') }}">
+{% endblock %}
+
 {% block title %}Detalles del Intento - {{ reading.title }}{% endblock %}
 
 {% block content %}
@@ -97,10 +101,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.alert {
-    border-radius: 5px;
-}
-</style>
 {% endblock %}

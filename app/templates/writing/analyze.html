@@ -1,60 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Analizador de Escritura - English Learning Platform{% endblock %}
-
-{% block extra_head %}
-<style>
-    .writing-area {
-        min-height: 300px;
-        font-size: 1.1rem;
-        line-height: 1.8;
-    }
-    .feedback-panel {
-        position: sticky;
-        top: 20px;
-    }
-    .error-highlight {
-        background-color: #fff3cd;
-        border-bottom: 2px wavy #ffc107;
-        cursor: pointer;
-    }
-    .error-highlight.grammar {
-        background-color: #f8d7da;
-        border-bottom-color: #dc3545;
-    }
-    .error-highlight.spelling {
-        background-color: #cce5ff;
-        border-bottom-color: #0d6efd;
-    }
-    .error-highlight.style {
-        background-color: #d4edda;
-        border-bottom-color: #28a745;
-    }
-    .live-stats {
-        font-size: 0.9rem;
-    }
-    .score-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 0 auto;
-    }
-    .error-list-item {
-        border-left: 3px solid;
-        margin-bottom: 0.5rem;
-        padding: 0.5rem;
-        background: #f8f9fa;
-    }
-    .error-list-item.high { border-left-color: #dc3545; }
-    .error-list-item.medium { border-left-color: #ffc107; }
-    .error-list-item.low { border-left-color: #28a745; }
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/writing/writing.css') }}">
 {% endblock %}
+
+{% block title %}Analizador de Escritura - English Learning Platform{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">

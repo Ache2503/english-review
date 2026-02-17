@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/games/games.css') }}">
+{% endblock %}
+
 {% block title %}Word Scramble - Mini Juegos{% endblock %}
 
 {% block content %}
@@ -99,10 +103,6 @@
     </div>
 </div>
 
-<style>
-.letter-spacing-2 { letter-spacing: 0.5rem; }
-</style>
-
 <script>
 const level = '{{ level }}';
 let words = [];
@@ -198,6 +198,9 @@ async function endGame() {
     clearInterval(timerInterval);
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromDaily = urlParams.get('from_daily') === 'true';
+    
     // Save score
     await fetch('/games/word-scramble/submit', {
         method: 'POST',
@@ -206,7 +209,8 @@ async function endGame() {
             score: score,
             level: level,
             time_seconds: elapsed,
-            words_completed: Math.floor(score / 10)
+            words_completed: Math.floor(score / 10),
+            from_daily: fromDaily
         })
     });
     

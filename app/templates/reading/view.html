@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/reading/reading.css') }}">
+{% endblock %}
+
 {% block title %}{{ reading.title }} - English Learning Platform{% endblock %}
 
 {% block content %}
@@ -231,24 +235,4 @@ function displayResults(data) {
     resultsArea.scrollIntoView({ behavior: 'smooth' });
 }
 </script>
-
-<style>
-.card {
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.progress {
-    background-color: #e9ecef;
-}
-
-.sentence-input {
-    font-size: 1.05em;
-}
-
-#readingText {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 5px;
-}
-</style>
 {% endblock %}

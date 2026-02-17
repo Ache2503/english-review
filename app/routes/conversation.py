@@ -445,7 +445,7 @@ def get_learned_options(scenario, step):
 @conversation_bp.route('/')
 def list():
     return render_template(
-        'conversation_list.html',
+        'conversation/conversation_list.html',
         conversations=conversations
     )
 
@@ -609,7 +609,7 @@ def detail(scenario):
     session[session_key] = conv_state
     
     return render_template(
-        'conversation_detail.html',
+        'conversation/conversation_detail.html',
         conversation=conversation,
         scenario=scenario,
         system_message=system_message,

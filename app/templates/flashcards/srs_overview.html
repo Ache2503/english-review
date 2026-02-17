@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/flashcards/flashcards.css') }}">
+{% endblock %}
+
 {% block title %}Repetición Espaciada (SRS) - English Learning{% endblock %}
 
 {% block content %}
@@ -242,16 +246,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.forecast-day {
-    padding: 10px 15px;
-}
-.card.bg-gradient-primary {
-    transition: transform 0.3s;
-}
-.card.bg-gradient-primary:hover {
-    transform: translateY(-3px);
-}
-</style>
 {% endblock %}

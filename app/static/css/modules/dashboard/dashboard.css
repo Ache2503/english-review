@@ -1,0 +1,238 @@
+/* =====================================================
+   MÓDULO: DASHBOARD
+   Archivo: modules/dashboard/dashboard.css
+===================================================== */
+
+
+/* =====================================================
+   ANIMACIÓN GENERAL
+===================================================== */
+
+.dashboard-animate {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: dashboardFade 0.5s ease forwards;
+}
+
+@keyframes dashboardFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =====================================================
+   CONTENEDOR GENERAL
+===================================================== */
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 1rem 3rem 1rem;
+}
+
+.dashboard-section {
+    margin-bottom: 2rem;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.dashboard-header h2 {
+    font-size: 1.6rem;
+    color: var(--text-primary);
+}
+
+.dashboard-header p {
+    color: var(--text-secondary);
+}
+
+
+/* =====================================================
+   KPI CARDS
+===================================================== */
+
+.dashboard-kpi-card {
+    background: var(--bg-card);
+    padding: 1.2rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-kpi-card h4 {
+    color: var(--text-primary);
+}
+
+.dashboard-kpi-card small {
+    color: var(--text-secondary);
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+
+/* =====================================================
+   ACCIONES RÁPIDAS
+===================================================== */
+
+.dashboard-action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-action-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-action-card i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-action-card span {
+    font-weight: 500;
+}
+
+
+/* =====================================================
+   UNIDADES (ACCORDION GRID)
+===================================================== */
+
+.dashboard-accordion {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.dashboard-accordion .accordion-item {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-accordion .accordion-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-accordion .accordion-button {
+    font-weight: 600;
+    background-color: transparent;
+    color: var(--text-primary);
+}
+
+.dashboard-accordion .accordion-button:focus {
+    box-shadow: none;
+}
+
+.dashboard-accordion .accordion-button:not(.collapsed) {
+    color: var(--color-primary);
+}
+
+.dashboard-accordion .accordion-body {
+    color: var(--text-primary);
+}
+
+.dashboard-accordion small {
+    color: var(--text-secondary);
+}
+
+
+/* =====================================================
+   PROGRESS BAR
+===================================================== */
+
+.dashboard-accordion .progress {
+    height: 8px;
+    border-radius: 50px;
+    background-color: var(--bg-secondary);
+}
+
+.dashboard-accordion .progress-bar {
+    border-radius: 50px;
+    transition: width 0.4s ease;
+}
+
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+.dashboard-accordion .btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-accordion .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* =====================================================
+    TEXT MUTED - LIGHT MODE (DEFAULT)
+===================================================== */
+
+.dashboard-container .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* =====================================================
+    DARK MODE CON MEDIA QUERY
+===================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .dashboard-container .text-muted,
+    .dashboard-header p,
+    .dashboard-kpi-card small,
+    .dashboard-accordion small {
+        color: rgba(255, 255, 255, 0.65) !important;
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .dashboard-kpi-card {
+        padding: 1rem;
+    }
+
+    .dashboard-action-card {
+        padding: 1.5rem;
+    }
+
+}

@@ -1,0 +1,87 @@
+/* =====================================================
+   COMPONENTE: ALERTS
+   Archivo: components/alerts.css
+   Sistema de alertas adaptable a dark mode
+===================================================== */
+
+/* ===== ALERT BASE ===== */
+.alert {
+    position: relative;
+    padding: 0.9rem 1.2rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    font-weight: 500;
+    transition:
+        background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        color var(--transition-normal);
+}
+
+/* ===== ALERT CON ICONO ===== */
+.alert i {
+    margin-right: 0.5rem;
+}
+
+/* =====================================================
+   VARIANTES
+===================================================== */
+
+/* SUCCESS */
+.alert-success {
+    background-color: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #4ade80;
+}
+
+/* DANGER */
+.alert-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+
+/* WARNING */
+.alert-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
+/* INFO */
+.alert-info {
+    background-color: rgba(14, 165, 233, 0.15);
+    border-color: rgba(14, 165, 233, 0.4);
+    color: #38bdf8;
+}
+
+/* =====================================================
+   ALERTA CON BORDE LATERAL (ESTILO MODERNO)
+===================================================== */
+
+.alert-left-border {
+    border-left: 4px solid currentColor;
+}
+
+/* =====================================================
+   ALERT DISMISSIBLE
+===================================================== */
+
+.alert-dismissible {
+    padding-right: 2.5rem;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.alert-dismissible .btn-close:hover {
+    color: var(--text-primary);
+}

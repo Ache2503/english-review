@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/conversation/conversation.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header con animación -->
+  <div class="text-center mb-5">
+    <div class="display-4 mb-3 animate__animated animate__fadeInDown">
+      <span class="text-primary">💬</span> Práctica Conversacional
+    </div>
+    <p class="lead text-muted animate__animated animate__fadeIn animate__delay-1s">
+      Mejora tu inglés hablado con conversaciones interactivas en situaciones reales
+    </p>
+    
+    <!-- Estadísticas rápidas -->
+    <div class="row justify-content-center mt-4">
+      <div class="col-auto">
+        <div class="d-flex align-items-center gap-4 flex-wrap justify-content-center">
+          <div class="text-center px-3">
+            <div class="h3 mb-0 text-primary">{{ conversations|length }}</div>
+            <small class="text-muted">Escenarios</small>
+          </div>
+          <div class="text-center px-3 border-start border-end">
+            <div class="h3 mb-0 text-success">3</div>
+            <small class="text-muted">Niveles</small>
+          </div>
+          <div class="text-center px-3">
+            <div class="h3 mb-0 text-info">∞</div>
+            <small class="text-muted">Práctica</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros de dificultad -->
+  <div class="mb-4 text-center">
+    <div class="btn-group" role="group" aria-label="Filtrar por dificultad">
+      <button type="button" class="btn btn-outline-secondary active" onclick="filterCards('all')">
+        <i class="fas fa-globe"></i> Todos
+      </button>
+      <button type="button" class="btn btn-outline-success" onclick="filterCards('Beginner')">
+        🟢 Principiante
+      </button>
+      <button type="button" class="btn btn-outline-warning" onclick="filterCards('Intermediate')">
+        🟡 Intermedio
+      </button>
+      <button type="button" class="btn btn-outline-danger" onclick="filterCards('Advanced')">
+        🔴 Avanzado
+      </button>
+    </div>
+  </div>
+
+  <!-- Grid de conversaciones -->
+  <div class="row g-4" id="conversationGrid">
+    {% for key, convo in conversations.items() %}
+    <div class="col-sm-6 col-lg-4 col-xl-3 conversation-card" data-difficulty="{{ convo.difficulty if convo.difficulty else 'Beginner' }}">
+      <div class="card h-100 shadow-sm card-hover border-0">
+        <div class="card-body text-center p-4">
+          <!-- Icono grande con efecto -->
+          <div class="scenario-icon mb-3">
+            <span class="display-3">{{ convo.icon if convo.icon else '💬' }}</span>
+          </div>
+          
+          <!-- Título -->
+          <h5 class="card-title fw-bold mb-2">{{ convo.title }}</h5>
+          
+          <!-- Descripción -->
+          {% if convo.description %}
+          <p class="text-muted small mb-2">{{ convo.description }}</p>
+          {% endif %}
+          
+          <!-- Roles -->
+          <p class="text-muted small mb-3">
+            <i class="fas fa-users"></i> {{ convo.user_role }} & {{ convo.system_role }}
+          </p>
+          
+          <!-- Badge de dificultad -->
+          <div class="mb-3">
+            <span class="badge rounded-pill px-3 py-2 {% if convo.difficulty == 'Beginner' %}bg-success{% elif convo.difficulty == 'Intermediate' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+              {% if convo.difficulty == 'Beginner' %}🟢{% elif convo.difficulty == 'Intermediate' %}🟡{% else %}🔴{% endif %}
+              {{ convo.difficulty if convo.difficulty else 'Beginner' }}
+            </span>
+          </div>
+          
+          <!-- Número de pasos -->
+          <p class="text-muted small mb-3">
+            <i class="fas fa-list-ol"></i> {{ convo.dialogue|selectattr('speaker', 'equalto', 'user')|list|length }} turnos de práctica
+          </p>
+        </div>
+        
+        <!-- Footer con botón -->
+        <div class="card-footer bg-transparent border-0 p-3">
+          <a href="{{ url_for('conversation.detail', scenario=key) }}" class="btn btn-primary w-100 btn-lg">
+            <i class="fas fa-play-circle"></i> Comenzar
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Botón de regreso -->
+  <div class="text-center mt-5">
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary btn-lg">
+      <i class="fas fa-arrow-left"></i> Volver al Dashboard
+    </a>
+  </div>
+</div>
+
+<script>
+function filterCards(difficulty) {
+  const cards = document.querySelectorAll('.conversation-card');
+  const buttons = document.querySelectorAll('.btn-group .btn');
+  
+  // Actualizar botones activos
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // Filtrar tarjetas
+  cards.forEach(card => {
+    if (difficulty === 'all' || card.dataset.difficulty === difficulty) {
+      card.classList.remove('hidden');
+      card.style.animation = 'none';
+      card.offsetHeight; // Trigger reflow
+      card.style.animation = 'fadeInUp 0.5s ease-out';
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+</script>
+{% endblock %}

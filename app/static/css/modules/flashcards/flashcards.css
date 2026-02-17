@@ -1,0 +1,183 @@
+/* ============================================================================
+   FLASHCARDS - Estilos para tarjetas de vocabulario
+   ============================================================================ */
+
+/* ===== FLASHCARD BASE ===== */
+.flashcard {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    perspective: 1000px;
+}
+
+.flashcard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.flashcard-front,
+.flashcard-back {
+    transition: opacity 0.3s ease;
+}
+
+.flashcard-flipping {
+    transform: rotateY(180deg);
+}
+
+/* ===== SRS STUDY ===== */
+.flashcard-srs {
+    min-height: 350px;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.flashcard-srs:hover {
+    transform: translateY(-5px);
+}
+
+.flashcard-srs .btn-lg {
+    min-width: 80px;
+}
+
+.flashcard-srs .flashcard-back .btn-lg {
+    flex-direction: column;
+    padding: 15px 20px;
+}
+
+.flashcard-srs .flashcard-back .btn-lg small {
+    font-size: 0.7rem;
+    margin-top: 5px;
+}
+
+.flashcard-srs kbd {
+    background: #333;
+    border-radius: 3px;
+    padding: 2px 6px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.card-animate {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes flipIn {
+    from {
+        transform: rotateY(90deg);
+        opacity: 0;
+    }
+    to {
+        transform: rotateY(0);
+        opacity: 1;
+    }
+}
+
+.flip-animation {
+    animation: flipIn 0.4s ease;
+}
+
+/* ===== SRS OVERVIEW ===== */
+.forecast-day {
+    padding: 10px 15px;
+    transition: background-color 0.2s ease;
+}
+
+.forecast-day:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.forecast-card {
+    transition: transform 0.3s;
+}
+
+.forecast-card:hover {
+    transform: translateY(-3px);
+}
+
+/* ===== SRS STATS ===== */
+.srs-stat {
+    text-align: center;
+    padding: 1rem;
+}
+
+.srs-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.srs-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted, #6c757d);
+    margin-top: 0.25rem;
+}
+
+/* ===== SRS BUTTONS ===== */
+.srs-rating-btn {
+    min-width: 100px;
+    padding: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.srs-rating-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.srs-rating-btn.correct {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-color: #28a745;
+    color: white;
+}
+
+.srs-rating-btn.hard {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border-color: #ffc107;
+    color: #333;
+}
+
+.srs-rating-btn.forgot {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-color: #dc3545;
+    color: white;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .flashcard:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .forecast-day:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .flashcard-srs kbd {
+        background: #1a1a1a;
+        border: 1px solid #333;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .flashcard-srs {
+        min-height: 280px;
+    }
+
+    .srs-rating-btn {
+        min-width: 80px;
+        padding: 0.75rem;
+    }
+
+    .srs-stat-value {
+        font-size: 1.5rem;
+    }
+}

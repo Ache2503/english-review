@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/games/games.css') }}">
+{% endblock %}
+
 {% block title %}Speed Typing - English Learning{% endblock %}
 
 {% block content %}
@@ -185,26 +189,6 @@
     </div>
 </div>
 
-<style>
-    .phrase-display {
-        font-family: 'Courier New', monospace;
-        min-height: 80px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #typingInput {
-        font-family: 'Courier New', monospace;
-        font-size: 1.1em;
-    }
-
-    #typingInput:focus {
-        border-color: #0066cc;
-        box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
-    }
-</style>
-
 <script>
 let currentPhraseIndex = 0;
 let phrases = [];
@@ -299,6 +283,10 @@ async function submitPhrase() {
     const phrase = phrases[currentPhraseIndex];
     const typed = document.getElementById('typingInput').value;
     const timeSeconds = (Date.now() - phraseStartTime) / 1000;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromDaily = urlParams.get('from_daily') === 'true';
+    const isLast = currentPhraseIndex === phrases.length - 1;
 
     try {
         const response = await fetch('/games/speed-typing/submit-answer', {
@@ -309,7 +297,9 @@ async function submitPhrase() {
             body: JSON.stringify({
                 typing_id: phrase.id,
                 typed_text: typed,
-                time_seconds: timeSeconds
+                time_seconds: timeSeconds,
+                from_daily: fromDaily,
+                is_last: isLast
             })
         });
 

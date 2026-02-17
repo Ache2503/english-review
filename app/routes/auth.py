@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db
-from app.models import User
+from app.models import User, MiniGame
+from datetime import datetime, date
+import random
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -84,7 +86,25 @@ def login():
         user = User.query.filter_by(username=username).first()
         
         if user and user.check_password(password):
-            login_user(user, remember=request.form.get('remember'))
+            login_user(user, remember=request.form.get('remember') == 'on')
+            
+            today = date.today()
+            show_daily_challenge = False
+            
+            # Verificar si es el primer login del día
+            if user.last_login_date != today:
+                # Nuevo día - resetear el flag de reto diario
+                user.daily_challenge_completed = False
+                user.last_login_date = today
+                db.session.commit()
+                
+                # Mostrar reto diario solo si no lo ha completado hoy
+                show_daily_challenge = True
+            
+            # Guardar en sesión para usar después del redirect
+            from flask import session
+            session['show_daily_challenge'] = show_daily_challenge
+            
             next_page = request.args.get('next')
             if not next_page or not url_has_allowed_host_and_scheme(next_page):
                 next_page = url_for('dashboard.index')
