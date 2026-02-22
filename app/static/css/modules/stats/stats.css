@@ -64,7 +64,7 @@
 
 .progress-circle-label {
     font-size: 0.75rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== STAT CARDS ===== */
@@ -85,7 +85,7 @@
 
 .stat-label {
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== CHART CONTAINER ===== */
@@ -93,7 +93,7 @@
     position: relative;
     height: 300px;
     padding: 1rem;
-    background: var(--bg-card, white);
+    background: var(--bs-body-bg, white);
     border-radius: 1rem;
 }
 
@@ -125,84 +125,6 @@
 .bg-warning.text-dark h3,
 .bg-warning.text-dark small {
     color: #000000 !important;
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .heatmap-legend {
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .heatmap-cell {
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .heatmap-cell.level-0 { background: #1e293b; }
-    .heatmap-cell.level-1 { background: #22c55e; }
-    .heatmap-cell.level-2 { background: #16a34a; }
-    .heatmap-cell.level-3 { background: #15803d; }
-    .heatmap-cell.level-4 { background: #166534; }
-
-    .heatmap-cell:hover {
-        outline-color: #93c5fd;
-        box-shadow: 0 0 8px rgba(147, 197, 253, 0.5);
-    }
-
-    .chart-container canvas {
-        filter: brightness(0.95);
-    }
-
-    .card.bg-primary {
-        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-    }
-
-    .card.bg-success {
-        background: linear-gradient(135deg, #22c55e, #16a34a) !important;
-    }
-
-    .card.bg-info {
-        background: linear-gradient(135deg, #38bdf8, #0ea5e9) !important;
-    }
-
-    .card.bg-warning {
-        background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
-    }
-
-    .card.bg-secondary {
-        background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
-    }
-
-    .card.bg-dark {
-        background: linear-gradient(135deg, #6b7280, #4b5563) !important;
-    }
-
-    .card.text-white h3 {
-        color: #ffffff !important;
-    }
-
-    .card.text-white small {
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-
-    .card.text-dark {
-        color: #000000 !important;
-    }
-
-    .card.text-dark h3 {
-        color: #000000 !important;
-    }
-
-    .border-end {
-        border-color: #2a3f5f !important;
-    }
-
-    .text-success {
-        color: #4ade80 !important;
-    }
-
-    .text-info {
-        color: #7dd3fc !important;
-    }
 }
 
 /* ===== RESPONSIVE ===== */

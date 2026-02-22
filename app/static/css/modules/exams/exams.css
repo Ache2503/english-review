@@ -200,37 +200,6 @@
     border-radius: 0.25rem;
 }
 
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .exam-card:hover {
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .exam-section-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .exam-option:hover {
-        background-color: rgba(13, 110, 253, 0.15);
-    }
-
-    .exam-option.selected {
-        background-color: rgba(13, 110, 253, 0.25);
-    }
-
-    .section-result-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .answer-review-item:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .answer-explanation {
-        background-color: rgba(255, 193, 7, 0.15);
-    }
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .exam-result-score {

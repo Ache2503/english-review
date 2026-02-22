@@ -14,11 +14,11 @@
 
 .quiz-title {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--bs-body-color, #212529);
 }
 
 .quiz-description {
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     font-size: 0.95rem;
 }
 
@@ -27,7 +27,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== QUIZ TAKE ===== */
@@ -41,7 +41,7 @@
 
 .quiz-question-number {
     font-weight: 600;
-    color: var(--primary-color, #0d6efd);
+    color: var(--bs-primary, #0d6efd);
 }
 
 .quiz-question-text {
@@ -58,12 +58,12 @@
 
 .quiz-option:hover {
     background-color: rgba(0, 0, 0, 0.02);
-    border-color: var(--border-color, #dee2e6);
+    border-color: var(--bs-border-color, #dee2e6);
 }
 
 .quiz-option.selected {
     background-color: rgba(13, 110, 253, 0.1);
-    border-color: var(--primary-color, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
 }
 
 .quiz-option.correct {
@@ -124,7 +124,7 @@
 
 .quiz-result-stat-label {
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== QUIZ TIMER ===== */
@@ -159,25 +159,6 @@
 .quiz-progress-bar {
     transition: width 0.3s ease;
     border-radius: 4px;
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .quiz-card:hover {
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .quiz-question-card:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .quiz-option:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .quiz-option.selected {
-        background-color: rgba(13, 110, 253, 0.2);
-    }
 }
 
 /* ===== RESPONSIVE ===== */

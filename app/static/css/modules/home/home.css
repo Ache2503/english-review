@@ -2,6 +2,7 @@
    MÓDULO: HOME
    Archivo: modules/home/home.css
    Estilos exclusivos del index
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
 /* ===== HERO SECTION ===== */
@@ -20,6 +21,7 @@
     height: 400px;
     background: radial-gradient(circle, rgba(0,102,204,0.15) 0%, transparent 70%);
     z-index: 0;
+    animation: pulse 4s ease-in-out infinite;
 }
 
 /* Asegura que el contenido quede encima */
@@ -28,70 +30,220 @@
     z-index: 1;
 }
 
+/* ===== HERO ANIMATIONS ===== */
+.hero-content-animate {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.hero-content-animate:nth-child(1) { animation-delay: 0.1s; }
+.hero-content-animate:nth-child(2) { animation-delay: 0.2s; }
+
 /* Título principal */
 .home-hero-title {
     font-size: clamp(2rem, 5vw, 3.2rem);
     line-height: 1.2;
+    font-weight: 700;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out 0.1s forwards;
 }
 
 .home-hero-title span {
-    color: var(--color-primary);
+    color: var(--bs-primary);
+    position: relative;
 }
 
 /* Texto */
 .home-hero p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     max-width: 540px;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out 0.2s forwards;
 }
+
+/* Botones en hero */
+.home-hero .btn {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
+}
+
+/* ===== FEATURE CARDS ===== */
+.feature-card-animate {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.feature-card-animate:nth-child(1) { animation-delay: 0.2s; }
+.feature-card-animate:nth-child(2) { animation-delay: 0.3s; }
+.feature-card-animate:nth-child(3) { animation-delay: 0.4s; }
 
 /* ===== CARD DE CARACTERÍSTICAS ===== */
 .home-feature-card {
-    background-color: var(--bg-card);
-    border: none;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    transition: transform var(--transition-fast),
-                box-shadow var(--transition-fast);
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    box-shadow: var(--bs-box-shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.home-feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
 }
 
 .home-feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    border-color: var(--bs-primary);
+}
+
+.home-feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+[data-bs-theme="dark"] .home-feature-card:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
 }
 
 .home-feature-icon {
-    color: #00cc99;
+    font-size: 2.5rem;
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.home-feature-card:hover .home-feature-icon {
+    transform: scale(1.2) rotate(10deg);
 }
 
 /* ===== LISTA DE CARACTERÍSTICAS ===== */
 .home-feature-list i {
-    color: #00cc99;
-    margin-right: 0.5rem;
+    color: var(--bs-primary);
+    margin-right: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.home-feature-list li:hover i {
+    transform: scale(1.2);
 }
 
 /* ===== SECCIÓN NIVELES ===== */
 .home-level-title {
     margin-top: 3rem;
     margin-bottom: 2rem;
+    position: relative;
+    display: inline-block;
+}
+
+.home-level-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    border-radius: 2px;
 }
 
 /* ===== UNIT CARDS ===== */
 .unit-card {
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-card);
-    transition: transform var(--transition-fast),
-                box-shadow var(--transition-fast),
-                border-color var(--transition-fast);
+    border-radius: var(--bs-border-radius-lg);
+    border: 1px solid var(--bs-border-color);
+    background-color: var(--bs-body-bg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Staggered animation for unit cards */
+.unit-card:nth-child(1) { animation-delay: 0.1s; }
+.unit-card:nth-child(2) { animation-delay: 0.15s; }
+.unit-card:nth-child(3) { animation-delay: 0.2s; }
+.unit-card:nth-child(4) { animation-delay: 0.25s; }
+.unit-card:nth-child(5) { animation-delay: 0.3s; }
+.unit-card:nth-child(6) { animation-delay: 0.35s; }
+
+.unit-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--bs-primary), var(--bs-info));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .unit-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-primary);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    border-color: var(--bs-primary);
+}
+
+.unit-card:hover::before {
+    opacity: 1;
+}
+
+[data-bs-theme="dark"] .unit-card:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Unit card title */
+.unit-card .card-title {
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.unit-card:hover .card-title {
+    color: var(--bs-primary);
+}
+
+/* Unit card icon */
+.unit-card .unit-icon {
+    font-size: 2rem;
+    color: var(--bs-primary);
+    transition: transform 0.3s ease;
+}
+
+.unit-card:hover .unit-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 /* Texto muted controlado por sistema */
 .unit-card .text-muted {
-    color: var(--text-muted) !important;
+    color: var(--bs-tertiary-color) !important;
+}
+
+/* ===== BUTTONS IN HOME ===== */
+.home-hero .btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.home-hero .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .unit-card:hover,
+    .home-feature-card:hover {
+        transform: translateY(-4px);
+    }
 }

@@ -89,12 +89,12 @@
 
 .sentence-pattern {
     font-weight: 600;
-    color: var(--primary-color, #0d6efd);
+    color: var(--bs-primary, #0d6efd);
 }
 
 .sentence-example {
     font-style: italic;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     background: rgba(0, 0, 0, 0.03);
     padding: 0.5rem;
     border-radius: 0.25rem;
@@ -152,7 +152,7 @@
 
 .sentence-list-item:hover {
     background-color: rgba(0, 0, 0, 0.02);
-    border-left-color: var(--primary-color, #0d6efd);
+    border-left-color: var(--bs-primary, #0d6efd);
 }
 
 .sentence-english {
@@ -161,7 +161,7 @@
 }
 
 .sentence-spanish {
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== SPEAK BUTTON ===== */
@@ -173,38 +173,6 @@
 
 .speak-btn:hover {
     transform: scale(1.2);
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .sentence-tabs .nav-link.active {
-        background-color: #1a1a1a;
-    }
-
-    .exercise-form.submitted .exercise-input {
-        background-color: #1a1a1a;
-    }
-
-    .sentence-example {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .sentence-word {
-        background: #1a1a1a;
-        border-color: #333;
-    }
-
-    .sentence-word:hover {
-        background: #2a2a2a;
-    }
-
-    .sentence-list-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .pattern-structure code {
-        background: rgba(255, 255, 255, 0.05);
-    }
 }
 
 /* ===== RESPONSIVE ===== */

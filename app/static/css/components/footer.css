@@ -2,23 +2,21 @@
    COMPONENTE: FOOTER
    Archivo: components/footer.css
    Footer global de la aplicación
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
 .app-footer {
-    background-color: var(--bg-secondary);
-    color: var(--text-secondary);
+    background-color: var(--bs-body-bg);
+    color: var(--bs-secondary-color);
     padding: 2rem 0;
     margin-top: auto;
-    border-top: 1px solid var(--border-color);
-    transition:
-        background-color var(--transition-normal),
-        border-color var(--transition-normal),
-        color var(--transition-normal);
+    border-top: 1px solid var(--bs-border-color);
+    transition: background-color var(--transition-normal), border-color var(--transition-normal);
 }
 
 /* Títulos del footer */
 .app-footer h5 {
-    color: var(--text-primary);
+    color: var(--bs-body-color);
     font-weight: 600;
     margin-bottom: 0.75rem;
 }
@@ -31,7 +29,7 @@
 
 /* Links dentro del footer */
 .app-footer a {
-    color: var(--color-primary);
+    color: var(--bs-primary);
     text-decoration: none;
     transition: color var(--transition-fast);
 }

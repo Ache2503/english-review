@@ -45,10 +45,10 @@
 
 /* ===== TOPIC GRAMMAR ===== */
 .topic-header {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    background: linear-gradient(135deg, var(--bs-body-bg), var(--bs-secondary-bg));
     padding: 2rem;
     border-radius: 1rem;
-    color: var(--text-main);
+    color: var(--bs-body-color);
 }
 
 .topic-icon-large {
@@ -57,22 +57,22 @@
 }
 
 .grammar-table {
-    background: var(--bg-card);
-    color: var(--text-main);
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
 }
 
 .grammar-table th {
-    background: var(--bg-body);
-    color: var(--text-primary);
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
     font-weight: 600;
     white-space: nowrap;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--bs-border-color);
 }
 
 .grammar-table td {
     vertical-align: middle;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-main);
+    border-bottom: 1px solid var(--bs-border-color);
+    color: var(--bs-body-color);
 }
 
 .highlight-cell {
@@ -85,7 +85,7 @@
     background: #fffbeb;
     border-left: 4px solid #fbbf24;
     font-size: 0.95rem;
-    color: var(--text-main);
+    color: var(--bs-body-color);
 }
 
 /* ===== COMPARISON BOX ===== */
@@ -93,7 +93,7 @@
     padding: 1.5rem;
     border-radius: 1rem;
     height: 100%;
-    color: var(--text-main);
+    color: var(--bs-body-color);
 }
 
 .comparison-primary {
@@ -311,52 +311,6 @@
 .like-btn.liked {
     background: #dc3545;
     color: white;
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    [data-bs-theme="dark"] .verb-card {
-        background-color: #161b22 !important;
-        border: 1px solid #30363d !important;
-        color: #c9d1d9;
-    }
-
-    [data-bs-theme="dark"] .verb-card:hover {
-        border-color: #58a6ff !important;
-        box-shadow: 0 0 0 1px #58a6ff;
-    }
-
-    [data-bs-theme="dark"] .verb-infinitive {
-        color: #58a6ff;
-    }
-
-    [data-bs-theme="dark"] .verb-translation {
-        color: #8b949e;
-    }
-
-    [data-bs-theme="dark"] .topic-header {
-        background: linear-gradient(135deg, #161b22, #0d1117);
-    }
-
-    [data-bs-theme="dark"] .sentence-english {
-        color: #f0f0f0;
-    }
-
-    [data-bs-theme="dark"] .sentence-item:hover {
-        background: rgba(102, 126, 234, 0.1);
-    }
-
-    [data-bs-theme="dark"] .sentence-item.featured {
-        background: rgba(255, 193, 7, 0.15);
-    }
-
-    [data-bs-theme="dark"] .sentence-item.border-warning {
-        background: rgba(255, 193, 7, 0.05);
-    }
-
-    [data-bs-theme="dark"] .comparison-desc {
-        color: #8b949e;
-    }
 }
 
 /* ===== RESPONSIVE ===== */

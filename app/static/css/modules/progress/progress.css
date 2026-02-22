@@ -37,7 +37,7 @@
 
 .unit-progress-header {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--bs-body-color, #212529);
 }
 
 .unit-progress-title {
@@ -83,7 +83,7 @@
     text-align: center;
     padding: 1.5rem;
     border-radius: 1rem;
-    background: linear-gradient(135deg, var(--primary-color, #0d6efd) 0%, var(--info-color, #0dcaf0) 100%);
+    background: linear-gradient(135deg, var(--bs-primary, #0d6efd) 0%, var(--bs-info, #0dcaf0) 100%);
     color: white;
 }
 
@@ -102,7 +102,7 @@
 /* ===== PROGRESS CHART ===== */
 .progress-chart {
     padding: 1rem;
-    background: var(--bg-card, white);
+    background: var(--bs-body-bg, white);
     border-radius: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -129,7 +129,7 @@
 .chart-label {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     margin-top: 0.5rem;
 }
 
@@ -146,7 +146,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: var(--border-color, #dee2e6);
+    background: var(--bs-border-color, #dee2e6);
 }
 
 .timeline-item {
@@ -176,21 +176,6 @@
     background: var(--bs-warning, #ffc107);
     box-shadow: 0 0 0 2px var(--bs-warning, #ffc107);
     animation: pulse 2s infinite;
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .unit-progress-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .progress-chart {
-        background: var(--bg-card, #1a2332);
-    }
-
-    .chart-label {
-        color: var(--text-muted, #a8b8cc);
-    }
 }
 
 /* ===== RESPONSIVE ===== */

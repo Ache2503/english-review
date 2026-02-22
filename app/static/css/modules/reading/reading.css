@@ -14,11 +14,11 @@
 
 .reading-title {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--bs-body-color, #212529);
 }
 
 .reading-description {
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     font-size: 0.95rem;
 }
 
@@ -27,7 +27,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 .reading-badge {
@@ -70,7 +70,7 @@
 }
 
 .sentence-input:focus {
-    border-color: var(--primary-color, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
@@ -117,30 +117,11 @@
 
 .history-date {
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 .history-score {
     font-weight: 600;
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .reading-card:hover {
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
-    }
-
-    .reading-content {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .reading-progress {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .history-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
 }
 
 /* ===== RESPONSIVE ===== */

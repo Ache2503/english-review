@@ -14,17 +14,17 @@
 .idiom-expression {
     font-style: italic;
     font-weight: 600;
-    color: var(--primary-color, #0d6efd);
+    color: var(--bs-primary, #0d6efd);
 }
 
 .idiom-meaning {
     font-size: 0.95rem;
-    color: var(--text-secondary, #6c757d);
+    color: var(--bs-secondary-color, #6c757d);
 }
 
 .idiom-example {
     font-style: italic;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     background: rgba(0, 0, 0, 0.03);
     padding: 0.5rem;
     border-radius: 0.25rem;
@@ -75,12 +75,12 @@
 
 .phrasal-meaning {
     font-size: 0.95rem;
-    color: var(--text-secondary, #6c757d);
+    color: var(--bs-secondary-color, #6c757d);
 }
 
 .phrasal-example {
     font-style: italic;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== IDIOM LIST ===== */
@@ -91,7 +91,7 @@
 
 .idiom-item:hover {
     background: rgba(0, 0, 0, 0.02);
-    border-left-color: var(--primary-color, #0d6efd);
+    border-left-color: var(--bs-primary, #0d6efd);
 }
 
 .idiom-category {
@@ -103,7 +103,7 @@
 
 /* ===== IDIOM DETAIL ===== */
 .idiom-detail-header {
-    background: linear-gradient(135deg, var(--primary-color, #0d6efd) 0%, var(--info-color, #0dcaf0) 100%);
+    background: linear-gradient(135deg, var(--bs-primary, #0d6efd) 0%, var(--bs-info, #0dcaf0) 100%);
     color: white;
     padding: 2rem;
     border-radius: 1rem;
@@ -114,7 +114,7 @@
     background: rgba(0, 0, 0, 0.03);
     padding: 1rem;
     border-radius: 0.5rem;
-    border-left: 4px solid var(--primary-color, #0d6efd);
+    border-left: 4px solid var(--bs-primary, #0d6efd);
 }
 
 /* ===== GAME STATS ===== */
@@ -133,25 +133,6 @@
 .game-stat-label {
     font-size: 0.85rem;
     opacity: 0.9;
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .idiom-example {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .idiom-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .phrasal-example {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .idiom-usage {
-        background: rgba(255, 255, 255, 0.05);
-    }
 }
 
 /* ===== RESPONSIVE ===== */

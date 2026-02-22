@@ -104,11 +104,11 @@
 
 .unit-title {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--bs-body-color, #212529);
 }
 
 .unit-description {
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 .unit-progress {
@@ -141,7 +141,7 @@
 
 .unit-lesson-description {
     font-size: 0.9rem;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* Estilos personalizados para Modo Oscuro Moderno */
@@ -222,17 +222,6 @@
         border-radius: 10px;
         margin-right: 15px;
     }
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .glass-card {
-        background: rgba(30, 41, 59, 0.8);
-    }
-
-    .unit-card:hover {
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
-    }
-}
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {

@@ -158,30 +158,6 @@
     text-align: center;
 }
 
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .drill-option:hover {
-        background-color: rgba(255, 193, 7, 0.15);
-    }
-
-    .drill-option.selected {
-        background-color: rgba(255, 193, 7, 0.25);
-    }
-
-    .drill-input:focus {
-        border-color: #ffc107;
-        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15);
-    }
-
-    .drill-explanation {
-        background-color: rgba(23, 162, 184, 0.15);
-    }
-
-    .error-pattern {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .drill-score-circle {

@@ -2,20 +2,18 @@
    COMPONENTE: ALERTS
    Archivo: components/alerts.css
    Sistema de alertas adaptable a dark mode
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
 /* ===== ALERT BASE ===== */
 .alert {
     position: relative;
     padding: 0.9rem 1.2rem;
-    border-radius: var(--radius-md);
+    border-radius: var(--bs-border-radius-md);
     margin-bottom: 1rem;
     border: 1px solid transparent;
     font-weight: 500;
-    transition:
-        background-color var(--transition-normal),
-        border-color var(--transition-normal),
-        color var(--transition-normal);
+    transition: background-color var(--transition-normal), border-color var(--transition-normal), color var(--transition-normal);
 }
 
 /* ===== ALERT CON ICONO ===== */
@@ -77,11 +75,11 @@
     right: 1rem;
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--bs-tertiary-color);
     font-size: 1rem;
     cursor: pointer;
 }
 
 .alert-dismissible .btn-close:hover {
-    color: var(--text-primary);
+    color: var(--bs-body-color);
 }

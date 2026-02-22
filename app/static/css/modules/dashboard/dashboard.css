@@ -1,31 +1,36 @@
 /* =====================================================
    MÓDULO: DASHBOARD
    Archivo: modules/dashboard/dashboard.css
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
-
-/* =====================================================
-   ANIMACIÓN GENERAL
-===================================================== */
-
+/* ===== ANIMACIÓN GENERAL ===== */
 .dashboard-animate {
     opacity: 0;
-    transform: translateY(15px);
-    animation: dashboardFade 0.5s ease forwards;
+    animation: fadeInUp 0.5s ease forwards;
 }
 
-@keyframes dashboardFade {
+@keyframes fadeInUp {
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
+/* Staggered animations for KPI cards */
+.kpi-card-animate {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards;
+}
 
-/* =====================================================
-   CONTENEDOR GENERAL
-===================================================== */
+.kpi-card-animate:nth-child(1) { animation-delay: 0.1s; }
+.kpi-card-animate:nth-child(2) { animation-delay: 0.15s; }
+.kpi-card-animate:nth-child(3) { animation-delay: 0.2s; }
+.kpi-card-animate:nth-child(4) { animation-delay: 0.25s; }
+.kpi-card-animate:nth-child(5) { animation-delay: 0.3s; }
+.kpi-card-animate:nth-child(6) { animation-delay: 0.35s; }
 
+/* ===== CONTENEDOR GENERAL ===== */
 .dashboard-container {
     max-width: 1200px;
     margin: auto;
@@ -36,121 +41,210 @@
     margin-bottom: 2rem;
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
+/* ===== HEADER ===== */
+.dashboard-header {
+    margin-bottom: 2rem;
+}
 
 .dashboard-header h2 {
-    font-size: 1.6rem;
-    color: var(--text-primary);
+    font-size: 1.8rem;
+    color: var(--bs-body-color);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+}
+
+.dashboard-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    border-radius: 2px;
 }
 
 .dashboard-header p {
-    color: var(--text-secondary);
+    color: var(--bs-secondary-color);
+    font-size: 1.1rem;
+    margin-top: 1rem;
 }
 
-
-/* =====================================================
-   KPI CARDS
-===================================================== */
-
+/* ===== KPI CARDS ===== */
 .dashboard-kpi-card {
-    background: var(--bg-card);
-    padding: 1.2rem;
-    border-radius: var(--radius-lg);
+    background: var(--bs-body-bg);
+    padding: 1.5rem;
+    border-radius: var(--bs-border-radius-lg);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 1.25rem;
+    box-shadow: var(--bs-box-shadow-sm);
+    border: 1px solid var(--bs-border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--bs-primary), var(--bs-info));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .dashboard-kpi-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    border-color: var(--bs-primary);
+}
+
+.dashboard-kpi-card:hover::before {
+    opacity: 1;
+}
+
+[data-bs-theme="dark"] .dashboard-kpi-card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
 .dashboard-kpi-card h4 {
-    color: var(--text-primary);
+    color: var(--bs-body-color);
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .dashboard-kpi-card small {
-    color: var(--text-secondary);
+    color: var(--bs-secondary-color);
+    font-size: 0.875rem;
 }
 
 .kpi-icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
 }
 
+.dashboard-kpi-card:hover .kpi-icon {
+    transform: scale(1.1) rotate(5deg);
+}
 
-/* =====================================================
-   ACCIONES RÁPIDAS
-===================================================== */
-
+/* ===== ACCIONES RÁPIDAS ===== */
 .dashboard-action-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--bg-card);
+    background: var(--bs-body-bg);
     padding: 2rem;
-    border-radius: var(--radius-lg);
+    border-radius: var(--bs-border-radius-lg);
     text-decoration: none;
-    color: var(--text-primary);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: var(--bs-body-color);
+    box-shadow: var(--bs-box-shadow-sm);
+    border: 1px solid var(--bs-border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-action-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.5s ease;
 }
 
 .dashboard-action-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    border-color: var(--bs-primary);
+}
+
+.dashboard-action-card:hover::after {
+    left: 100%;
 }
 
 .dashboard-action-card i {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--bs-primary);
+    transition: transform 0.3s ease;
+}
+
+.dashboard-action-card:hover i {
+    transform: scale(1.2) rotate(10deg);
+    color: var(--bs-info);
 }
 
 .dashboard-action-card span {
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
-
-/* =====================================================
-   UNIDADES (ACCORDION GRID)
-===================================================== */
-
+/* ===== UNIDADES (ACCORDION GRID) ===== */
 .dashboard-accordion {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
 .dashboard-accordion .accordion-item {
-    border-radius: var(--radius-lg);
+    border-radius: var(--bs-border-radius-lg);
     overflow: hidden;
-    border: 1px solid var(--border-color);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    box-shadow: var(--bs-box-shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards;
 }
 
+/* Staggered animation for accordion items */
+.dashboard-accordion .accordion-item:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-accordion .accordion-item:nth-child(2) { animation-delay: 0.15s; }
+.dashboard-accordion .accordion-item:nth-child(3) { animation-delay: 0.2s; }
+.dashboard-accordion .accordion-item:nth-child(4) { animation-delay: 0.25s; }
+.dashboard-accordion .accordion-item:nth-child(5) { animation-delay: 0.3s; }
+.dashboard-accordion .accordion-item:nth-child(6) { animation-delay: 0.35s; }
+.dashboard-accordion .accordion-item:nth-child(7) { animation-delay: 0.4s; }
+.dashboard-accordion .accordion-item:nth-child(8) { animation-delay: 0.45s; }
+
 .dashboard-accordion .accordion-item:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    border-color: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] .dashboard-accordion .accordion-item:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
 }
 
 .dashboard-accordion .accordion-button {
     font-weight: 600;
     background-color: transparent;
-    color: var(--text-primary);
+    color: var(--bs-body-color);
+    padding: 1.25rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .dashboard-accordion .accordion-button:focus {
@@ -158,75 +252,73 @@
 }
 
 .dashboard-accordion .accordion-button:not(.collapsed) {
-    color: var(--color-primary);
+    color: var(--bs-primary);
+    background-color: var(--bs-tertiary-bg);
 }
 
 .dashboard-accordion .accordion-body {
-    color: var(--text-primary);
+    color: var(--bs-body-color);
+    padding: 1.25rem;
 }
 
 .dashboard-accordion small {
-    color: var(--text-secondary);
+    color: var(--bs-secondary-color);
 }
 
-
-/* =====================================================
-   PROGRESS BAR
-===================================================== */
-
+/* ===== PROGRESS BAR ===== */
 .dashboard-accordion .progress {
-    height: 8px;
+    height: 10px;
     border-radius: 50px;
-    background-color: var(--bg-secondary);
+    background-color: var(--bs-tertiary-bg);
+    overflow: hidden;
 }
 
 .dashboard-accordion .progress-bar {
     border-radius: 50px;
-    transition: width 0.4s ease;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
 }
 
-
-/* =====================================================
-   BOTONES
-===================================================== */
-
+/* ===== BOTONES ===== */
 .dashboard-accordion .btn {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-accordion .btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.dashboard-accordion .btn:active::before {
+    width: 200px;
+    height: 200px;
 }
 
 .dashboard-accordion .btn:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--bs-box-shadow);
 }
 
-/* =====================================================
-    TEXT MUTED - LIGHT MODE (DEFAULT)
-===================================================== */
-
-.dashboard-container .text-muted {
-    color: var(--text-muted) !important;
+/* ===== DARK MODE ===== */
+[data-bs-theme="dark"] .dashboard-container .text-muted,
+[data-bs-theme="dark"] .dashboard-header p,
+[data-bs-theme="dark"] .dashboard-kpi-card small,
+[data-bs-theme="dark"] .dashboard-accordion small {
+    color: var(--bs-secondary-color) !important;
 }
 
-/* =====================================================
-    DARK MODE CON MEDIA QUERY
-===================================================== */
-
-@media (prefers-color-scheme: dark) {
-    .dashboard-container .text-muted,
-    .dashboard-header p,
-    .dashboard-kpi-card small,
-    .dashboard-accordion small {
-        color: rgba(255, 255, 255, 0.65) !important;
-    }
-}
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-
     .dashboard-kpi-card {
         padding: 1rem;
     }
@@ -234,5 +326,13 @@
     .dashboard-action-card {
         padding: 1.5rem;
     }
-
+    
+    .dashboard-accordion .accordion-item:hover {
+        transform: translateY(-4px);
+    }
+    
+    .dashboard-kpi-card:hover,
+    .dashboard-action-card:hover {
+        transform: translateY(-4px);
+    }
 }

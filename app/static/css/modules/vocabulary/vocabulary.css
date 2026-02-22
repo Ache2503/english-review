@@ -14,11 +14,11 @@
 
 .vocab-category {
     font-weight: 600;
-    color: var(--text-primary, #212529);
+    color: var(--bs-body-color, #212529);
 }
 
 .vocab-category-description {
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== VOCABULARY ITEM ===== */
@@ -33,17 +33,17 @@
 .vocab-word {
     font-weight: 600;
     font-size: 1.1rem;
-    color: var(--primary-color, #0d6efd);
+    color: var(--bs-primary, #0d6efd);
 }
 
 .vocab-definition {
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     font-size: 0.9rem;
 }
 
 .vocab-example {
     font-style: italic;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
     font-size: 0.85rem;
 }
 
@@ -55,7 +55,7 @@
 
 .vocab-list-item:hover {
     background-color: rgba(0, 0, 0, 0.02);
-    border-left-color: var(--primary-color, #0d6efd);
+    border-left-color: var(--bs-primary, #0d6efd);
 }
 
 .vocab-list-word {
@@ -64,12 +64,12 @@
 }
 
 .vocab-list-definition {
-    color: var(--text-secondary, #6c757d);
+    color: var(--bs-secondary-color, #6c757d);
 }
 
 .vocab-list-example {
     font-style: italic;
-    color: var(--text-muted, #6c757d);
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== VOCABULARY PRACTICE ===== */
@@ -84,7 +84,7 @@
 .vocab-practice-word {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--primary-color, #0d6efd);
+    color: var(--bs-primary, #0d6efd);
 }
 
 /* ===== VOCABULARY FLASHCARD ===== */
@@ -125,22 +125,7 @@
 
 .vocab-stat-label {
     font-size: 0.85rem;
-    color: var(--text-muted, #6c757d);
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .vocab-card:hover {
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .vocab-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .vocab-list-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
+    color: var(--bs-tertiary-color, #6c757d);
 }
 
 /* ===== RESPONSIVE ===== */

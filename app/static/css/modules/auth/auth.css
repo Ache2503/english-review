@@ -25,10 +25,10 @@
     max-width: 450px;
 
     padding: clamp(1.5rem, 4vw, 2.5rem);
-    border-radius: var(--radius-lg);
+    border-radius: var(--bs-border-radius-lg);
 
-    background-color: var(--bg-card);
-    box-shadow: var(--shadow-lg);
+    background-color: var(--bs-body-bg);
+    box-shadow: var(--bs-box-shadow-lg);
 
     margin: 0 auto;
 
@@ -59,7 +59,7 @@
 
 .auth-icon {
     font-size: 2rem;
-    color: var(--color-primary);
+    color: var(--bs-primary);
     text-align: center;
     margin-bottom: 1rem;
 }
@@ -69,7 +69,7 @@
 ===================================================== */
 
 .auth-card .form-control {
-    border-radius: var(--radius-md);
+    border-radius: var(--bs-border-radius-md);
     transition:
         border-color var(--transition-fast),
         box-shadow var(--transition-fast),
@@ -79,14 +79,14 @@
 /* Cuando haces focus */
 .auth-card .form-control:focus,
 .auth-card .form-control:focus-visible {
-    border-color: var(--color-primary);
+    border-color: var(--bs-primary);
     box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.20);
     transform: translateY(-1px);
 }
 
 /* 🔥 Cuando el usuario ya escribió algo */
 .auth-card .form-control:not(:placeholder-shown) {
-    border-color: var(--color-primary);
+    border-color: var(--bs-primary);
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.10);
 }
 
@@ -103,7 +103,7 @@
 
 .auth-card .btn:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--bs-box-shadow);
 }
 
 .auth-card .btn:active {
@@ -122,12 +122,12 @@
 }
 
 .auth-link a {
-    color: var(--color-primary);
+    color: var(--bs-primary);
     text-decoration: none;
 }
 
 .auth-link a:hover {
-    color: var(--color-primary-hover);
+    color: var(--bs-primary);
 }
 
 /* =====================================================

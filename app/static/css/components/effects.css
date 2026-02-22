@@ -1,0 +1,179 @@
+/* =====================================================
+   EFECTOS VISUALES REUTILIZABLES
+   Archivo: components/effects.css
+   Define efectos y animaciones para toda la app
+===================================================== */
+
+/* ===== FADE IN UP ANIMATION ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+.animate-delay-5 { animation-delay: 0.5s; }
+
+/* ===== SHIMMER EFFECT ===== */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(
+        90deg,
+        var(--bs-body-bg) 25%,
+        var(--bs-secondary-bg) 50%,
+        var(--bs-body-bg) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* ===== GLOW EFFECT ===== */
+.glow {
+    transition: box-shadow var(--transition-normal);
+}
+
+.glow:hover {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+}
+
+.glow-success:hover {
+    box-shadow: 0 0 20px rgba(22, 163, 74, 0.4);
+}
+
+.glow-warning:hover {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.glow-danger:hover {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+}
+
+/* ===== HOVER TRANSLATE ===== */
+.hover-translate {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.hover-translate:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--bs-box-shadow);
+}
+
+/* ===== PULSE ANIMATION ===== */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* ===== SPIN ANIMATION ===== */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* ===== SHAKE ANIMATION ===== */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.animate-shake {
+    animation: shake 0.5s;
+}
+
+/* ===== FLOAT ANIMATION ===== */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ===== PROGRESS BAR ANIMATION ===== */
+@keyframes progressBar {
+    0% {
+        width: 0%;
+    }
+}
+
+.animate-progress {
+    animation: progressBar 1s ease-out forwards;
+}
+
+/* ===== BORDER ANIMATION ===== */
+@keyframes borderGlow {
+    0%, 100% {
+        border-color: var(--bs-primary);
+    }
+    50% {
+        border-color: var(--bs-info);
+    }
+}
+
+.border-animate {
+    animation: borderGlow 2s ease-in-out infinite;
+}
+
+/* ===== ZOOM IN ===== */
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-zoom-in {
+    animation: zoomIn 0.3s ease-out forwards;
+}

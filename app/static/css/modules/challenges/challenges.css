@@ -43,23 +43,6 @@
     font-variant-numeric: tabular-nums;
 }
 
-@media (prefers-color-scheme: dark) {
-    .avatar {
-        background: linear-gradient(135deg, #1a2f4f 0%, #141829 100%) !important;
-    }
-
-    .streak-fire {
-        color: #fbbf24;
-    }
-
-    .rank-badge.gold {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-}
-
 @media (max-width: 768px) {
     .avatar {
         width: 32px !important;

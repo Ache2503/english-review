@@ -1,14 +1,11 @@
 /* =====================================================
    VARIABLES GLOBALES DEL SISTEMA
    Archivo: core/variables.css
-   Solo contiene variables. Nada de estilos estructurales.
+   Usa variables nativas de Bootstrap 5.3 para soporte
+   nativo de tema oscuro.
 ===================================================== */
 
-/* =========================
-   LIGHT MODE (DEFAULT)
-========================= */
 :root {
-
     /* ===== COLORES DE MARCA ===== */
     --color-primary: #2563eb;
     --color-primary-hover: #1e40af;
@@ -17,31 +14,14 @@
     --color-danger: #dc2626;
     --color-info: #0ea5e9;
 
-    /* ===== FONDOS ===== */
-    --bg-body: #f8fafc;
-    --bg-card: #ffffff;
-    --bg-navbar: linear-gradient(135deg, #2563eb, #1e40af);
-    --bg-input: #ffffff;
-    --bg-footer: #020617;
-
-    /* ===== TEXTOS ===== */
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-    --text-light: #94a3b8;
-
-    /* ===== BORDES ===== */
-    --border-color: #e2e8f0;
-
     /* ===== RADIOS ===== */
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
 
-    /* ===== SOMBRAS ===== */
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+    /* ===== SOMBRAS PERSONALIZADAS ===== */
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
     /* ===== TRANSICIONES ===== */
     --transition-fast: 0.15s ease-in-out;
@@ -52,31 +32,209 @@
     --font-family-base: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
 
-/* =========================
-   DARK MODE
-========================= */
-@media (prefers-color-scheme: dark) {
-    :root {
+/* =====================================================
+   ANIMACIONES GLOBALES
+===================================================== */
 
-        /* ===== FONDOS ===== */
-        --bg-body: #0a0e27;
-        --bg-card: #141829;
-        --bg-navbar: #0a0e27;
-        --bg-input: #1a2332;
-        --bg-footer: #020617;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        /* ===== TEXTOS ===== */
-        --text-primary: #f0f4f8;
-        --text-secondary: #d4dce8;
-        --text-muted: #a8b8cc;
-        --text-light: #8b92a1;
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
 
-        /* ===== BORDES ===== */
-        --border-color: #2a3f5f;
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
 
-        /* ===== SOMBRAS ===== */
-        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* =====================================================
+   CLASES DE ANIMACIÓN
+===================================================== */
+
+/* Fade In Up */
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-left {
+    animation: fadeInLeft 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-fade-in-right {
+    animation: fadeInRight 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-zoom-in {
+    animation: zoomIn 0.4s ease-out forwards;
+    opacity: 0;
+}
+
+/* Animation delays */
+.animate-delay-1 { animation-delay: 0.05s; }
+.animate-delay-2 { animation-delay: 0.1s; }
+.animate-delay-3 { animation-delay: 0.15s; }
+.animate-delay-4 { animation-delay: 0.2s; }
+.animate-delay-5 { animation-delay: 0.25s; }
+.animate-delay-6 { animation-delay: 0.3s; }
+.animate-delay-7 { animation-delay: 0.35s; }
+.animate-delay-8 { animation-delay: 0.4s; }
+
+/* Utility animations */
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* =====================================================
+   EFECTOS VISUALES
+===================================================== */
+
+.glow-effect {
+    transition: box-shadow var(--transition-normal);
+}
+
+.glow-effect:hover {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+}
+
+.glow-success:hover {
+    box-shadow: 0 0 20px rgba(22, 163, 74, 0.4);
+}
+
+.glow-warning:hover {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.glow-danger:hover {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+}
+
+.card-hover {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* Hover translate */
+.hover-translate {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.hover-translate:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* =====================================================
+   SOPORTE PARA REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .animate-fade-in-up,
+    .animate-fade-in-left,
+    .animate-fade-in-right,
+    .animate-zoom-in {
+        opacity: 1;
+        transform: none;
     }
 }

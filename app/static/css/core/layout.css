@@ -2,6 +2,7 @@
    LAYOUT GLOBAL
    Archivo: core/layout.css
    Define estructura general de la aplicación
+   Usa variables de Bootstrap 5.3 para temas claros/oscuros
 ===================================================== */
 
 /* ===== MAIN WRAPPER ===== */
@@ -37,7 +38,7 @@ main {
     flex-direction: column;
 }
 
-/* ===== GRID SIMPLE PERSONALIZADO (opcional extra a Bootstrap) ===== */
+/* ===== GRID SIMPLE PERSONALIZADO ===== */
 .grid-auto {
     display: grid;
     gap: 1.5rem;
@@ -59,15 +60,15 @@ main {
 }
 
 .breadcrumb-item {
-    color: var(--text-secondary);
+    color: var(--bs-secondary-color);
 }
 
 .breadcrumb-item.active {
-    color: var(--text-muted);
+    color: var(--bs-tertiary-color);
 }
 
 .breadcrumb-item a {
-    color: var(--color-primary);
+    color: var(--bs-primary);
 }
 
 .breadcrumb-item a:hover {
@@ -87,7 +88,7 @@ main {
     padding: 3rem 0;
 }
 
-/* ===== CONTAINER MAX WIDTH PERSONALIZADO (si no usas solo Bootstrap) ===== */
+/* ===== CONTAINER MAX WIDTH PERSONALIZADO ===== */
 .container-narrow {
     max-width: 900px;
     margin: 0 auto;
@@ -98,22 +99,29 @@ main {
     margin: 0 auto;
 }
 
-@media (prefers-color-scheme: dark) {
-    /* Fuerza el contraste en textos secundarios */
-    .text-muted {
-        color: var(--text-muted) !important;
-    }
+/* ===== TEMAS OSCURO/CLARO - Override de estilos inline ===== */
+[data-bs-theme="dark"] .bg-white {
+    background-color: var(--bs-body-bg) !important;
+}
 
-    .lead {
-        color: var(--text-secondary) !important;
-    }
+[data-bs-theme="dark"] .text-dark {
+    color: var(--bs-body-color) !important;
+}
 
-    /* Mejora la visibilidad de los iconos en el dashboard */
-    .text-muted i, .text-secondary i {
-        color: var(--text-muted);
-    }
-    
-    /* Ajuste para los badges suaves (subtle) del Dashboard */
-    .bg-primary-subtle { background-color: rgba(37, 99, 235, 0.2) !important; color: #60a5fa !important; }
-    .bg-success-subtle { background-color: rgba(22, 163, 74, 0.2) !important; color: #4ade80 !important; }
+[data-bs-theme="dark"] .border {
+    border-color: var(--bs-border-color) !important;
+}
+
+/* ===== IMPROVES VISIBILITY IN DARK MODE ===== */
+[data-bs-theme="dark"] .text-muted {
+    color: var(--bs-tertiary-color) !important;
+}
+
+[data-bs-theme="dark"] .lead {
+    color: var(--bs-secondary-color) !important;
+}
+
+[data-bs-theme="dark"] .text-muted i, 
+[data-bs-theme="dark"] .text-secondary i {
+    color: var(--bs-tertiary-color);
 }

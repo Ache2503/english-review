@@ -1,13 +1,9 @@
 /* ==========================
-   CORE
+    CORE
 ========================== */
 @import url("core/variables.css");
 @import url("core/reset.css");
 @import url("core/layout.css");
-
-/* ==========================
-    THEMES
-@import url("themes/dark-mode.css");
 
 /* ==========================
     COMPONENTS
@@ -20,9 +16,8 @@
 @import url("components/alerts.css");
 @import url("components/footer.css");
 
-
 /* ==========================
-   MODULES (se agregarán después)
+    MODULES
 ========================== */
 @import url("modules/auth/auth.css");
 @import url("modules/badges/badges.css");

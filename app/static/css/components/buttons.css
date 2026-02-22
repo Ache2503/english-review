@@ -1,14 +1,15 @@
 /* =====================================================
    COMPONENTE: BUTTONS
    Archivo: components/buttons.css
-   Sistema de botones reutilizable
+   Sistema de botones reutilizable con efectos visuales
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
 /* ===== BOTÓN BASE ===== */
 .btn {
     display: inline-block;
     font-weight: 500;
-    border-radius: var(--radius-md);
+    border-radius: var(--bs-border-radius-md);
     padding: 0.5rem 1rem;
     transition:
         background-color var(--transition-normal),
@@ -20,7 +21,7 @@
 
 /* Hover base */
 .btn:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 /* Active */
@@ -37,79 +38,66 @@
 }
 
 /* =====================================================
-   VARIANTES DE COLOR
+   EFECTOS VISUALES
 ===================================================== */
 
-/* PRIMARY */
-.btn-primary {
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-primary);
-    color: #ffffff;
+/* Efecto shimmer */
+.btn-shimmer {
+    position: relative;
+    overflow: hidden;
 }
 
-.btn-primary:hover {
-    background-color: var(--color-primary-hover);
-    border-color: var(--color-primary-hover);
-    box-shadow: var(--shadow-sm);
+.btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: left 0.5s ease;
 }
 
-/* SUCCESS */
-.btn-success {
-    background-color: var(--color-success);
-    border: 1px solid var(--color-success);
-    color: #ffffff;
+.btn-shimmer:hover::after {
+    left: 100%;
 }
 
-.btn-success:hover {
-    filter: brightness(1.1);
+/* Efecto glow */
+.btn-glow {
+    position: relative;
 }
 
-/* DANGER */
-.btn-danger {
-    background-color: var(--color-danger);
-    border: 1px solid var(--color-danger);
-    color: #ffffff;
+.btn-glow:hover {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
 }
 
-.btn-danger:hover {
-    filter: brightness(1.1);
+/* Ripple effect container */
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
 }
 
-/* WARNING */
-.btn-warning {
-    background-color: var(--color-warning);
-    border: 1px solid var(--color-warning);
-    color: #ffffff;
+.btn-ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
-.btn-warning:hover {
-    filter: brightness(1.05);
-}
-
-/* INFO */
-.btn-info {
-    background-color: var(--color-info);
-    border: 1px solid var(--color-info);
-    color: #ffffff;
-}
-
-.btn-info:hover {
-    filter: brightness(1.1);
-}
-
-/* =====================================================
-   VARIANTES OUTLINE
-===================================================== */
-
-.btn-outline-primary {
-    background-color: transparent;
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
-}
-
-.btn-outline-primary:hover {
-    background-color: var(--color-primary);
-    color: #ffffff;
+.btn-ripple:active::before {
+    width: 300px;
+    height: 300px;
 }
 
 /* =====================================================
@@ -131,4 +119,31 @@
 /* Botón full width */
 .btn-block {
     width: 100%;
+}
+
+/* Icon button */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+/* Botón flotante */
+.btn-float {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    box-shadow: var(--bs-box-shadow-lg);
+    z-index: 1000;
+}
+
+.btn-float:hover {
+    transform: scale(1.1);
 }

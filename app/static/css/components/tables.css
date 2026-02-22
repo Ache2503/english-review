@@ -2,36 +2,35 @@
    COMPONENTE: TABLES
    Archivo: components/tables.css
    Sistema de tablas adaptable a dark mode
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
 /* ===== TABLA BASE ===== */
 .table {
     width: 100%;
     margin-bottom: 1rem;
-    color: var(--text-primary);
-    background-color: var(--bg-card);
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
     border-collapse: collapse;
-    transition:
-        background-color var(--transition-normal),
-        color var(--transition-normal);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 /* ===== HEADER ===== */
 .table thead {
-    background-color: var(--bg-secondary);
+    background-color: var(--bs-tertiary-bg);
 }
 
 .table th {
     font-weight: 600;
     padding: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--bs-border-color);
     text-align: left;
 }
 
 /* ===== CELDAS ===== */
 .table td {
     padding: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 /* ===== FILAS ===== */
@@ -41,18 +40,18 @@
 
 /* Hover */
 .table-hover tbody tr:hover {
-    background-color: var(--border-color);
+    background-color: var(--bs-tertiary-bg);
 }
 
 /* ===== TABLA STRIPED ===== */
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: var(--bs-secondary-bg);
 }
 
 /* ===== TABLA CON BORDES ===== */
 .table-bordered th,
 .table-bordered td {
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--bs-border-color);
 }
 
 /* ===== TABLA COMPACTA ===== */

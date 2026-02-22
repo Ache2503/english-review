@@ -1,5 +1,6 @@
 /* ============================================================================
    BADGES - Estilos para insignias y badges
+   Usa variables de Bootstrap 5.3
    ============================================================================ */
 
 .badge-unit {
@@ -18,7 +19,7 @@
 
 .badge-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--bs-box-shadow);
 }
 
 .score-badge {
@@ -64,28 +65,27 @@
     color: white;
 }
 
-@media (prefers-color-scheme: dark) {
-    .score-badge.excellent {
-        background: rgba(40, 167, 69, 0.9);
-    }
+/* ===== DARK MODE (Bootstrap 5.3 handles this with data-bs-theme) ===== */
+[data-bs-theme="dark"] .score-badge.excellent {
+    background: rgba(40, 167, 69, 0.9);
+}
 
-    .score-badge.good {
-        background: rgba(255, 193, 7, 0.9);
-        color: #1a1a1a;
-    }
+[data-bs-theme="dark"] .score-badge.good {
+    background: rgba(255, 193, 7, 0.9);
+    color: #1a1a1a;
+}
 
-    .score-badge.practice {
-        background: rgba(220, 53, 69, 0.9);
-    }
+[data-bs-theme="dark"] .score-badge.practice {
+    background: rgba(220, 53, 69, 0.9);
+}
 
-    .badge-card {
-        background: linear-gradient(135deg, #1a2f4f 0%, #141829 100%) !important;
-    }
+[data-bs-theme="dark"] .badge-card {
+    background: var(--bs-secondary-bg) !important;
+}
 
-    .badge-card.opacity-50 {
-        opacity: 0.5;
-        background: #1a2332 !important;
-    }
+[data-bs-theme="dark"] .badge-card.opacity-50 {
+    opacity: 0.5;
+    background: var(--bs-tertiary-bg) !important;
 }
 
 @media (max-width: 768px) {

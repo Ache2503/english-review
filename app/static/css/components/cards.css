@@ -1,58 +1,312 @@
 /* =====================================================
    COMPONENTE: CARDS
    Archivo: components/cards.css
-   Estilos reutilizables para tarjetas
+   Estilos reutilizables para tarjetas con efectos visuales
+   Usa variables de Bootstrap 5.3
 ===================================================== */
+
+/* ===== ANIMATIONS KEYFRAMES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes borderGlow {
+    0%, 100% {
+        border-color: var(--bs-primary);
+    }
+    50% {
+        border-color: var(--bs-info);
+    }
+}
 
 /* ===== CARD BASE ===== */
 .card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-md);
+    box-shadow: var(--bs-box-shadow-sm);
     transition: 
-        transform var(--transition-normal),
-        box-shadow var(--transition-normal),
-        background-color var(--transition-normal),
-        border-color var(--transition-normal);
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s ease,
+        border-color 0.3s ease;
 }
 
-/* ===== HOVER SUAVE ===== */
+/* ===== ENTRANCE ANIMATIONS ===== */
+.card-animate {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.card-animate-left {
+    opacity: 0;
+    animation: fadeInLeft 0.5s ease-out forwards;
+}
+
+.card-animate-right {
+    opacity: 0;
+    animation: fadeInRight 0.5s ease-out forwards;
+}
+
+.card-animate-zoom {
+    opacity: 0;
+    animation: zoomIn 0.4s ease-out forwards;
+}
+
+/* Animation delays */
+.card-animate-delay-1 { animation-delay: 0.05s; }
+.card-animate-delay-2 { animation-delay: 0.1s; }
+.card-animate-delay-3 { animation-delay: 0.15s; }
+.card-animate-delay-4 { animation-delay: 0.2s; }
+.card-animate-delay-5 { animation-delay: 0.25s; }
+.card-animate-delay-6 { animation-delay: 0.3s; }
+.card-animate-delay-7 { animation-delay: 0.35s; }
+.card-animate-delay-8 { animation-delay: 0.4s; }
+
+/* ===== HOVER EFFECTS ===== */
 .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    border-color: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] .card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== VARIANT: Subtle hover (less movement) */
+.card-hover-subtle:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--bs-box-shadow);
+}
+
+/* ===== VARIANT: No translate on hover (only shadow) */
+.card-hover-shadow:hover {
+    transform: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== VARIANT: Scale on hover */
+.card-hover-scale:hover {
+    transform: scale(1.02);
+}
+
+/* ===== VARIANT: Float animation on hover */
+.card-hover-float:hover {
+    animation: float 2s ease-in-out infinite;
+    transform: translateY(-8px);
+}
+
+/* ===== VARIANT: Border glow on hover */
+.card-border-glow {
+    animation: borderGlow 3s ease-in-out infinite;
+}
+
+.card-border-glow:hover {
+    animation: none;
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+}
+
+/* ===== SHINE EFFECT ===== */
+.card-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    transform: skewX(-25deg);
+    transition: left 0.5s ease;
+}
+
+.card-shine:hover::after {
+    left: 150%;
+    transition: left 0.7s ease;
+}
+
+/* ===== GRADIENT BORDER EFFECT ===== */
+.card-gradient-border {
+    position: relative;
+    background: var(--bs-body-bg);
+}
+
+.card-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--bs-primary), var(--bs-info), var(--bs-primary));
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-gradient-border:hover::before {
+    opacity: 1;
+}
+
+/* ===== 3D TILT EFFECT ===== */
+.card-3d-tilt {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.card-3d-tilt:hover {
+    transform: rotateX(5deg) rotateY(-5deg) translateY(-8px);
+}
+
+/* ===== CARD INTERACTIVE (clickable) ===== */
+.card-interactive {
+    cursor: pointer;
+}
+
+.card-interactive:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
 }
 
 /* ===== CARD HEADER ===== */
 .card-header {
     background-color: transparent;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--bs-border-color);
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--bs-body-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* ===== CARD BODY ===== */
 .card-body {
-    color: var(--text-secondary);
+    color: var(--bs-secondary-color);
+    transition: color 0.3s ease;
 }
 
 /* ===== CARD TITLE ===== */
 .card-title {
-    color: var(--text-primary);
+    color: var(--bs-body-color);
     font-weight: 600;
     margin-bottom: 0.75rem;
+    transition: color 0.3s ease;
 }
 
 /* ===== CARD TEXT ===== */
 .card-text {
-    color: var(--text-secondary);
+    color: var(--bs-secondary-color);
+    transition: color 0.3s ease;
 }
 
 /* ===== CARD FOOTER ===== */
 .card-footer {
     background-color: transparent;
-    border-top: 1px solid var(--border-color);
-    color: var(--text-muted);
+    border-top: 1px solid var(--bs-border-color);
+    color: var(--bs-tertiary-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== CARD LINKS ===== */
+.card a {
+    color: var(--bs-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.card a:hover {
+    color: var(--bs-info);
+}
+
+/* ===== CARD ICONS ===== */
+.card .card-icon {
+    font-size: 2rem;
+    color: var(--bs-primary);
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+    color: var(--bs-info);
 }
 
 /* =====================================================
@@ -61,26 +315,90 @@
 
 /* Card destacada */
 .card--highlight {
-    border-left: 4px solid var(--color-primary);
+    border-left: 4px solid var(--bs-primary);
+}
+
+.card--highlight:hover {
+    border-left-color: var(--bs-info);
 }
 
 /* Card éxito */
 .card--success {
-    border-left: 4px solid var(--color-success);
+    border-left: 4px solid var(--bs-success);
+}
+
+.card--success:hover {
+    border-left-color: var(--bs-info);
+    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.2);
 }
 
 /* Card warning */
 .card--warning {
-    border-left: 4px solid var(--color-warning);
+    border-left: 4px solid var(--bs-warning);
+}
+
+.card--warning:hover {
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
 }
 
 /* Card danger */
 .card--danger {
-    border-left: 4px solid var(--color-danger);
+    border-left: 4px solid var(--bs-danger);
+}
+
+.card--danger:hover {
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.2);
+}
+
+/* Card info */
+.card--info {
+    border-left: 4px solid var(--bs-info);
 }
 
 /* Card sin hover */
 .card--static:hover {
     transform: none;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--bs-box-shadow-sm);
+    border-color: var(--bs-border-color);
+}
+
+/* Card con gradiente sutil */
+.card-gradient {
+    background: linear-gradient(135deg, var(--bs-body-bg) 0%, var(--bs-tertiary-bg) 100%);
+}
+
+/* Card oscura (para dark mode) */
+[data-bs-theme="dark"] .card-dark {
+    background: linear-gradient(135deg, #1a1f35 0%, #141829 100%);
+    border-color: #2a3f5f;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .card-animate,
+    .card-animate-left,
+    .card-animate-right,
+    .card-animate-zoom {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+    
+    .card:hover {
+        transform: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .card-hover-float:hover {
+        animation: none;
+    }
 }

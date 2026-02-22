@@ -311,44 +311,6 @@
     color: #dc3545;
 }
 
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    .quiz-option:hover {
-        background-color: rgba(0, 102, 204, 0.15);
-    }
-
-    .quiz-option.selected {
-        background-color: rgba(0, 102, 204, 0.25);
-    }
-
-    .answer-options {
-        background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .memory-card-back {
-        background: #1a1a1a;
-        border-color: #28a745;
-    }
-
-    .scramble-letter {
-        background: #2a2a2a;
-        border-color: #444;
-    }
-
-    .scramble-letter:hover {
-        background: #333;
-        border-color: #555;
-    }
-
-    .gap-word {
-        background: #2a2a2a;
-    }
-
-    .gap-word:hover {
-        background: #333;
-    }
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .memory-card {

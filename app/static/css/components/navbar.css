@@ -2,17 +2,25 @@
    COMPONENTE: NAVBAR
    Archivo: components/navbar.css
    Barra de navegación principal
+   Usa variables de Bootstrap 5.3
 ===================================================== */
 
 /* ===== NAVBAR BASE ===== */
 .navbar {
-    background: var(--bg-navbar);
+    background: var(--bs-body-bg);
     padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-    transition:
-        background-color var(--transition-normal),
-        border-color var(--transition-normal);
+    border-bottom: 1px solid var(--bs-border-color);
+    box-shadow: var(--bs-box-shadow);
+    transition: background-color var(--transition-normal);
+}
+
+[data-bs-theme="light"] .navbar {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+[data-bs-theme="dark"] .navbar {
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 /* ===== BRAND ===== */
@@ -30,14 +38,20 @@
 /* ===== LINKS ===== */
 .nav-link {
     font-weight: 500;
-    color: #f0f4f8;
-    transition:
-        color var(--transition-fast),
-        opacity var(--transition-fast);
+    color: rgba(255, 255, 255, 0.9);
+    transition: color var(--transition-fast), opacity var(--transition-fast);
 }
 
 .nav-link:hover {
     color: #ffffff;
+}
+
+[data-bs-theme="dark"] .nav-link {
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .nav-link:hover {
+    color: var(--bs-primary);
 }
 
 /* Active link */
@@ -48,37 +62,56 @@
 
 /* ===== DROPDOWN MENU ===== */
 .dropdown-menu {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    transition:
-        background-color var(--transition-normal),
-        border-color var(--transition-normal);
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    box-shadow: var(--bs-box-shadow);
 }
 
 /* ===== DROPDOWN ITEM ===== */
 .dropdown-item {
-    color: var(--text-primary);
-    transition:
-        background-color var(--transition-fast),
-        color var(--transition-fast);
+    color: var(--bs-body-color);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .dropdown-item:hover,
 .dropdown-item:focus {
-    background-color: var(--border-color);
-    color: var(--text-primary);
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
 }
 
-/* Active dropdown item */
 .dropdown-item.active,
 .dropdown-item:active {
-    background-color: var(--color-primary);
+    background-color: var(--bs-primary);
     color: #ffffff;
 }
 
-/* Divider */
 .dropdown-divider {
-    border-color: var(--border-color);
+    border-color: var(--bs-border-color);
+}
+
+/* ===== THEME TOGGLE BUTTON ===== */
+.theme-toggle {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .theme-toggle {
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .theme-toggle:hover {
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-primary);
 }
