@@ -5,12 +5,25 @@
    Usa variables de Bootstrap 5.3
 ===================================================== */
 
+/* ===== FORM GROUP ===== */
+.form-group {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
 /* ===== LABELS ===== */
 label {
     color: var(--bs-body-color);
     font-weight: 500;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
     display: inline-block;
+    transition: color 0.3s ease;
+}
+
+/* Required indicator */
+label .required {
+    color: var(--bs-danger);
+    margin-left: 2px;
 }
 
 /* ===== INPUTS & SELECTS ===== */
@@ -20,18 +33,42 @@ label {
     color: var(--bs-body-color);
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius-md);
-    padding: 0.5rem 0.75rem;
-    transition:
-        background-color var(--transition-normal),
-        color var(--transition-normal),
-        border-color var(--transition-normal),
-        box-shadow var(--transition-normal);
+    padding: 0.75rem 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+/* Input with icon */
+.form-control-icon {
+    position: relative;
+}
+
+.form-control-icon i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--bs-tertiary-color);
+    transition: color 0.3s ease;
+}
+
+.form-control-icon .form-control {
+    padding-left: 2.75rem;
+}
+
+.form-control-icon:focus-within i {
+    color: var(--bs-primary);
 }
 
 /* ===== PLACEHOLDER ===== */
 .form-control::placeholder {
     color: var(--bs-tertiary-color);
-    opacity: 0.8;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.form-control:focus::placeholder {
+    opacity: 1;
 }
 
 /* ===== FOCUS STATE ===== */
@@ -41,56 +78,142 @@ label {
     color: var(--bs-body-color);
     border-color: var(--bs-primary);
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Input floating label animation */
+.form-floating > label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    transform: scale(0.85) translateY(-0.5rem);
+    color: var(--bs-primary);
+}
+
+/* ===== HOVER STATE ===== */
+.form-control:hover,
+.form-select:hover {
+    border-color: var(--bs-primary);
+    transform: translateY(-1px);
 }
 
 /* ===== CHECKBOX & RADIO ===== */
-.form-check-input {
-    background-color: var(--bs-body-bg);
-    border: 1px solid var(--bs-border-color);
-    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+.form-check {
+    padding-left: 1.75rem;
+    margin-bottom: 0.5rem;
 }
 
-/* Checked state */
+.form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
 .form-check-input:checked {
     background-color: var(--bs-primary);
     border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-/* Focus state */
 .form-check-input:focus {
-    box-shadow: 0 0 0 0.15rem rgba(37, 99, 235, 0.25);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    border-color: var(--bs-primary);
 }
 
-/* Label for checkbox */
 .form-check-label {
     color: var(--bs-secondary-color);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.form-check-label:hover {
+    color: var(--bs-body-color);
+}
+
+/* Custom checkbox with icon */
+.form-check-icon {
+    padding-left: 2.5rem;
+}
+
+.form-check-icon .form-check-input {
+    position: absolute;
+    left: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+.form-check-icon .form-check-input ~ i {
+    position: absolute;
+    left: 2.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--bs-tertiary-color);
+    transition: all 0.2s ease;
+}
+
+.form-check-icon .form-check-input:checked ~ i {
+    color: var(--bs-primary);
 }
 
 /* ===== TEXTAREA ===== */
 textarea.form-control {
     resize: vertical;
-    min-height: 120px;
+    min-height: 140px;
+    line-height: 1.6;
 }
 
 /* ===== DISABLED STATE ===== */
 .form-control:disabled,
 .form-select:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
+    background-color: var(--bs-tertiary-bg);
 }
 
-/* =====================================================
-   VARIANTES OPCIONALES
-===================================================== */
+.form-control:disabled:hover,
+.form-select:disabled:hover {
+    transform: none;
+    border-color: var(--bs-border-color);
+}
+
+/* ===== READONLY STATE ===== */
+.form-control[readonly] {
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* ===== INPUT SIZES ===== */
+.form-control-lg {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+}
+
+.form-control-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* ===== VARIANTES ===== */
 
 /* Input con error */
 .input-error {
     border-color: var(--bs-danger);
+    animation: shake 0.4s ease;
 }
 
 .input-error:focus {
-    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
 }
 
 /* Input con éxito */
@@ -99,5 +222,103 @@ textarea.form-control {
 }
 
 .input-success:focus {
-    box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.25);
+    border-color: var(--bs-success);
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15);
+}
+
+/* Input con warning */
+.input-warning {
+    border-color: var(--bs-warning);
+}
+
+.input-warning:focus {
+    border-color: var(--bs-warning);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+/* ===== HELP TEXT ===== */
+.form-text {
+    color: var(--bs-tertiary-color);
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    transition: color 0.2s ease;
+}
+
+/* Valid feedback */
+.valid-feedback {
+    color: var(--bs-success);
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    display: none;
+}
+
+.is-valid ~ .valid-feedback {
+    display: block;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Invalid feedback */
+.invalid-feedback {
+    color: var(--bs-danger);
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    display: none;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* ===== SEARCH INPUT ===== */
+.search-input {
+    position: relative;
+}
+
+.search-input .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--bs-tertiary-color);
+    pointer-events: none;
+}
+
+.search-input .form-control {
+    padding-left: 2.75rem;
+}
+
+.search-input .form-control:focus {
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* Search clear button */
+.search-clear {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--bs-tertiary-color);
+    cursor: pointer;
+    padding: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.search-input:not(:focus):not(:placeholder-shown) .search-clear {
+    opacity: 1;
+}
+
+.search-clear:hover {
+    color: var(--bs-danger);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .form-control,
+    .form-select {
+        padding: 0.65rem 0.85rem;
+    }
 }

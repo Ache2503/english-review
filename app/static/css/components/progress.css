@@ -1,0 +1,264 @@
+/* =====================================================
+   PROGRESS BARS
+   Archivo: components/progress.css
+   Barras de progreso animadas
+===================================================== */
+
+/* ===== PROGRESS BASE ===== */
+.progress {
+    height: 10px;
+    border-radius: 50px;
+    background-color: var(--bs-tertiary-bg);
+    overflow: hidden;
+    position: relative;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+    border-radius: 50px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated striped */
+.progress-bar-striped {
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 1rem 1rem;
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 1rem 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+/* ===== PROGRESS SIZES ===== */
+.progress-sm {
+    height: 6px;
+}
+
+.progress-lg {
+    height: 16px;
+}
+
+.progress-xl {
+    height: 24px;
+}
+
+/* ===== PROGRESS WITH LABEL ===== */
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-label .progress-text {
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+    font-weight: 500;
+}
+
+.progress-label .progress-percent {
+    font-size: 0.875rem;
+    color: var(--bs-primary);
+    font-weight: 600;
+}
+
+/* ===== MULTICOLOR PROGRESS ===== */
+.progress-success .progress-bar {
+    background: linear-gradient(90deg, #22c55e, #10b981);
+}
+
+.progress-danger .progress-bar {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.progress-warning .progress-bar {
+    background: linear-gradient(90deg, #f59e0b, #eab308);
+}
+
+.progress-info .progress-bar {
+    background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+}
+
+/* ===== PROGRESS ANIMATED ===== */
+.progress-animated .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ===== PROGRESS GLOW ===== */
+.progress-glow .progress-bar {
+    box-shadow: 0 0 10px var(--bs-primary);
+}
+
+/* ===== CIRCULAR PROGRESS ===== */
+.circular-progress {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circular-progress svg {
+    transform: rotate(-90deg);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.circular-progress .progress-bg {
+    fill: none;
+    stroke: var(--bs-tertiary-bg);
+    stroke-width: 8;
+}
+
+.circular-progress .progress-bar-circle {
+    fill: none;
+    stroke: var(--bs-primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.circular-progress .progress-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--bs-body-color);
+    z-index: 1;
+}
+
+.circular-progress .progress-label {
+    position: absolute;
+    bottom: -25px;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+}
+
+/* Circular progress sizes */
+.circular-progress.sm {
+    width: 60px;
+    height: 60px;
+}
+
+.circular-progress.sm .progress-bg,
+.circular-progress.sm .progress-bar-circle {
+    stroke-width: 6;
+}
+
+.circular-progress.sm .progress-value {
+    font-size: 1rem;
+}
+
+.circular-progress.lg {
+    width: 160px;
+    height: 160px;
+}
+
+.circular-progress.lg .progress-bg,
+.circular-progress.lg .progress-bar-circle {
+    stroke-width: 10;
+}
+
+.circular-progress.lg .progress-value {
+    font-size: 2.5rem;
+}
+
+/* Circular progress colors */
+.circular-progress.primary .progress-bar-circle {
+    stroke: var(--bs-primary);
+}
+
+.circular-progress.success .progress-bar-circle {
+    stroke: var(--bs-success);
+}
+
+.circular-progress.danger .progress-bar-circle {
+    stroke: var(--bs-danger);
+}
+
+.circular-progress.warning .progress-bar-circle {
+    stroke: var(--bs-warning);
+}
+
+.circular-progress.info .progress-bar-circle {
+    stroke: var(--bs-info);
+}
+
+/* ===== SKILL PROGRESS ===== */
+.skill-progress {
+    margin-bottom: 1.5rem;
+}
+
+.skill-progress .skill-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.skill-progress .skill-name {
+    font-weight: 500;
+    color: var(--bs-body-color);
+}
+
+.skill-progress .skill-percent {
+    font-weight: 600;
+    color: var(--bs-primary);
+}
+
+.skill-progress .skill-icon {
+    margin-right: 0.5rem;
+    color: var(--bs-primary);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .circular-progress {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .circular-progress .progress-value {
+        font-size: 1.5rem;
+    }
+}

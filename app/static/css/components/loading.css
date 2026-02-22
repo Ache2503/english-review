@@ -1,0 +1,298 @@
+/* =====================================================
+   LOADING STATES & SPINNERS
+   Archivo: components/loading.css
+   Estados de carga y spinners
+===================================================== */
+
+/* ===== SPINNER BASE ===== */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bs-border-color);
+    border-top-color: var(--bs-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Spinner sizes */
+.spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+
+.spinner-lg {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+}
+
+.spinner-xl {
+    width: 80px;
+    height: 80px;
+    border-width: 5px;
+}
+
+/* Spinner colors */
+.spinner-primary {
+    border-top-color: var(--bs-primary);
+}
+
+.spinner-success {
+    border-top-color: var(--bs-success);
+}
+
+.spinner-danger {
+    border-top-color: var(--bs-danger);
+}
+
+.spinner-warning {
+    border-top-color: var(--bs-warning);
+}
+
+.spinner-info {
+    border-top-color: var(--bs-info);
+}
+
+.spinner-light {
+    border-top-color: #fff;
+}
+
+.spinner-dark {
+    border-top-color: var(--bs-body-color);
+}
+
+/* ===== SPINNER WITH TEXT ===== */
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+}
+
+.spinner-text {
+    color: var(--bs-secondary-color);
+    font-size: 0.95rem;
+}
+
+/* ===== LOADING OVERLAY ===== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+[data-bs-theme="dark"] .loading-overlay {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.loading-overlay .spinner {
+    width: 50px;
+    height: 50px;
+}
+
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--bs-tertiary-bg) 25%,
+        var(--bs-secondary-bg) 50%,
+        var(--bs-tertiary-bg) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: var(--bs-border-radius-sm);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Skeleton shapes */
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-text-sm {
+    height: 0.75rem;
+    width: 60%;
+}
+
+.skeleton-title {
+    height: 1.5rem;
+    width: 80%;
+    margin-bottom: 0.75rem;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--bs-border-radius-md);
+}
+
+.skeleton-card {
+    padding: 1.5rem;
+    border-radius: var(--bs-border-radius-lg);
+    border: 1px solid var(--bs-border-color);
+}
+
+.skeleton-table-row {
+    height: 50px;
+    margin-bottom: 0.5rem;
+}
+
+/* ===== PULSE DOTS ===== */
+.loading-dots {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.loading-dots span {
+    width: 10px;
+    height: 10px;
+    background: var(--bs-primary);
+    border-radius: 50%;
+    animation: pulse-dot 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes pulse-dot {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+/* ===== PROGRESS BAR ANIMATION ===== */
+.progress-animated {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-animated::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: progress-shimmer 2s infinite;
+}
+
+@keyframes progress-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ===== LOADING BUTTON ===== */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    color: transparent !important;
+}
+
+.btn-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.btn-loading.btn-outline-primary::before,
+.btn-loading.btn-outline-secondary::before {
+    border-color: rgba(0, 0, 0, 0.2);
+    border-top-color: var(--bs-body-color);
+}
+
+/* ===== LOADING CARD ===== */
+.loading-card {
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 2rem;
+    text-align: center;
+}
+
+/* ===== LAZY LOAD IMAGE ===== */
+.lazy-image {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.lazy-image.loaded {
+    opacity: 1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .spinner-xl {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .loading-overlay .spinner {
+        width: 40px;
+        height: 40px;
+    }
+}

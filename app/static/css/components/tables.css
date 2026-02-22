@@ -5,14 +5,15 @@
    Usa variables de Bootstrap 5.3
 ===================================================== */
 
-/* ===== TABLA BASE ===== */
+/* ===== TABLE BASE ===== */
 .table {
     width: 100%;
     margin-bottom: 1rem;
     color: var(--bs-body-color);
     background-color: var(--bs-body-bg);
-    border-collapse: collapse;
-    transition: background-color var(--transition-normal), color var(--transition-normal);
+    border-collapse: separate;
+    border-spacing: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ===== HEADER ===== */
@@ -20,71 +21,194 @@
     background-color: var(--bs-tertiary-bg);
 }
 
-.table th {
+.table thead th {
     font-weight: 600;
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--bs-border-color);
+    padding: 1rem 0.75rem;
+    border-bottom: 2px solid var(--bs-border-color);
     text-align: left;
+    white-space: nowrap;
+    position: relative;
 }
 
-/* ===== CELDAS ===== */
+/* Sortable columns */
+.table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.table thead th.sortable::after {
+    content: '\f0dc';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 0.5rem;
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+}
+
+.table thead th.sortable:hover::after {
+    opacity: 0.7;
+}
+
+.table thead th.sortable.asc::after {
+    content: '\f0de';
+    opacity: 1;
+}
+
+.table thead th.sortable.desc::after {
+    content: '\f0dd';
+    opacity: 1;
+}
+
+/* ===== CELLS ===== */
 .table td {
-    padding: 0.75rem;
+    padding: 1rem 0.75rem;
     border-bottom: 1px solid var(--bs-border-color);
+    vertical-align: middle;
+    transition: background-color 0.2s ease;
 }
 
-/* ===== FILAS ===== */
+/* ===== ROWS ===== */
 .table tbody tr {
-    transition: background-color var(--transition-fast);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.table tbody tr::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: var(--bs-primary);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
 }
 
 /* Hover */
 .table-hover tbody tr:hover {
     background-color: var(--bs-tertiary-bg);
+    transform: translateX(4px);
 }
 
-/* ===== TABLA STRIPED ===== */
+.table-hover tbody tr:hover::before {
+    transform: scaleY(1);
+}
+
+/* ===== TABLE STRIPED ===== */
 .table-striped tbody tr:nth-of-type(odd) {
     background-color: var(--bs-secondary-bg);
 }
 
-/* ===== TABLA CON BORDES ===== */
+.table-striped tbody tr:nth-of-type(odd):hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* ===== TABLE BORDERED ===== */
+.table-bordered {
+    border: 1px solid var(--bs-border-color);
+}
+
 .table-bordered th,
 .table-bordered td {
     border: 1px solid var(--bs-border-color);
 }
 
-/* ===== TABLA COMPACTA ===== */
+.table-bordered thead th,
+.table-bordered thead td {
+    border-bottom-width: 2px;
+}
+
+/* ===== TABLE COMPACT ===== */
 .table-sm th,
 .table-sm td {
-    padding: 0.4rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.table-sm thead th {
+    padding: 0.75rem;
 }
 
 /* ===== RESPONSIVE ===== */
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    border-radius: var(--bs-border-radius-lg);
+    border: 1px solid var(--bs-border-color);
 }
 
-/* ===== ESTADOS DE FILA ===== */
+/* ===== ROW STATES ===== */
 .table-success {
-    background-color: rgba(34, 197, 94, 0.15);
+    background-color: rgba(34, 197, 94, 0.1);
 }
 
 .table-danger {
-    background-color: rgba(239, 68, 68, 0.15);
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 .table-warning {
-    background-color: rgba(245, 158, 11, 0.15);
+    background-color: rgba(245, 158, 11, 0.1);
 }
 
 .table-info {
-    background-color: rgba(14, 165, 233, 0.15);
+    background-color: rgba(14, 165, 233, 0.1);
 }
 
-/* ===== ACCIONES EN CELDAS ===== */
+/* ===== ACTIONS IN CELLS ===== */
 .table-actions {
     display: flex;
     gap: 0.5rem;
+}
+
+.table-actions .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* ===== TABLE ICONS ===== */
+.table td i {
+    transition: transform 0.2s ease;
+}
+
+.table tr:hover td i {
+    transform: scale(1.1);
+}
+
+/* ===== TABLE AVATAR ===== */
+.table-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 0.75rem;
+    vertical-align: middle;
+}
+
+/* ===== TABLE BADGE ===== */
+.table .badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+}
+
+/* ===== DARK MODE ===== */
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-bs-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .table td,
+    .table th {
+        padding: 0.65rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .table-hover tbody tr:hover {
+        transform: none;
+    }
 }

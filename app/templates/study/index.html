@@ -25,7 +25,7 @@
     <!-- Estadísticas rápidas -->
     <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card bg-primary text-white h-100">
+            <div class="card bg-primary text-white h-100 theme-card-primary">
                 <div class="card-body text-center">
                     <h2 class="display-4 fw-bold">9</h2>
                     <p class="mb-0">Temas Completos</p>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-success text-white h-100">
+            <div class="card bg-success text-white h-100 theme-card-success">
                 <div class="card-body text-center">
                     <h2 class="display-4 fw-bold">100+</h2>
                     <p class="mb-0">Ejercicios Interactivos</p>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-warning text-dark h-100">
+            <div class="card bg-warning h-100 theme-card-warning">
                 <div class="card-body text-center">
                     <h2 class="display-4 fw-bold">~3h</h2>
                     <p class="mb-0">Tiempo Estimado Total</p>
@@ -70,7 +70,7 @@
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <span class="badge 
                             {% if topic.difficulty == 'beginner' %}bg-success
-                            {% elif topic.difficulty == 'intermediate' %}bg-warning text-dark
+                            {% elif topic.difficulty == 'intermediate' %}bg-warning
                             {% else %}bg-danger{% endif %}">
                             {{ topic.difficulty | capitalize }}
                         </span>
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Sección de consejos -->
-    <div class="card mt-5 border-0 bg-light">
+    <div class="card mt-5 border-0 theme-card-surface">
         <div class="card-body p-4">
             <h3 class="h5 mb-4">
                 <i class="fas fa-star text-warning me-2"></i>

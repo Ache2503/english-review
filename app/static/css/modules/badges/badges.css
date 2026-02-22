@@ -3,100 +3,311 @@
    Usa variables de Bootstrap 5.3
    ============================================================================ */
 
+/* ===== BADGE BASE ===== */
+.badge {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* ===== BADGE SIZES ===== */
+.badge-sm {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+/* ===== UNIT BADGE ===== */
 .badge-unit {
     font-size: 0.75rem;
     letter-spacing: 0.5px;
+    padding: 0.4rem 0.75rem;
 }
 
-.badge-sm {
-    font-size: 0.65rem;
-    padding: 0.2rem 0.4rem;
-}
-
+/* ===== ACHIEVEMENT BADGE CARD ===== */
 .badge-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
 }
 
 .badge-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--bs-box-shadow);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-color: var(--bs-primary);
 }
 
-.score-badge {
-    display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 50px;
+.badge-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Badge card icon */
+.badge-card .badge-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.badge-card:hover .badge-icon {
+    transform: scale(1.2) rotate(10deg);
+}
+
+.badge-card .badge-title {
     font-weight: 600;
-    font-size: 0.85rem;
+    color: var(--bs-body-color);
+    margin-bottom: 0.5rem;
 }
 
-.score-badge.excellent {
-    background: #28a745;
-    color: white;
+.badge-card .badge-description {
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
 }
 
-.score-badge.good {
-    background: #ffc107;
-    color: #333;
+/* ===== BADGE LOCKED STATE ===== */
+.badge-card.locked {
+    opacity: 0.6;
 }
 
-.score-badge.practice {
-    background: #dc3545;
-    color: white;
+.badge-card.locked .badge-icon {
+    filter: grayscale(100%);
 }
 
-.special-badge {
+/* ===== NEW BADGE ANIMATION ===== */
+@keyframes badgeNewPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+    }
+}
+
+.badge-new {
+    animation: badgeNewPulse 2s ease-in-out infinite;
+}
+
+/* ===== SHINE EFFECT FOR BADGES ===== */
+@keyframes badgeShine {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+.badge-shine {
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: badgeShine 3s ease-in-out infinite;
+}
+
+/* ===== ACHIEVEMENT UNLOCKED ANIMATION ===== */
+@keyframes achievementUnlock {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.badge-unlocked {
+    animation: achievementUnlock 0.5s ease-out forwards;
+}
+
+/* ===== CONFETTI EFFECT ===== */
+@keyframes confetti {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--bs-primary);
+    animation: confetti 1s ease-out forwards;
+}
+
+/* ===== SCORE BADGES ===== */
+.score-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.35rem 0.75rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.score-badge:hover {
+    transform: scale(1.05);
+}
+
+.score-badge.excellent {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.score-badge.good {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: #333;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.score-badge.practice {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.score-badge:hover.excellent {
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+}
+
+.score-badge:hover.good {
+    box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+}
+
+.score-badge:hover.practice {
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+}
+
+/* ===== SPECIAL BADGES ===== */
+.special-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
     border-radius: 50px;
     font-weight: 500;
     font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.special-badge:hover {
+    transform: translateY(-2px);
 }
 
 .special-badge.learned {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .special-badge.multi {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
     color: white;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
-/* ===== DARK MODE (Bootstrap 5.3 handles this with data-bs-theme) ===== */
+.special-badge.learning {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.special-badge.locked {
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-tertiary-color);
+    box-shadow: none;
+}
+
+/* ===== BADGE PROGRESS ===== */
+.badge-progress {
+    height: 6px;
+    border-radius: 50px;
+    background: var(--bs-tertiary-bg);
+    overflow: hidden;
+}
+
+.badge-progress-bar {
+    height: 100%;
+    border-radius: 50px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    transition: width 0.6s ease;
+}
+
+/* ===== DARK MODE ===== */
 [data-bs-theme="dark"] .score-badge.excellent {
-    background: rgba(40, 167, 69, 0.9);
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.9), rgba(32, 201, 151, 0.9));
 }
 
 [data-bs-theme="dark"] .score-badge.good {
-    background: rgba(255, 193, 7, 0.9);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(253, 126, 20, 0.9));
     color: #1a1a1a;
 }
 
 [data-bs-theme="dark"] .score-badge.practice {
-    background: rgba(220, 53, 69, 0.9);
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.9), rgba(200, 35, 51, 0.9));
 }
 
 [data-bs-theme="dark"] .badge-card {
-    background: var(--bs-secondary-bg) !important;
+    background: var(--bs-secondary-bg);
 }
 
-[data-bs-theme="dark"] .badge-card.opacity-50 {
-    opacity: 0.5;
-    background: var(--bs-tertiary-bg) !important;
+[data-bs-theme="dark"] .badge-card:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
 }
 
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+    .badge-card {
+        padding: 1rem;
+    }
+    
+    .badge-card .badge-icon {
+        font-size: 2.5rem;
+    }
+    
     .special-badge.learned,
     .special-badge.multi {
         font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+        padding: 0.3rem 0.6rem;
     }
-
+    
     .score-badge {
         font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
+        padding: 0.3rem 0.6rem;
     }
 }

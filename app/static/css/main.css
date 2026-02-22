@@ -15,6 +15,19 @@
 @import url("components/tables.css");
 @import url("components/alerts.css");
 @import url("components/footer.css");
+@import url("components/loading.css");
+@import url("components/modal.css");
+@import url("components/effects.css");
+@import url("components/progress.css");
+@import url("components/accordion.css");
+@import url("components/tabs.css");
+@import url("components/tooltip.css");
+@import url("components/toast.css");
+@import url("components/pagination.css");
+@import url("components/listgroup.css");
+@import url("components/avatar.css");
+@import url("components/breadcrumb.css");
+@import url("components/scroll-animations.css");
 
 /* ==========================
     MODULES

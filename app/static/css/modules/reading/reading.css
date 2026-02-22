@@ -1,24 +1,30 @@
 /* ============================================================================
    READING - Estilos para lecturas y ejercicios de comprensión
+   Usa variables de Bootstrap 5.3
    ============================================================================ */
 
 /* ===== READING LIST ===== */
 .reading-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
 }
 
 .reading-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: var(--bs-box-shadow);
+    border-color: var(--bs-primary);
 }
 
 .reading-title {
     font-weight: 600;
-    color: var(--bs-body-color, #212529);
+    color: var(--bs-body-color);
 }
 
 .reading-description {
-    color: var(--bs-tertiary-color, #6c757d);
+    color: var(--bs-secondary-color);
     font-size: 0.95rem;
 }
 
@@ -27,7 +33,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.85rem;
-    color: var(--bs-tertiary-color, #6c757d);
+    color: var(--bs-tertiary-color);
 }
 
 .reading-badge {
@@ -36,11 +42,12 @@
 
 /* ===== READING VIEW ===== */
 .reading-content {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 5px;
+    background: var(--bs-tertiary-bg);
+    padding: 1.5rem;
+    border-radius: var(--bs-border-radius-lg);
     line-height: 1.8;
     font-size: 1.05rem;
+    color: var(--bs-body-color);
 }
 
 .reading-paragraph {
@@ -48,86 +55,109 @@
 }
 
 .reading-highlight {
-    background-color: rgba(255, 193, 7, 0.3);
-    padding: 2px 4px;
-    border-radius: 2px;
+    background-color: rgba(245, 158, 11, 0.3);
+    padding: 2px 6px;
+    border-radius: var(--bs-border-radius-sm);
+    font-weight: 500;
 }
 
 .reading-progress {
-    background-color: #e9ecef;
+    background-color: var(--bs-tertiary-bg);
     height: 8px;
-    border-radius: 4px;
+    border-radius: var(--bs-border-radius-lg);
+    overflow: hidden;
 }
 
 .reading-progress-bar {
     transition: width 0.3s ease;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
 }
 
 /* ===== SENTENCE EXERCISE ===== */
 .sentence-input {
-    font-size: 1.05em;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-md);
+    padding: 0.75rem 1rem;
+    font-size: 1.05rem;
+    color: var(--bs-body-color);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.sentence-input::placeholder {
+    color: var(--bs-tertiary-color);
+}
+
 .sentence-input:focus {
-    border-color: var(--bs-primary, #0d6efd);
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    outline: none;
 }
 
 .sentence-correct {
-    border-color: var(--bs-success, #28a745);
-    background-color: rgba(40, 167, 69, 0.1);
+    border-color: var(--bs-success);
+    background-color: rgba(22, 163, 74, 0.1);
 }
 
 .sentence-incorrect {
-    border-color: var(--bs-danger, #dc3545);
-    background-color: rgba(220, 53, 69, 0.1);
+    border-color: var(--bs-danger);
+    background-color: rgba(220, 38, 38, 0.1);
 }
 
 /* ===== SUBMISSION DETAIL ===== */
 .submission-alert {
-    border-radius: 5px;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 1.5rem;
 }
 
 .submission-score {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .submission-score.excellent {
-    color: var(--bs-success, #28a745);
+    color: var(--bs-success);
 }
 
 .submission-score.good {
-    color: var(--bs-warning, #ffc107);
+    color: var(--bs-warning);
 }
 
 .submission-score.needs-practice {
-    color: var(--bs-danger, #dc3545);
+    color: var(--bs-danger);
 }
 
 /* ===== READING HISTORY ===== */
 .history-item {
-    transition: background-color 0.2s ease;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-md);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
 }
 
 .history-item:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+    background: var(--bs-tertiary-bg);
+    border-color: var(--bs-primary);
 }
 
 .history-date {
     font-size: 0.85rem;
-    color: var(--bs-tertiary-color, #6c757d);
+    color: var(--bs-tertiary-color);
 }
 
 .history-score {
     font-weight: 600;
+    color: var(--bs-primary);
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .reading-content {
-        padding: 15px;
+        padding: 1rem;
         font-size: 1rem;
     }
 

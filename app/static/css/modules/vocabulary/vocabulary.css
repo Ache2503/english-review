@@ -1,140 +1,244 @@
 /* ============================================================================
    VOCABULARY - Estilos para vocabulario
+   Usa variables de Bootstrap 5.3
    ============================================================================ */
 
 /* ===== VOCABULARY CARD ===== */
 .vocab-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
 }
 
 .vocab-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-5px);
+    box-shadow: var(--bs-box-shadow);
+    border-color: var(--bs-primary);
 }
 
 .vocab-category {
     font-weight: 600;
-    color: var(--bs-body-color, #212529);
+    color: var(--bs-body-color);
 }
 
 .vocab-category-description {
-    color: var(--bs-tertiary-color, #6c757d);
+    color: var(--bs-secondary-color);
 }
 
 /* ===== VOCABULARY ITEM ===== */
 .vocab-item {
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+    padding: 1rem;
     transition: background-color 0.2s ease;
 }
 
 .vocab-item:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: var(--bs-tertiary-bg);
 }
 
 .vocab-word {
     font-weight: 600;
     font-size: 1.1rem;
-    color: var(--bs-primary, #0d6efd);
+    color: var(--bs-primary);
 }
 
 .vocab-definition {
-    color: var(--bs-tertiary-color, #6c757d);
-    font-size: 0.9rem;
+    color: var(--bs-secondary-color);
+    font-size: 0.95rem;
 }
 
 .vocab-example {
     font-style: italic;
-    color: var(--bs-tertiary-color, #6c757d);
-    font-size: 0.85rem;
+    color: var(--bs-tertiary-color);
+    font-size: 0.9rem;
+    background: var(--bs-tertiary-bg);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--bs-border-radius-sm);
+    margin-top: 0.5rem;
 }
 
 /* ===== VOCABULARY LIST ===== */
 .vocab-list-item {
-    transition: all 0.2s ease;
-    border-left: 3px solid transparent;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-left: 3px solid var(--bs-primary);
+    border-radius: var(--bs-border-radius-md);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
 }
 
 .vocab-list-item:hover {
-    background-color: rgba(0, 0, 0, 0.02);
-    border-left-color: var(--bs-primary, #0d6efd);
+    background-color: var(--bs-tertiary-bg);
+    border-left-color: var(--bs-info);
+    transform: translateX(5px);
 }
 
 .vocab-list-word {
     font-weight: 600;
     font-size: 1.1rem;
+    color: var(--bs-body-color);
 }
 
 .vocab-list-definition {
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--bs-secondary-color);
 }
 
 .vocab-list-example {
     font-style: italic;
-    color: var(--bs-tertiary-color, #6c757d);
+    color: var(--bs-tertiary-color);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--bs-border-color);
 }
 
 /* ===== VOCABULARY PRACTICE ===== */
 .vocab-practice-card {
-    transition: transform 0.3s ease;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
 .vocab-practice-card:hover {
     transform: translateY(-5px);
+    box-shadow: var(--bs-box-shadow);
+    border-color: var(--bs-primary);
 }
 
 .vocab-practice-word {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--bs-primary, #0d6efd);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+}
+
+.vocab-practice-definition {
+    font-size: 1.25rem;
+    color: var(--bs-secondary-color);
 }
 
 /* ===== VOCABULARY FLASHCARD ===== */
 .vocab-flashcard {
-    min-height: 200px;
+    min-height: 250px;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
     perspective: 1000px;
+}
+
+.vocab-flashcard:hover {
+    box-shadow: var(--bs-box-shadow);
+    border-color: var(--bs-primary);
 }
 
 .vocab-flashcard-front,
 .vocab-flashcard-back {
-    transition: transform 0.5s ease;
-    backface-visibility: hidden;
-}
-
-.vocab-flashcard.flipped .vocab-flashcard-front {
-    transform: rotateY(180deg);
-}
-
-.vocab-flashcard.flipped .vocab-flashcard-back {
-    transform: rotateY(0deg);
+    text-align: center;
+    transition: opacity 0.3s ease;
 }
 
 .vocab-flashcard-back {
-    transform: rotateY(180deg);
+    opacity: 0;
+}
+
+.vocab-flashcard.flipped .vocab-flashcard-front {
+    opacity: 0;
+}
+
+.vocab-flashcard.flipped .vocab-flashcard-back {
+    opacity: 1;
 }
 
 /* ===== VOCABULARY STATS ===== */
 .vocab-stat-card {
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
     text-align: center;
-    padding: 1rem;
-    border-radius: 0.5rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.vocab-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--bs-box-shadow);
 }
 
 .vocab-stat-value {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    line-height: 1;
 }
 
 .vocab-stat-label {
-    font-size: 0.85rem;
-    color: var(--bs-tertiary-color, #6c757d);
+    font-size: 0.9rem;
+    color: var(--bs-secondary-color);
+    margin-top: 0.5rem;
+}
+
+/* ===== SEARCH INPUT ===== */
+.vocab-search {
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-md);
+    padding: 0.75rem 1rem;
+    color: var(--bs-body-color);
+    transition: all 0.3s ease;
+}
+
+.vocab-search:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    outline: none;
+}
+
+/* ===== FILTER BUTTONS ===== */
+.vocab-filter-btn {
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: var(--bs-border-radius-md);
+    transition: all 0.2s ease;
+}
+
+.vocab-filter-btn:hover {
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+}
+
+.vocab-filter-btn.active {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: white;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .vocab-practice-word {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
     }
 
     .vocab-stat-value {
-        font-size: 1.5rem;
+        font-size: 2rem;
+    }
+    
+    .vocab-flashcard {
+        min-height: 200px;
     }
 }

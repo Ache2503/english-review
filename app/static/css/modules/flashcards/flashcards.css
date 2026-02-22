@@ -3,74 +3,114 @@
    Usa variables de Bootstrap 5.3
    ============================================================================ */
 
+/* ===== FLASHCARD CONTAINER ===== */
+.flashcard-container {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 400px;
+    height: 280px;
+}
+
 /* ===== FLASHCARD BASE ===== */
 .flashcard {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
 }
 
 .flashcard:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--bs-box-shadow) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-.flashcard-front,
-.flashcard-back {
-    transition: opacity 0.3s ease;
-}
-
-.flashcard-flipping {
+.flashcard.flipped {
     transform: rotateY(180deg);
 }
 
-/* ===== SRS STUDY ===== */
-.flashcard-srs {
-    min-height: 350px;
-    border-radius: 15px;
-    transition: transform 0.3s ease;
-}
-
-.flashcard-srs:hover {
-    transform: translateY(-5px);
-}
-
-.flashcard-srs .btn-lg {
-    min-width: 80px;
-}
-
-.flashcard-srs .flashcard-back .btn-lg {
+/* ===== FLASHCARD FACES ===== */
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--bs-border-radius-lg);
+    display: flex;
     flex-direction: column;
-    padding: 15px 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--bs-box-shadow);
+    border: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    transition: box-shadow 0.3s ease;
 }
 
-.flashcard-srs .flashcard-back .btn-lg small {
-    font-size: 0.7rem;
-    margin-top: 5px;
+.flashcard:hover .flashcard-front,
+.flashcard:hover .flashcard-back {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-.flashcard-srs kbd {
+.flashcard-back {
+    transform: rotateY(180deg);
+}
+
+/* ===== FLASHCARD CONTENT ===== */
+.flashcard-word {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--bs-body-color);
+    margin-bottom: 0.5rem;
+}
+
+.flashcard-pronunciation {
+    font-size: 1rem;
+    color: var(--bs-primary);
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.flashcard-definition {
+    font-size: 1.25rem;
+    color: var(--bs-secondary-color);
+}
+
+.flashcard-example {
+    font-size: 0.95rem;
+    color: var(--bs-tertiary-color);
+    margin-top: 1rem;
+    font-style: italic;
+    padding: 0.75rem;
     background: var(--bs-tertiary-bg);
-    border-radius: 3px;
-    padding: 2px 6px;
+    border-radius: var(--bs-border-radius-sm);
 }
 
-/* ===== ANIMATIONS ===== */
-@keyframes slideIn {
+/* ===== FLASHCARD ICONS ===== */
+.flashcard-icon {
+    font-size: 3rem;
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease 0.2s forwards;
+}
+
+/* ===== FLIP ANIMATIONS ===== */
+@keyframes flipInFront {
     from {
+        transform: rotateY(-90deg);
         opacity: 0;
-        transform: translateX(50px);
     }
     to {
+        transform: rotateY(0);
         opacity: 1;
-        transform: translateX(0);
     }
 }
 
-.card-animate {
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes flipIn {
+@keyframes flipInBack {
     from {
         transform: rotateY(90deg);
         opacity: 0;
@@ -81,13 +121,169 @@
     }
 }
 
-.flip-animation {
-    animation: flipIn 0.4s ease;
+.flashcard.flipping .flashcard-front {
+    animation: flipInFront 0.3s ease forwards;
 }
 
-/* ===== SRS OVERVIEW ===== */
+.flashcard.flipping .flashcard-back {
+    animation: flipInBack 0.3s ease forwards;
+}
+
+/* ===== FLASHCARD CLICK HINT ===== */
+.flashcard-hint {
+    position: absolute;
+    bottom: 1rem;
+    font-size: 0.75rem;
+    color: var(--bs-tertiary-color);
+    opacity: 0.7;
+}
+
+/* ===== SRS STUDY CARDS ===== */
+.flashcard-srs {
+    min-height: 380px;
+    border-radius: var(--bs-border-radius-lg);
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    box-shadow: var(--bs-box-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.flashcard-srs::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.flashcard-srs:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.flashcard-srs:hover::before {
+    transform: scaleX(1);
+}
+
+.flashcard-srs .word-display {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--bs-body-color);
+    margin-bottom: 0.5rem;
+}
+
+.flashcard-srs .pronunciation {
+    font-size: 1.1rem;
+    color: var(--bs-primary);
+    margin-bottom: 1.5rem;
+}
+
+.flashcard-srs .definition {
+    font-size: 1.3rem;
+    color: var(--bs-secondary-color);
+}
+
+.flashcard-srs .example-sentence {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bs-tertiary-bg);
+    border-radius: var(--bs-border-radius-md);
+    font-style: italic;
+    color: var(--bs-secondary-color);
+}
+
+/* ===== SRS BUTTONS ===== */
+.flashcard-srs .rating-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.srs-rating-btn {
+    min-width: 110px;
+    padding: 1rem;
+    border-radius: var(--bs-border-radius-md);
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.srs-rating-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.srs-rating-btn:active::before {
+    width: 200px;
+    height: 200px;
+}
+
+.srs-rating-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.srs-rating-btn.correct {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+    color: white;
+}
+
+.srs-rating-btn.hard {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    border-color: #ffc107;
+    color: #333;
+}
+
+.srs-rating-btn.forgot {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-color: #dc3545;
+    color: white;
+}
+
+.srs-rating-btn small {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+/* ===== FORECAST CARD ===== */
+.forecast-card {
+    border-radius: var(--bs-border-radius-lg);
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    box-shadow: var(--bs-box-shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--bs-primary);
+}
+
 .forecast-day {
-    padding: 10px 15px;
+    padding: 1rem 1.25rem;
     transition: background-color 0.2s ease;
 }
 
@@ -95,65 +291,53 @@
     background-color: var(--bs-tertiary-bg);
 }
 
-.forecast-card {
-    transition: transform 0.3s;
-}
-
-.forecast-card:hover {
-    transform: translateY(-3px);
-}
-
 /* ===== SRS STATS ===== */
 .srs-stat {
     text-align: center;
-    padding: 1rem;
+    padding: 1.5rem;
+    background: var(--bs-body-bg);
+    border-radius: var(--bs-border-radius-lg);
+    border: 1px solid var(--bs-border-color);
+    transition: all 0.3s ease;
 }
 
-.srs-stat-value {
-    font-size: 2rem;
-    font-weight: bold;
-    line-height: 1;
-}
-
-.srs-stat-label {
-    font-size: 0.75rem;
-    color: var(--bs-tertiary-color);
-    margin-top: 0.25rem;
-}
-
-/* ===== SRS BUTTONS ===== */
-.srs-rating-btn {
-    min-width: 100px;
-    padding: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.srs-rating-btn:hover {
-    transform: translateY(-2px);
+.srs-stat:hover {
+    transform: translateY(-4px);
     box-shadow: var(--bs-box-shadow);
 }
 
-.srs-rating-btn.correct {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    border-color: #28a745;
-    color: white;
+.srs-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    line-height: 1;
+    margin-bottom: 0.5rem;
 }
 
-.srs-rating-btn.hard {
-    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-    border-color: #ffc107;
-    color: #333;
+.srs-stat-label {
+    font-size: 0.85rem;
+    color: var(--bs-tertiary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.srs-rating-btn.forgot {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    border-color: #dc3545;
-    color: white;
+/* ===== KEYBOARD HINT ===== */
+.flashcard-srs kbd {
+    background: var(--bs-tertiary-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: monospace;
+    font-size: 0.85rem;
 }
 
-/* ===== DARK MODE (Bootstrap 5.3 handles this with data-bs-theme) ===== */
+/* ===== DARK MODE ===== */
 [data-bs-theme="dark"] .flashcard:hover {
-    box-shadow: var(--bs-box-shadow-lg) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-bs-theme="dark"] .flashcard-srs:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 [data-bs-theme="dark"] .forecast-day:hover {
@@ -162,21 +346,28 @@
 
 [data-bs-theme="dark"] .flashcard-srs kbd {
     background: var(--bs-secondary-bg);
-    border: 1px solid var(--bs-border-color);
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    .flashcard-srs {
-        min-height: 280px;
+    .flashcard-container {
+        height: 240px;
     }
-
+    
+    .flashcard-srs {
+        min-height: 320px;
+    }
+    
+    .flashcard-srs .word-display {
+        font-size: 2rem;
+    }
+    
     .srs-rating-btn {
         min-width: 80px;
         padding: 0.75rem;
     }
-
+    
     .srs-stat-value {
-        font-size: 1.5rem;
+        font-size: 2rem;
     }
 }

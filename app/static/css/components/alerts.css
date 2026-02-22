@@ -8,78 +8,278 @@
 /* ===== ALERT BASE ===== */
 .alert {
     position: relative;
-    padding: 0.9rem 1.2rem;
-    border-radius: var(--bs-border-radius-md);
+    padding: 1rem 1.25rem;
+    border-radius: var(--bs-border-radius-lg);
     margin-bottom: 1rem;
     border: 1px solid transparent;
     font-weight: 500;
-    transition: background-color var(--transition-normal), border-color var(--transition-normal), color var(--transition-normal);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
-/* ===== ALERT CON ICONO ===== */
+/* Entry animation */
+.alert {
+    animation: alertSlideIn 0.4s ease-out;
+}
+
+@keyframes alertSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Alert icon */
 .alert i {
-    margin-right: 0.5rem;
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
 }
 
-/* =====================================================
-   VARIANTES
-===================================================== */
+/* ===== ALERT WITH LEFT BORDER ===== */
+.alert-left-border {
+    border-left: 4px solid currentColor;
+}
+
+/* ===== VARIANTS ===== */
 
 /* SUCCESS */
 .alert-success {
-    background-color: rgba(34, 197, 94, 0.15);
-    border-color: rgba(34, 197, 94, 0.4);
+    background-color: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #4ade80;
+}
+
+.alert-success .alert-icon {
     color: #4ade80;
 }
 
 /* DANGER */
 .alert-danger {
-    background-color: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.4);
+    background-color: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+.alert-danger .alert-icon {
     color: #f87171;
 }
 
 /* WARNING */
 .alert-warning {
-    background-color: rgba(245, 158, 11, 0.15);
-    border-color: rgba(245, 158, 11, 0.4);
+    background-color: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
+}
+
+.alert-warning .alert-icon {
     color: #fbbf24;
 }
 
 /* INFO */
 .alert-info {
-    background-color: rgba(14, 165, 233, 0.15);
-    border-color: rgba(14, 165, 233, 0.4);
+    background-color: rgba(14, 165, 233, 0.12);
+    border-color: rgba(14, 165, 233, 0.3);
     color: #38bdf8;
 }
 
-/* =====================================================
-   ALERTA CON BORDE LATERAL (ESTILO MODERNO)
-===================================================== */
-
-.alert-left-border {
-    border-left: 4px solid currentColor;
+.alert-info .alert-icon {
+    color: #38bdf8;
 }
 
-/* =====================================================
-   ALERT DISMISSIBLE
-===================================================== */
+/* PRIMARY */
+.alert-primary {
+    background-color: rgba(37, 99, 235, 0.12);
+    border-color: rgba(37, 99, 235, 0.3);
+    color: #60a5fa;
+}
 
+.alert-primary .alert-icon {
+    color: #60a5fa;
+}
+
+/* SECONDARY */
+.alert-secondary {
+    background-color: rgba(108, 117, 125, 0.12);
+    border-color: rgba(108, 117, 125, 0.3);
+    color: #a8b8cc;
+}
+
+/* LIGHT */
+.alert-light {
+    background-color: rgba(248, 249, 250, 0.9);
+    border-color: rgba(248, 249, 250, 0.3);
+    color: #495057;
+}
+
+/* DARK */
+.alert-dark {
+    background-color: rgba(33, 37, 41, 0.9);
+    border-color: rgba(33, 37, 41, 0.3);
+    color: #d4dce8;
+}
+
+/* ===== ALERT SIZES ===== */
+.alert-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.alert-lg {
+    padding: 1.25rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* ===== ALERT WITH ICON ===== */
+.alert-icon {
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+    display: inline-block;
+    animation: alertIconPop 0.3s ease 0.2s both;
+}
+
+@keyframes alertIconPop {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ===== ALERT WITH CLOSE BUTTON ===== */
 .alert-dismissible {
-    padding-right: 2.5rem;
+    padding-right: 3rem;
 }
 
 .alert-dismissible .btn-close {
     position: absolute;
-    top: 0.75rem;
+    top: 50%;
     right: 1rem;
+    transform: translateY(-50%);
     background: none;
     border: none;
-    color: var(--bs-tertiary-color);
-    font-size: 1rem;
+    color: inherit;
+    font-size: 1.25rem;
     cursor: pointer;
+    padding: 0.25rem;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    width: auto;
+    height: auto;
 }
 
 .alert-dismissible .btn-close:hover {
-    color: var(--bs-body-color);
+    opacity: 1;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.alert-dismissible .btn-close:focus {
+    box-shadow: none;
+    opacity: 1;
+}
+
+/* ===== ALERT LINK ===== */
+.alert-link {
+    font-weight: 600;
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+}
+
+.alert-link:hover {
+    opacity: 0.8;
+}
+
+/* ===== ALERT OUTLINE ===== */
+.alert-outline {
+    background-color: transparent;
+}
+
+.alert-outline.alert-success {
+    border-color: #4ade80;
+    color: #4ade80;
+}
+
+.alert-outline.alert-danger {
+    border-color: #f87171;
+    color: #f87171;
+}
+
+.alert-outline.alert-warning {
+    border-color: #fbbf24;
+    color: #fbbf24;
+}
+
+.alert-outline.alert-info {
+    border-color: #38bdf8;
+    color: #38bdf8;
+}
+
+/* ===== ALERT SOFT ===== */
+.alert-soft {
+    border-radius: var(--bs-border-radius-sm);
+    border: none;
+}
+
+.alert-soft.alert-success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.alert-soft.alert-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.alert-soft.alert-warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.alert-soft.alert-info {
+    background-color: rgba(14, 165, 233, 0.15);
+    color: #0ea5e9;
+}
+
+/* ===== ALERT WITH ICON AND CLOSE ===== */
+.alert.has-icon {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.alert.has-icon .alert-icon {
+    margin-right: 0;
+}
+
+.alert.has-icon .alert-content {
+    flex: 1;
+}
+
+/* ===== DARK MODE ===== */
+[data-bs-theme="dark"] .alert-light {
+    background-color: rgba(33, 37, 41, 0.9);
+    color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .alert-dark {
+    background-color: rgba(33, 37, 41, 0.95);
+    color: #f8f9fa;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .alert {
+        padding: 0.75rem 1rem;
+    }
+    
+    .alert-dismissible {
+        padding-right: 2.5rem;
+    }
 }

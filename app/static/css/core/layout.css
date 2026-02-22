@@ -125,3 +125,8 @@ main {
 [data-bs-theme="dark"] .text-secondary i {
     color: var(--bs-tertiary-color);
 }
+
+/* ===== BG-LIGHT FIX IN DARK MODE ===== */
+[data-bs-theme="dark"] .bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+}

@@ -1,0 +1,146 @@
+/* =====================================================
+   PAGINATION
+   Archivo: components/pagination.css
+   Estilos para paginación
+===================================================== */
+
+/* ===== PAGINATION BASE ===== */
+.pagination {
+    gap: 0.35rem;
+}
+
+.page-link {
+    color: var(--bs-secondary-color);
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--bs-border-radius-md);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-link:hover {
+    color: var(--bs-primary);
+    background: var(--bs-tertiary-bg);
+    border-color: var(--bs-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.page-link:focus {
+    box-shadow: none;
+    border-color: var(--bs-primary);
+}
+
+/* Active page */
+.page-item.active .page-link {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Disabled page */
+.page-item.disabled .page-link {
+    color: var(--bs-tertiary-color);
+    background: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+    opacity: 0.6;
+}
+
+/* ===== PAGINATION WITH ICONS ===== */
+.page-link i {
+    transition: transform 0.2s ease;
+}
+
+.page-link:hover i.fa-chevron-left {
+    transform: translateX(-3px);
+}
+
+.page-link:hover i.fa-chevron-right {
+    transform: translateX(3px);
+}
+
+/* ===== PAGINATION SIZES ===== */
+.pagination-sm .page-link {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.85rem;
+}
+
+.pagination-lg .page-link {
+    padding: 0.65rem 1.1rem;
+    font-size: 1.1rem;
+}
+
+/* ===== PAGINATION CIRCLE ===== */
+.pagination-circle .page-link {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-circle.pagination-sm .page-link {
+    width: 32px;
+    height: 32px;
+}
+
+.pagination-circle.pagination-lg .page-link {
+    width: 48px;
+    height: 48px;
+}
+
+/* ===== PAGINATION WITH DOTS ===== */
+.page-dots .page-link {
+    min-width: 40px;
+}
+
+.page-dots .page-link::after {
+    content: '...';
+    font-weight: bold;
+}
+
+/* ===== PAGINATION CENTERED ===== */
+.pagination-center {
+    justify-content: center;
+}
+
+.pagination-end {
+    justify-content: flex-end;
+}
+
+/* ===== PAGINATION WITH BORDER ===== */
+.pagination-border .page-link {
+    margin: 0 2px;
+    border-radius: var(--bs-border-radius-md);
+}
+
+.pagination-border .page-item:first-child .page-link {
+    border-radius: var(--bs-border-radius-md);
+}
+
+.pagination-border .page-item:last-child .page-link {
+    border-radius: var(--bs-border-radius-md);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .page-link {
+        padding: 0.4rem 0.65rem;
+        font-size: 0.9rem;
+    }
+    
+    .pagination-circle .page-link {
+        width: 36px;
+        height: 36px;
+    }
+}
