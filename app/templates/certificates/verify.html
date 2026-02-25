@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Verificar Certificado{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5 text-center">
+                    <i class="fas fa-certificate fa-4x text-primary mb-4"></i>
+                    <h2 class="mb-4">Verificar Certificado</h2>
+                    
+                    <form method="POST" action="{{ url_for('certificates.verify') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Número de Certificado</label>
+                            <input type="text" name="certificate_number" class="form-control" 
+                                   placeholder="CERT-XXXXXXXX" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Código de Verificación</label>
+                            <input type="text" name="verification_code" class="form-control" 
+                                   placeholder="XXXXXXXXXX" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill w-100">
+                            <i class="fas fa-search me-2"></i> Verificar
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            {% if result %}
+            <div class="card border-0 shadow mt-4">
+                <div class="card-body">
+                    {% if result.valid %}
+                    <div class="text-center">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h4 class="text-success">Certificado Válido</h4>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nombre:</strong><br>{{ result.user_name }}</p>
+                            <p><strong>Certificado:</strong><br>{{ result.title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Fecha de emisión:</strong><br>{{ result.issue_date.strftime('%d/%m/%Y') }}</p>
+                            {% if result.expiry_date %}
+                            <p><strong>Expira:</strong><br>{{ result.expiry_date.strftime('%d/%m/%Y') }}</p>
+                            {% else %}
+                            <p><strong>Expira:</strong><br>No expira</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center">
+                        <i class="fas fa-times-circle fa-3x text-danger mb-3"></i>
+                        <h4 class="text-danger">Certificado Inválido</h4>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if error %}
+            <div class="alert alert-warning mt-4">
+                <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

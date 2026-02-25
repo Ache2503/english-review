@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡A Jugar! - {{ topic.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="{{ url_for('static', filename='css/modules/kids/kids.css') }}" rel="stylesheet">
+</head>
+<body class="kids-game-bg kids-body d-flex flex-column text-white">
+
+    <a href="{{ url_for('kids.topic_view', child_id=child.id, topic_id=topic.id) }}" class="btn-close-game">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <div class="container flex-grow-1 d-flex flex-column justify-content-center align-items-center py-5 position-relative">
+        <h2 class="fw-bold mb-4 text-warning game-status" id="game-status">¡Toca el botón para escuchar!</h2>
+        
+        <button id="speaker-btn" class="mb-5" onclick="playTargetWord()">
+            <i class="fas fa-volume-up fa-4x text-white"></i>
+        </button>
+
+        <div class="row w-100 justify-content-center g-4" id="options-container" style="max-width: 800px;">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const vocabData = {{ vocab_data | tojson | safe }};
+        let currentTarget = null;
+
+        function initRound() {
+            currentTarget = vocabData[Math.floor(Math.random() * vocabData.length)];
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            vocabData.forEach(item => {
+                const col = document.createElement('div');
+                col.className = 'col-6 col-md-4';
+                
+                let cardContent = '';
+                if (item.image && item.image.startsWith('/')) {
+                    cardContent = `<img src="${item.image}" alt="${item.word_en}" style="width: 120px; height: 120px; object-fit: contain;">`;
+                } else if (item.image) {
+                    cardContent = item.image;
+                } else {
+                    cardContent = `<span style="font-size: 2rem;">${item.word_en}</span>`;
+                }
+                
+                col.innerHTML = `
+                    <div class="game-card" style="background-color: white; font-size: 5rem; color: initial;" onclick="checkAnswer('${item.word_en}')">
+                        ${cardContent}
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+
+            document.getElementById('game-status').innerText = "¿Dónde está...";
+            setTimeout(playTargetWord, 500);
+        }
+
+        function playTargetWord() {
+            if(!currentTarget) return;
+            const speech = new SpeechSynthesisUtterance(currentTarget.word_en);
+            speech.lang = 'en-US';
+            speech.rate = 0.8;
+            speech.pitch = 1.2;
+            window.speechSynthesis.speak(speech);
+        }
+
+        function checkAnswer(selectedWord) {
+            if (selectedWord === currentTarget.word_en) {
+                document.getElementById('game-status').innerText = "¡Excelente! 🎉";
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                
+                const successSpeech = new SpeechSynthesisUtterance("Great job!");
+                successSpeech.lang = 'en-US';
+                successSpeech.rate = 0.9;
+                window.speechSynthesis.speak(successSpeech);
+                
+                setTimeout(initRound, 2500);
+            } else {
+                document.getElementById('game-status').innerText = "¡Sigue intentando! 🔄";
+                const errorSpeech = new SpeechSynthesisUtterance("Try again");
+                errorSpeech.lang = 'en-US';
+                window.speechSynthesis.speak(errorSpeech);
+                
+                setTimeout(playTargetWord, 1000);
+            }
+        }
+
+        window.onload = initRound;
+    </script>
+</body>
+</html>

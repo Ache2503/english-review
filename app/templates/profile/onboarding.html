@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Bienvenido{% endblock %}
+
+{% block extra_css %}
+<style>
+.onboarding-step {
+    display: none;
+}
+.onboarding-step.active {
+    display: block;
+}
+.onboarding-progress {
+    height: 5px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.onboarding-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: width 0.3s ease;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="onboarding-progress mb-4">
+                <div class="onboarding-progress-bar" id="progressBar" style="width: 20%;"></div>
+            </div>
+            
+            <!-- Paso 1: Bienvenida -->
+            <div class="onboarding-step active" data-step="1">
+                <i class="fas fa-graduation-cap fa-4x text-primary mb-4"></i>
+                <h1>¡Bienvenido a English Learning Platform!</h1>
+                <p class="lead text-muted">Aprende inglés de forma interactiva y práctica</p>
+                <button class="btn btn-primary btn-lg rounded-pill mt-4" onclick="nextStep(2)">
+                    Comenzar Tour <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+            
+            <!-- Paso 2: Cursos -->
+            <div class="onboarding-step" data-step="2">
+                <i class="fas fa-book fa-4x text-success mb-4"></i>
+                <h1> Cursos Completos</h1>
+                <p class="lead text-muted">77 unidades con gramática, vocabulario y ejercicios</p>
+                <button class="btn btn-primary btn-lg rounded-pill mt-4" onclick="nextStep(3)">
+                    Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+            
+            <!-- Paso 3: Escenarios -->
+            <div class="onboarding-step" data-step="3">
+                <i class="fas fa-store fa-4x text-warning mb-4"></i>
+                <h1>Escenarios Reales</h1>
+                <p class="lead text-muted">Practica en situaciones de restaurante, hotel, tienda y más</p>
+                <button class="btn btn-primary btn-lg rounded-pill mt-4" onclick="nextStep(4)">
+                    Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+            
+            <!-- Paso 4: Simulador -->
+            <div class="onboarding-step" data-step="4">
+                <i class="fas fa-comments fa-4x text-info mb-4"></i>
+                <h1>Simulador de Conversación</h1>
+                <p class="lead text-muted">Roleplay con clientes amables y difíciles</p>
+                <button class="btn btn-primary btn-lg rounded-pill mt-4" onclick="nextStep(5)">
+                    Siguiente <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+            
+            <!-- Paso 5: Gamificación -->
+            <div class="onboarding-step" data-step="5">
+                <i class="fas fa-trophy fa-4x text-danger mb-4"></i>
+                <h1>Gamificación</h1>
+                <p class="lead text-muted">Gana puntos, badges y mantén tu racha de estudio</p>
+                <button class="btn btn-primary btn-lg rounded-pill mt-4" onclick="completeOnboarding()">
+                    ¡Empezar a Aprender! <i class="fas fa-rocket ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+function nextStep(step) {
+    document.querySelector(`.onboarding-step[data-step="${currentStep}"]`).classList.remove('active');
+    currentStep = step;
+    document.querySelector(`.onboarding-step[data-step="${currentStep}"]`).classList.add('active');
+    
+    const progress = (currentStep / totalSteps) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+}
+
+function completeOnboarding() {
+    fetch('/profile/complete-onboarding', {
+        method: 'POST'
+    }).then(() => {
+        window.location.href = '{{ url_for("dashboard.index") }}';
+    });
+}
+</script>
+{% endblock %}

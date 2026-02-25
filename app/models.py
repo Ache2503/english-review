@@ -3,7 +3,9 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-# Tabla de asociación para User-Badge (muchos a muchos)
+# ==========================================
+# Tabla de asociación para User-Badge (muchos a muchos).
+# =========================================
 user_badges = db.Table(
     'user_badges',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
@@ -11,9 +13,20 @@ user_badges = db.Table(
     db.Column('earned_at', db.DateTime, default=datetime.utcnow)
 )
 
+# ==========================================
+# Tabla de asociación para escenarios comprados "a la carta"
+# ==========================================
+user_unlocked_scenarios = db.Table(
+    'user_unlocked_scenarios',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('scenario_id', db.Integer, db.ForeignKey('thematic_scenarios.id'), primary_key=True),
+    db.Column('unlocked_at', db.DateTime, default=datetime.utcnow),
+    db.Column('purchase_method', db.String(50)) # Ej: 'stripe', 'paypal', 'points'
+)
+
 
 class User(UserMixin, db.Model):
-    """Modelo de usuario con seguimiento de progreso"""
+    """Modelo de usuario con seguimiento de progreso y monetización"""
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -25,14 +38,42 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
-    last_login_date = db.Column(db.Date, nullable=True)  # Para el reto diario
-    daily_challenge_completed = db.Column(db.Boolean, default=False)  # Si completó el reto de hoy
+    last_login_date = db.Column(db.Date, nullable=True)
+    daily_challenge_completed = db.Column(db.Boolean, default=False)
+    date_of_birth = db.Column(db.Date, nullable=True)
     
-    # Relaciones
+    # NUEVOS CAMPOS: Perfil de usuario
+    avatar_url = db.Column(db.String(500), default=None)  # URL del avatar
+    bio = db.Column(db.String(500), default=None)  # Biografía corta
+    country = db.Column(db.String(100), default=None)  # País
+    preferred_language = db.Column(db.String(10), default='es')  # Idioma de la interfaz
+    timezone = db.Column(db.String(50), default='America/Mexico_City')  # Zona horaria
+    notification_email = db.Column(db.Boolean, default=True)  # Recibir emails
+    notification_daily = db.Column(db.Boolean, default=True)  # Recordatorios diarios
+    daily_goal_minutes = db.Column(db.Integer, default=15)  # Meta diaria en minutos
+    show_progress = db.Column(db.Boolean, default=True)  # Mostrar progreso públicamente
+    onboarding_completed = db.Column(db.Boolean, default=False)  # Si completó el tour
+    
+    # NUEVOS CAMPOS: Monetización y Suscripciones
+    subscription_type = db.Column(db.String(50), default='free') # free, premium_all_access, kids_pass
+    subscription_expires_at = db.Column(db.DateTime, nullable=True)
+    
+    # Relaciones originales
     progress = db.relationship('UserProgress', backref='user', lazy='dynamic', cascade='all, delete-orphan')
-    
     badges_earned = db.relationship('Badge', secondary=user_badges, backref='owners')
+    
+    # NUEVA RELACIÓN: Escenarios desbloqueados individualmente
+    unlocked_scenarios = db.relationship('ThematicScenario', secondary=user_unlocked_scenarios, backref='unlocked_by_users')
 
+    @property
+    def age(self):
+        """Calcula la edad del usuario a partir de su fecha de nacimiento"""
+        if not self.date_of_birth:
+            return 15  # Edad por defecto si no se proporciona
+        
+        today = datetime.today()
+        return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+    
     def set_password(self, password):
         """Hashear y guardar contraseña"""
         self.password_hash = generate_password_hash(password)
@@ -50,10 +91,19 @@ class User(UserMixin, db.Model):
             'completed_units': completed_units,
             'percentage': (completed_units / total_units * 100) if total_units > 0 else 0
         }
+
+    # NUEVO MÉTODO: Verificar permisos
+    def has_access_to_scenario(self, scenario_id):
+        return True
+        """Verifica si el usuario puede ver este escenario"""
+        # if self.is_admin or self.subscription_type == 'premium_all_access':
+        #    return True
+        # Verifica si lo compró a la carta
+        # return any(scenario.id == scenario_id for scenario in self.unlocked_scenarios)
     
     def __repr__(self):
         return f'<User {self.username}>'
-
+    
 
 class Unit(db.Model):
     """Modelo para cada unidad de estudio"""
@@ -675,8 +725,10 @@ class TopicExplanation(db.Model):
     def __repr__(self):
         return f'<TopicExplanation Topic:{self.topic_id} {self.section_title}>'
 
-
+# ==========================================
 # Conversational Practice Models
+# ==========================================
+
 class Conversation(db.Model):
     __tablename__ = 'conversations'
     id = db.Column(db.Integer, primary_key=True)
@@ -1646,3 +1698,548 @@ class StudyProgress(db.Model):
     
     def __repr__(self):
         return f'<StudyProgress User:{self.user_id} Topic:{self.topic_id} Success:{self.success_rate}%>'
+
+
+# ============================================================================
+# ESCENARIOS TEMÁTICOS PARA ADULTOS (Restaurante, Aeropuerto, Hotel, etc.)
+# ============================================================================
+
+class ThematicScenario(db.Model):
+    """Modelo principal para escenarios especializados"""
+    __tablename__ = 'thematic_scenarios'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False) # Ej: "At the Restaurant"
+    category = db.Column(db.String(100), index=True) # Ej: "Food & Dining", "Travel"
+    description = db.Column(db.Text)
+    difficulty = db.Column(db.String(20), default='beginner')
+    icon_or_image = db.Column(db.String(255))
+    is_premium = db.Column(db.Boolean, default=True) # Si requiere pago o no
+    price_points = db.Column(db.Integer, default=100) # Precio si se compra con puntos
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relaciones
+    vocabulary = db.relationship('ScenarioVocabulary', backref='scenario', lazy='dynamic', cascade='all, delete-orphan')
+    phrases = db.relationship('ScenarioPhrase', backref='scenario', lazy='dynamic', cascade='all, delete-orphan')
+    simulations = db.relationship('ScenarioSimulation', backref='scenario', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<ThematicScenario {self.title}>'
+
+class ScenarioVocabulary(db.Model):
+    """Vocabulario exclusivo de este escenario"""
+    __tablename__ = 'scenario_vocabulary'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'), nullable=False, index=True)
+    word = db.Column(db.String(100), nullable=False)
+    translation = db.Column(db.String(100), nullable=False)
+    part_of_speech = db.Column(db.String(50))
+    example_usage = db.Column(db.Text)
+    audio_url = db.Column(db.String(255))
+
+class ScenarioPhrase(db.Model):
+    """Preguntas y respuestas comunes del escenario"""
+    __tablename__ = 'scenario_phrases'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'), nullable=False, index=True)
+    role = db.Column(db.String(50), nullable=False) # Ej: "Waiter" o "Customer"
+    phrase_type = db.Column(db.String(50)) # "question", "answer"
+    english_text = db.Column(db.Text, nullable=False)
+    spanish_translation = db.Column(db.Text, nullable=False)
+    audio_url = db.Column(db.String(255))
+    order = db.Column(db.Integer, default=0)
+
+class ScenarioSimulation(db.Model):
+    """Simulador interactivo situacional"""
+    __tablename__ = 'scenario_simulations'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'), nullable=False, index=True)
+    prompt_text = db.Column(db.Text, nullable=False)
+    options = db.Column(db.JSON, nullable=False)
+    correct_option_index = db.Column(db.Integer, nullable=False)
+    explanation_on_error = db.Column(db.Text)
+    order = db.Column(db.Integer, default=0)
+
+class UserScenarioProgress(db.Model):
+    """Seguimiento del progreso del usuario en el escenario"""
+    __tablename__ = 'user_scenario_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'), nullable=False, index=True)
+    
+    vocab_completed = db.Column(db.Boolean, default=False)
+    phrases_completed = db.Column(db.Boolean, default=False)
+    simulation_score = db.Column(db.Float, default=0.0)
+    is_completed = db.Column(db.Boolean, default=False)
+    completed_at = db.Column(db.DateTime)
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'scenario_id', name='unique_user_scenario'),
+    )
+
+
+# ============================================================================
+# ECOSISTEMA INFANTIL (KIDS ZONE)
+# ============================================================================
+
+class ChildProfile(db.Model):
+    """Perfil del niño asociado a la cuenta de un padre/tutor"""
+    __tablename__ = 'child_profiles'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    name = db.Column(db.String(50), nullable=False)
+    age = db.Column(db.Integer)
+    avatar_url = db.Column(db.String(255))
+    stars_earned = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<ChildProfile {self.name}>'
+
+class KidsTopic(db.Model):
+    """Temas para niños (Ej: Colores, Animales)"""
+    __tablename__ = 'kids_topics'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(200))
+    cover_image = db.Column(db.String(255), nullable=False)
+    order = db.Column(db.Integer, default=0)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    vocabulary = db.relationship('KidsVocabulary', backref='topic', lazy='dynamic', cascade='all, delete-orphan')
+
+class KidsVocabulary(db.Model):
+    """Palabras interactivas para niños"""
+    __tablename__ = 'kids_vocabulary'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    topic_id = db.Column(db.Integer, db.ForeignKey('kids_topics.id'), nullable=False, index=True)
+    word_english = db.Column(db.String(50), nullable=False)
+    word_spanish = db.Column(db.String(50), nullable=False)
+    image_url = db.Column(db.String(255), nullable=False)
+    audio_url_en = db.Column(db.String(255), nullable=False)
+    sound_effect = db.Column(db.String(255)) # Opcional: sonido de animal, coche, etc.
+
+class ChildProgress(db.Model):
+    """Progreso gamificado del niño"""
+    __tablename__ = 'child_progress'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False, index=True)
+    topic_id = db.Column(db.Integer, db.ForeignKey('kids_topics.id'), nullable=False, index=True)
+    is_completed = db.Column(db.Boolean, default=False)
+    stars_awarded = db.Column(db.Integer, default=0)
+    completed_at = db.Column(db.DateTime)
+    
+    child = db.relationship('ChildProfile', backref='progress')
+
+
+# ============================================================================
+# SIMULADOR ROLEPLAY AVANZADO CON BRANCHING
+# ============================================================================
+
+class SimulationStep(db.Model):
+    """Pasos del diálogo en el simulador roleplay"""
+    __tablename__ = 'simulation_steps'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'), nullable=False, index=True)
+    step_order = db.Column(db.Integer, nullable=False)
+    customer_message = db.Column(db.Text, nullable=False)
+    customer_mood = db.Column(db.String(20), default='neutral')  # friendly, neutral, difficult, angry
+    situation_context = db.Column(db.Text)  # Contexto adicional de la situación
+    audio_url = db.Column(db.String(500))
+    image_url = db.Column(db.String(500))  # Imagen opcional del cliente
+    time_limit_seconds = db.Column(db.Integer, default=30)
+    points_value = db.Column(db.Integer, default=10)
+    is_final_step = db.Column(db.Boolean, default=False)
+    
+    scenario = db.relationship('ThematicScenario', backref='simulation_steps')
+    options = db.relationship('SimulationOption', backref='step', lazy='dynamic', cascade='all, delete-orphan')
+    
+    __table_args__ = (
+        db.UniqueConstraint('scenario_id', 'step_order', name='unique_scenario_step'),
+    )
+    
+    def __repr__(self):
+        return f'<SimulationStep Scenario:{self.scenario_id} Step:{self.step_order}>'
+
+
+class SimulationOption(db.Model):
+    """Opciones de respuesta del usuario en cada paso"""
+    __tablename__ = 'simulation_options'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    step_id = db.Column(db.Integer, db.ForeignKey('simulation_steps.id'), nullable=False, index=True)
+    option_text = db.Column(db.Text, nullable=False)
+    is_correct = db.Column(db.Boolean, default=False)
+    correctness_score = db.Column(db.Float, default=0.0)  # 0.0 - 1.0
+    points_earned = db.Column(db.Integer, default=0)
+    feedback_correct = db.Column(db.Text)  # Feedback si es correcto
+    feedback_incorrect = db.Column(db.Text)  # Feedback si es incorrecto
+    next_step_if_chosen = db.Column(db.Integer)  # Branching: siguiente paso si elige esta opción
+    consequence_mood_change = db.Column(db.Integer, default=0)  # Cambio en el ánimo del cliente
+    order = db.Column(db.Integer, default=0)
+    
+    __table_args__ = (
+        db.Index('idx_option_step', 'step_id', 'order'),
+    )
+    
+    def __repr__(self):
+        return f'<SimulationOption Step:{self.step_id} Correct:{self.is_correct}>'
+
+
+class CustomerMood(db.Model):
+    """Estados de ánimo del cliente durante la simulación"""
+    __tablename__ = 'customer_moods'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False, unique=True)  # happy, neutral, annoyed, angry
+    display_name = db.Column(db.String(50), nullable=False)
+    icon = db.Column(db.String(50))  # Emoji
+    color = db.Column(db.String(20))  # Color para UI
+    mood_score = db.Column(db.Integer, default=50)  # 0-100
+    
+    def __repr__(self):
+        return f'<CustomerMood {self.name}>'
+
+
+class SimulationAttempt(db.Model):
+    """Registro de intentos de simulación del usuario"""
+    __tablename__ = 'simulation_attempts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'), nullable=False, index=True)
+    
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
+    
+    difficulty_level = db.Column(db.String(20), default='normal')  # easy, normal, difficult
+    
+    initial_mood = db.Column(db.String(20), default='neutral')
+    final_mood = db.Column(db.String(20))
+    mood_score = db.Column(db.Integer, default=50)  # Score basado en estado de ánimo
+    
+    total_points = db.Column(db.Integer, default=0)
+    max_points = db.Column(db.Integer, default=0)
+    score_percentage = db.Column(db.Float, default=0.0)
+    
+    steps_completed = db.Column(db.Integer, default=0)
+    correct_answers = db.Column(db.Integer, default=0)
+    incorrect_answers = db.Column(db.Integer, default=0)
+    
+    passed = db.Column(db.Boolean, default=False)
+    passed_score = db.Column(db.Float, default=70.0)
+    
+    answers_log = db.Column(db.JSON)  # Historial de respuestas
+    
+    user = db.relationship('User', backref='simulation_attempts')
+    scenario = db.relationship('ThematicScenario', backref='attempts')
+    
+    __table_args__ = (
+        db.Index('idx_user_scenario_attempt', 'user_id', 'scenario_id'),
+    )
+    
+    def __repr__(self):
+        return f'<SimulationAttempt User:{self.user_id} Scenario:{self.scenario_id}>'
+
+
+# ============================================================================
+# CERTIFICADOS
+# ============================================================================
+
+class Certificate(db.Model):
+    """Certificados emitidos a usuarios"""
+    __tablename__ = 'certificates'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    
+    certificate_type = db.Column(db.String(50), nullable=False)  # course_completion, scenario_master, exam_pass
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    
+    course_name = db.Column(db.String(200))  # Nombre del curso
+    scenario_id = db.Column(db.Integer, db.ForeignKey('thematic_scenarios.id'))  # Si es de un escenario
+    exam_score = db.Column(db.Float)  # Si es de un examen
+    
+    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
+    expiry_date = db.Column(db.DateTime, nullable=True)
+    
+    certificate_number = db.Column(db.String(50), unique=True, index=True)
+    verification_code = db.Column(db.String(100), unique=True, index=True)
+    
+    pdf_url = db.Column(db.String(500))
+    is_active = db.Column(db.Boolean, default=True)
+    
+    user = db.relationship('User', backref='certificates')
+    scenario = db.relationship('ThematicScenario', backref='certificates')
+    
+    __table_args__ = (
+        db.Index('idx_user_cert_type', 'user_id', 'certificate_type'),
+    )
+    
+    @staticmethod
+    def generate_certificate_number():
+        import uuid
+        return f"CERT-{uuid.uuid4().hex[:8].upper()}"
+    
+    @staticmethod
+    def generate_verification_code():
+        import uuid
+        return uuid.uuid4().hex.upper()
+    
+    def __repr__(self):
+        return f'<Certificate {self.certificate_number}: {self.title}>'
+
+
+# ============================================================================
+# ARCHIVOS DE AUDIO
+# ============================================================================
+
+class AudioFile(db.Model):
+    """Archivos de audio para vocabulario, frases y pronunciación"""
+    __tablename__ = 'audio_files'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    
+    audio_type = db.Column(db.String(50), nullable=False)  # vocabulary, phrase, dialogue, pronunciation
+    file_url = db.Column(db.String(500), nullable=False)
+    duration_seconds = db.Column(db.Float)
+    
+    # Relaciones de contenido
+    vocabulary_id = db.Column(db.Integer, db.ForeignKey('vocabulary_items.id'), nullable=True)
+    scenario_vocab_id = db.Column(db.Integer, db.ForeignKey('scenario_vocabulary.id'), nullable=True)
+    phrase_id = db.Column(db.Integer, db.ForeignKey('scenario_phrases.id'), nullable=True)
+    verb_id = db.Column(db.Integer, db.ForeignKey('verbs.id'), nullable=True)
+    idiom_id = db.Column(db.Integer, db.ForeignKey('idioms.id'), nullable=True)
+    
+    cefr_level = db.Column(db.String(10))  # A1-C2
+    transcript = db.Column(db.Text)  # Transcripción del audio
+    translation = db.Column(db.String(500))  # Traducción
+    
+    is_active = db.Column(db.Boolean, default=True)
+    plays_count = db.Column(db.Integer, default=0)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (
+        db.Index('idx_audio_type', 'audio_type'),
+        db.Index('idx_audio_level', 'cefr_level'),
+    )
+    
+    def __repr__(self):
+        return f'<AudioFile {self.title}>'
+
+
+# ============================================================================
+# SUSCRIPCIONES Y PAGOS (para SaaS)
+# ============================================================================
+
+class Subscription(db.Model):
+    """Suscripciones de usuarios"""
+    __tablename__ = 'subscriptions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    
+    plan_type = db.Column(db.String(50), nullable=False)  # free, basic, premium, enterprise
+    billing_cycle = db.Column(db.String(20), default='monthly')  # monthly, yearly
+    
+    stripe_subscription_id = db.Column(db.String(100), unique=True)
+    paypal_subscription_id = db.Column(db.String(100), unique=True)
+    
+    status = db.Column(db.String(20), default='active')  # active, cancelled, past_due, trialing
+    current_period_start = db.Column(db.DateTime)
+    current_period_end = db.Column(db.DateTime)
+    cancel_at_period_end = db.Column(db.Boolean, default=False)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    user = db.relationship('User', backref='subscription')
+    
+    __table_args__ = (
+        db.Index('idx_subscription_user', 'user_id', 'status'),
+    )
+    
+    def __repr__(self):
+        return f'<Subscription User:{self.user_id} Plan:{self.plan_type}>'
+
+
+class RestaurantLicense(db.Model):
+    """Licencias para restaurantes (B2B)"""
+    __tablename__ = 'restaurant_licenses'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    restaurant_name = db.Column(db.String(200), nullable=False)
+    contact_email = db.Column(db.String(120), nullable=False)
+    contact_phone = db.Column(db.String(20))
+    
+    license_type = db.Column(db.String(50), default='standard')  # standard, premium, enterprise
+    total_seats = db.Column(db.Integer)  # Número de empleados permitidos
+    active_users = db.Column(db.Integer, default=0)
+    
+    stripe_customer_id = db.Column(db.String(100), unique=True)
+    subscription_status = db.Column(db.String(20), default='active')
+    
+    valid_from = db.Column(db.DateTime, default=datetime.utcnow)
+    valid_until = db.Column(db.DateTime)
+    
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<RestaurantLicense {self.restaurant_name}>'
+
+
+class RestaurantEmployee(db.Model):
+    """Empleados registrados bajo una licencia de restaurante"""
+    __tablename__ = 'restaurant_employees'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    license_id = db.Column(db.Integer, db.ForeignKey('restaurant_licenses.id'), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    
+    role = db.Column(db.String(50))  # waiter, host, supervisor, manager
+    employee_id = db.Column(db.String(50))  # ID interno del restaurante
+    
+    joined_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    license = db.relationship('RestaurantLicense', backref='employees')
+    user = db.relationship('User', backref='restaurant_employments')
+    
+    __table_args__ = (
+        db.UniqueConstraint('license_id', 'user_id', name='unique_license_user'),
+    )
+    
+    def __repr__(self):
+        return f'<RestaurantEmployee User:{self.user_id} License:{self.license_id}>'
+
+
+# ============================================================================
+# FEEDBACK DE USUARIOS
+# ============================================================================
+
+class UserFeedback(db.Model):
+    """Feedback de usuarios sobre la plataforma"""
+    __tablename__ = 'user_feedback'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Puede ser anónimo
+    
+    feedback_type = db.Column(db.String(20), nullable=False)  # bug, suggestion, compliment, complaint
+    category = db.Column(db.String(50))  # general, content, ui, bug, feature
+    
+    rating = db.Column(db.Integer)  # 1-5 estrellas (opcional)
+    subject = db.Column(db.String(200))
+    message = db.Column(db.Text, nullable=False)
+    
+    page_url = db.Column(db.String(200))  # Página donde dio feedback
+    browser_info = db.Column(db.String(200))  # Info del navegador
+    
+    status = db.Column(db.String(20), default='new')  # new, reviewed, resolved, dismissed
+    admin_response = db.Column(db.Text)
+    responded_at = db.Column(db.DateTime)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='feedback')
+    
+    __table_args__ = (
+        db.Index('idx_feedback_type', 'feedback_type'),
+        db.Index('idx_feedback_status', 'status'),
+    )
+    
+    def __repr__(self):
+        return f'<UserFeedback Type:{self.feedback_type} Status:{self.status}>'
+
+
+# ============================================================================
+# BOOKMARKS / FAVORITOS
+# ============================================================================
+
+class Bookmark(db.Model):
+    """Frases y vocabulario guardado por usuarios"""
+    __tablename__ = 'bookmarks'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    
+    bookmark_type = db.Column(db.String(30), nullable=False)  # phrase, vocabulary, sentence, scenario
+    content_type = db.Column(db.String(30))  # grammar, vocabulary, idiom, etc.
+    
+    # Referencias al contenido
+    vocabulary_id = db.Column(db.Integer, db.ForeignKey('vocabulary_items.id'), nullable=True)
+    phrase_id = db.Column(db.Integer, db.ForeignKey('scenario_phrases.id'), nullable=True)
+    grammar_id = db.Column(db.ForeignKey('grammar_rules.id'), nullable=True)
+    sentence_id = db.Column(db.Integer, db.ForeignKey('user_sentences.id'), nullable=True)
+    
+    # Contenido guardado (para no depender de foreign keys)
+    english_text = db.Column(db.Text, nullable=False)
+    spanish_translation = db.Column(db.Text)
+    notes = db.Column(db.Text)  # Notas personales del usuario
+    
+    # Metadata
+    source = db.Column(db.String(50))  # De dónde viene: conversation, scenario, etc.
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='bookmarks')
+    vocabulary = db.relationship('VocabularyItem', backref='bookmarks')
+    
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'bookmark_type', 'vocabulary_id', name='unique_bookmark_vocab'),
+        db.UniqueConstraint('user_id', 'bookmark_type', 'phrase_id', name='unique_bookmark_phrase'),
+    )
+    
+    def __repr__(self):
+        return f'<Bookmark User:{self.user_id} Type:{self.bookmark_type}>'
+
+
+# ============================================================================
+# ACTIVIDAD RECIENTE DEL USUARIO
+# ============================================================================
+
+class UserActivity(db.Model):
+    """Historial de actividad del usuario"""
+    __tablename__ = 'user_activities'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    
+    activity_type = db.Column(db.String(50), nullable=False)  # lesson_completed, exercise_done, etc.
+    activity_category = db.Column(db.String(50))  # vocabulary, grammar, conversation, etc.
+    
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(500))
+    
+    # Metadata de la actividad
+    related_id = db.Column(db.Integer)  # ID del elemento relacionado (unit, scenario, etc.)
+    related_type = db.Column(db.String(30))  # unit, scenario, challenge, etc.
+    
+    # Métricas
+    score = db.Column(db.Float)  # Puntuación obtenida
+    time_spent = db.Column(db.Integer)  # Segundos
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='activities')
+    
+    __table_args__ = (
+        db.Index('idx_activity_user_time', 'user_id', 'created_at'),
+    )
+    
+    def __repr__(self):
+        return f'<UserActivity User:{self.user_id} Type:{self.activity_type}>'

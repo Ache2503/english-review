@@ -1,0 +1,666 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/scenarios/scenarios.css') }}">
+<style>
+.simulation-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.customer-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    margin: 0 auto 20px;
+    transition: all 0.3s ease;
+}
+
+.mood-happy { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+.mood-neutral { background: linear-gradient(135deg, #3498db, #2980b9); }
+.mood-annoyed { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.mood-angry { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+.mood-indicator {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    border: 3px solid var(--bs-body-bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.bubble {
+    position: relative;
+    background: var(--bs-tertiary-bg);
+    border-radius: 20px;
+    padding: 20px 25px;
+    margin: 20px 0;
+    max-width: 80%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    color: var(--bs-body-color);
+}
+
+.bubble::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    bottom: -10px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: var(--bs-tertiary-bg) transparent;
+}
+
+.option-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    margin: 10px 0;
+    border: 2px solid var(--bs-border-color);
+    border-radius: 12px;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+
+.option-btn:hover {
+    border-color: var(--bs-primary);
+    background: var(--bs-tertiary-bg);
+    transform: translateX(5px);
+}
+
+.option-btn.selected {
+    border-color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+}
+
+.option-btn.correct {
+    border-color: var(--bs-success);
+    background: var(--bs-success-bg-subtle);
+}
+
+.option-btn.incorrect {
+    border-color: var(--bs-danger);
+    background: var(--bs-danger-bg-subtle);
+}
+
+.timer-bar {
+    height: 6px;
+    background: var(--bs-border-color);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.timer-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--bs-success), var(--bs-warning), var(--bs-danger));
+    transition: width 1s linear;
+}
+
+.feedback-box {
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px 0;
+}
+
+.feedback-correct {
+    background: var(--bs-success-bg-subtle);
+    border-left: 4px solid var(--bs-success);
+    color: var(--bs-body-color);
+}
+
+.feedback-incorrect {
+    background: var(--bs-danger-bg-subtle);
+    border-left: 4px solid var(--bs-danger);
+    color: var(--bs-body-color);
+}
+
+.score-display {
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    color: var(--bs-body-color);
+}
+
+.points-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 72px;
+    font-weight: bold;
+    color: var(--bs-success);
+    animation: popIn 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+.difficulty-select {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.difficulty-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--bs-border-color);
+    border-radius: 25px;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.difficulty-btn:hover, .difficulty-btn.active {
+    border-color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+}
+
+.difficulty-btn.easy.active { border-color: var(--bs-success); background: var(--bs-success-bg-subtle); }
+.difficulty-btn.normal.active { border-color: var(--bs-primary); background: var(--bs-primary-bg-subtle); }
+.difficulty-btn.difficult.active { border-color: var(--bs-danger); background: var(--bs-danger-bg-subtle); }
+
+/* Start screen card */
+.difficulty-select + .text-start {
+    background: var(--bs-tertiary-bg);
+    padding: 1.5rem;
+    border-radius: var(--bs-border-radius-lg);
+}
+</style>
+{% endblock %}
+
+{% block title %}Simulador Roleplay | {{ scenario.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 simulation-container">
+    
+    <!-- Pantalla de inicio -->
+    <div id="start-screen" class="text-center">
+        <div class="mb-4">
+            <i class="fas fa-store fa-4x text-primary"></i>
+        </div>
+        <h1 class="mb-3">Simulador de Roleplay</h1>
+        <p class="lead text-muted mb-4">{{ scenario.title }}</p>
+        
+        <div class="card border-0 shadow-sm p-4 mb-4 text-center">
+            <h5 class="mb-3">Selecciona la dificultad:</h5>
+            <div class="difficulty-select">
+                <button class="difficulty-btn easy" data-difficulty="easy">
+                    <i class="fas fa-smile text-success"></i> Fácil
+                </button>
+                <button class="difficulty-btn normal active" data-difficulty="normal">
+                    <i class="fas fa-meh text-primary"></i> Normal
+                </button>
+                <button class="difficulty-btn difficult" data-difficulty="difficult">
+                    <i class="fas fa-frown text-danger"></i> Difícil
+                </button>
+            </div>
+            
+            <div class="text-start mt-4 p-3 rounded">
+                <h6>¿Cómo funciona?</h6>
+                <ul class="mb-0">
+                    <li>Atenderás a un cliente con diferentes estados de ánimo</li>
+                    <li>Debes elegir la mejor respuesta en cada situación</li>
+                    <li>Cada respuesta correcta te da puntos y mejora el mood del cliente</li>
+                    <li>Para pasar necesitas 70% de puntuación</li>
+                </ul>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary btn-lg px-5 rounded-pill" onclick="startSimulation()">
+            <i class="fas fa-play me-2"></i> INICIAR SIMULACIÓN
+        </button>
+    </div>
+    
+    <!-- Pantalla de simulación -->
+    <div id="simulation-screen" style="display: none;">
+        <!-- Progress bar -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-secondary" id="step-counter">Paso 1</span>
+            <span class="badge bg-primary" id="points-display">0 pts</span>
+        </div>
+        
+        <!-- Timer -->
+        <div class="timer-bar">
+            <div class="timer-progress" id="timer" style="width: 100%"></div>
+        </div>
+        
+        <!-- Customer Avatar -->
+        <div class="position-relative d-inline-block" style="display: block; width: fit-content;">
+            <div class="customer-avatar mood-neutral" id="customer-avatar">
+                <span id="customer-emoji">😐</span>
+            </div>
+            <div class="mood-indicator" id="mood-indicator">
+                <span id="mood-icon">😐</span>
+            </div>
+        </div>
+        
+        <!-- Context -->
+        <p class="text-muted text-center small" id="context-text"></p>
+        
+        <!-- Customer Message -->
+        <div class="bubble" id="customer-message">
+            <p class="mb-0" id="message-text">Cargando...</p>
+        </div>
+        
+        <!-- Options -->
+        <div id="options-container">
+            <!-- Opciones se generan dinámicamente -->
+        </div>
+        
+        <!-- Feedback -->
+        <div id="feedback-container" style="display: none;">
+            <div class="feedback-box" id="feedback-box">
+                <h5 id="feedback-title"></h5>
+                <p id="feedback-text"></p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-success" id="feedback-points"></span>
+                    <button class="btn btn-primary btn-sm" id="next-btn" onclick="nextStep()">
+                        Siguiente <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla de resultados -->
+    <div id="results-screen" class="text-center" style="display: none;">
+        <div class="mb-4">
+            <i class="fas fa-trophy fa-4x" id="result-icon"></i>
+        </div>
+        
+        <h2 id="result-title" class="mb-3"></h2>
+        
+        <div class="score-display" id="final-score">0%</div>
+        <p class="text-muted" id="result-subtitle"></p>
+        
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <div class="row text-center">
+                <div class="col-4">
+                    <div class="h3 mb-0" id="correct-count" style="color: var(--bs-success)">0</div>
+                    <small class="text-muted">Correctas</small>
+                </div>
+                <div class="col-4">
+                    <div class="h3 mb-0" id="incorrect-count" style="color: var(--bs-danger)">0</div>
+                    <small class="text-muted">Incorrectas</small>
+                </div>
+                <div class="col-4">
+                    <div class="h3 mb-0" id="final-mood">😐</div>
+                    <small class="text-muted">Mood Final</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-3 justify-content-center">
+            <button class="btn btn-outline-primary rounded-pill" onclick="restartSimulation()">
+                <i class="fas fa-redo me-2"></i> Intentar de nuevo
+            </button>
+            <a href="{{ url_for('scenarios.dashboard', scenario_id=scenario.id) }}" class="btn btn-outline-secondary rounded-pill">
+                <i class="fas fa-arrow-left me-2"></i> Volver
+            </a>
+            <button class="btn btn-success rounded-pill" id="claim-cert-btn" style="display: none;" onclick="claimCertificate()">
+                <i class="fas fa-certificate me-2"></i> Obtener Certificado
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let currentScenarioId = {{ scenario.id }};
+let currentStep = null;
+let currentStepId = null;
+let currentDifficulty = 'normal';
+let timerInterval = null;
+let timeRemaining = 30;
+let totalPoints = 0;
+let correctCount = 0;
+let incorrectCount = 0;
+let attemptId = null;
+
+// Mood configurations
+const moodConfig = {
+    'happy': { emoji: '😊', class: 'mood-happy', color: '#27ae60' },
+    'neutral': { emoji: '😐', class: 'mood-neutral', color: '#3498db' },
+    'annoyed': { emoji: '😕', class: 'mood-annoyed', color: '#f39c12' },
+    'angry': { emoji: '😠', class: 'mood-angry', color: '#e74c3c' }
+};
+
+// Select difficulty
+document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDifficulty = btn.dataset.difficulty;
+    });
+});
+
+async function startSimulation() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('simulation-screen').style.display = 'block';
+    
+    try {
+        console.log('Starting simulation with difficulty:', currentDifficulty);
+        
+        const response = await fetch(`/api/simulation/${currentScenarioId}/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ difficulty: currentDifficulty })
+        });
+        
+        const data = await response.json();
+        console.log('Start response:', data);
+        
+        if (!data.success) {
+            alert(data.error || 'Error al iniciar simulación');
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('simulation-screen').style.display = 'none';
+            return;
+        }
+        
+        attemptId = data.data.attempt_id;
+        console.log('Simulation started, attemptId:', attemptId);
+        showStep(data.data.step);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al conectar con el servidor: ' + error.message);
+        document.getElementById('start-screen').style.display = 'block';
+        document.getElementById('simulation-screen').style.display = 'none';
+    }
+}
+
+function showStep(stepData) {
+    currentStep = stepData;
+    currentStepId = stepData.step_id;
+    
+    // Update UI
+    document.getElementById('step-counter').textContent = `Paso ${stepData.order}`;
+    document.getElementById('points-display').textContent = `${totalPoints} pts`;
+    document.getElementById('message-text').textContent = stepData.message;
+    document.getElementById('context-text').textContent = stepData.context || '';
+    
+    // Update mood
+    const mood = moodConfig[stepData.mood] || moodConfig.neutral;
+    const avatar = document.getElementById('customer-avatar');
+    avatar.className = `customer-avatar ${mood.class}`;
+    document.getElementById('customer-emoji').textContent = mood.emoji;
+    document.getElementById('mood-icon').textContent = mood.emoji;
+    
+    // Update timer
+    timeRemaining = stepData.time_limit || 30;
+    startTimer(timeRemaining);
+    
+    // Show options
+    renderOptions(stepData.options);
+    
+    // Hide feedback
+    document.getElementById('feedback-container').style.display = 'none';
+}
+
+function renderOptions(options) {
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+    
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt.text;
+        btn.dataset.optionId = opt.id;
+        btn.onclick = () => selectOption(opt.id, opt.text);
+        container.appendChild(btn);
+    });
+}
+
+async function selectOption(optionId, optionText) {
+    // Disable all buttons
+    document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+    });
+    
+    // Stop timer
+    stopTimer();
+    
+    try {
+        console.log('Sending answer:', { step_id: currentStepId, option_id: optionId, attempt_id: attemptId });
+        
+        const response = await fetch(`/api/simulation/${currentScenarioId}/answer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                step_id: currentStepId,
+                option_id: optionId,
+                time_taken: timeRemaining,
+                attempt_id: attemptId  // Include attempt_id for robustness
+            })
+        });
+        
+        const data = await response.json();
+        console.log('Response:', data);
+        
+        if (!data.success) {
+            alert(data.error);
+            return;
+        }
+        
+        const feedback = data.data.feedback;
+        
+        // Update points
+        totalPoints += feedback.points_earned;
+        if (feedback.is_correct) {
+            correctCount++;
+        } else {
+            incorrectCount++;
+        }
+        
+        // Show feedback
+        showFeedback(feedback);
+        
+        // Check if complete
+        if (data.data.is_complete) {
+            document.getElementById('next-btn').textContent = 'Ver Resultados';
+            document.getElementById('next-btn').onclick = completeSimulation;
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al enviar respuesta: ' + error.message);
+    }
+}
+
+function showFeedback(feedback) {
+    const container = document.getElementById('feedback-container');
+    const box = document.getElementById('feedback-box');
+    const title = document.getElementById('feedback-title');
+    const text = document.getElementById('feedback-text');
+    const points = document.getElementById('feedback-points');
+    
+    if (feedback.is_correct) {
+        box.className = 'feedback-box feedback-correct';
+        title.textContent = '¡Correcto!';
+        title.className = 'text-success';
+    } else {
+        box.className = 'feedback-box feedback-incorrect';
+        title.textContent = '¡Incorrecto!';
+        title.className = 'text-danger';
+    }
+    
+    text.textContent = feedback.feedback;
+    points.textContent = `+${feedback.points_earned} pts`;
+    
+    container.style.display = 'block';
+    
+    // Animate points
+    if (feedback.points_earned > 0) {
+        showPointsPopup(feedback.points_earned);
+    }
+    
+    // Update mood indicator
+    const mood = moodConfig[feedback.mood] || moodConfig.neutral;
+    const avatar = document.getElementById('customer-avatar');
+    avatar.className = `customer-avatar ${mood.class}`;
+    document.getElementById('customer-emoji').textContent = mood.emoji;
+    document.getElementById('mood-icon').textContent = mood.emoji;
+}
+
+function showPointsPopup(points) {
+    const popup = document.createElement('div');
+    popup.className = 'points-popup';
+    popup.textContent = `+${points}`;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1000);
+}
+
+async function nextStep() {
+    try {
+        const response = await fetch(`/api/simulation/${currentScenarioId}/step/${currentStepId}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+            alert(data.error);
+            return;
+        }
+        
+        if (data.data) {
+            showStep(data.data);
+        } else {
+            // No more steps
+            completeSimulation();
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar siguiente paso');
+    }
+}
+
+async function completeSimulation() {
+    try {
+        const response = await fetch(`/api/simulation/${currentScenarioId}/complete`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            alert(data.error);
+            return;
+        }
+        
+        showResults(data.data);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al completar simulación');
+    }
+}
+
+function showResults(result) {
+    document.getElementById('simulation-screen').style.display = 'none';
+    document.getElementById('results-screen').style.display = 'block';
+    
+    document.getElementById('final-score').textContent = `${result.score_percentage}%`;
+    document.getElementById('correct-count').textContent = result.correct_answers;
+    document.getElementById('incorrect-count').textContent = result.incorrect_answers;
+    document.getElementById('final-mood').textContent = moodConfig[result.final_mood]?.emoji || '😐';
+    
+    const icon = document.getElementById('result-icon');
+    const title = document.getElementById('result-title');
+    const subtitle = document.getElementById('result-subtitle');
+    const claimBtn = document.getElementById('claim-cert-btn');
+    
+    if (result.passed) {
+        icon.className = 'fas fa-trophy fa-4x text-success';
+        title.textContent = '¡Felicidades! ¡Aprobaste!';
+        subtitle.textContent = `Puntuación: ${result.score_percentage}%`;
+        claimBtn.style.display = 'inline-block';
+    } else {
+        icon.className = 'fas fa-times-circle fa-4x text-danger';
+        title.textContent = '¡Inténtalo de nuevo!';
+        subtitle.textContent = `Necesitas 70% para aprobar. Puntuación: ${result.score_percentage}%`;
+        claimBtn.style.display = 'none';
+    }
+}
+
+async function restartSimulation() {
+    document.getElementById('results-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    
+    // Reset
+    totalPoints = 0;
+    correctCount = 0;
+    incorrectCount = 0;
+    attemptId = null;
+}
+
+async function claimCertificate() {
+    try {
+        const response = await fetch(`/certificates/claim/scenario/${currentScenarioId}`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('¡CertificadoClaimed! ¡Revisa tu panel de certificados!');
+            window.location.href = '/certificates/';
+        } else {
+            alert(data.error || 'Error al reclamar certificado');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al reclamar certificado');
+    }
+}
+
+function startTimer(seconds) {
+    stopTimer();
+    
+    const progress = document.getElementById('timer');
+    const total = seconds;
+    
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const percent = (timeRemaining / total) * 100;
+        progress.style.width = `${percent}%`;
+        
+        if (timeRemaining <= 0) {
+            stopTimer();
+            // Auto-submit with no answer
+            // Could implement timeout logic here
+        }
+        
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/scenarios/scenarios.css') }}">
+{% endblock %}
+
+{% block title %}{{ scenario.title }} | Escenarios Reales{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold text-primary mb-2">
+                <i class="{{ scenario.icon_or_image }}"></i> {{ scenario.title }}
+            </h1>
+            <p class="lead text-muted">{{ scenario.description }}</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('scenarios.list_scenarios') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fas fa-arrow-left"></i> Volver al Catálogo
+            </a>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills nav-fill mb-4 scenario-tabs rounded-pill p-2" id="scenarioTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active rounded-pill fw-bold" id="vocab-tab" data-bs-toggle="tab" data-bs-target="#vocab" type="button" role="tab" aria-selected="true">
+                <i class="fas fa-book-open"></i> 1. Preparación
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill fw-bold" id="phrases-tab" data-bs-toggle="tab" data-bs-target="#phrases" type="button" role="tab" aria-selected="false">
+                <i class="fas fa-comments"></i> 2. Frases Clave
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill fw-bold" id="simulation-tab" data-bs-toggle="tab" data-bs-target="#simulation" type="button" role="tab" aria-selected="false">
+                <i class="fas fa-play-circle"></i> 3. Simulador Roleplay
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="scenarioTabsContent">
+        
+        <div class="tab-pane fade show active" id="vocab" role="tabpanel" tabindex="0">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="mb-4 fw-bold"><i class="fas fa-book-open text-primary"></i> Vocabulario Esencial</h3>
+                    <div class="row g-4">
+                        {% for word in vocabulary %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 vocab-card transition-hover">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h4 class="card-title fw-bold mb-0">{{ word.word }}</h4>
+                                        <span class="badge bg-secondary">{{ word.part_of_speech }}</span>
+                                    </div>
+                                    <h6 class="card-subtitle mb-3 text-primary">{{ word.translation }}</h6>
+                                    <p class="card-text text-muted fst-italic"><small>"{{ word.example_usage }}"</small></p>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info rounded-4">Aún no hay vocabulario para este escenario.</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="phrases" role="tabpanel" tabindex="0">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="mb-4 fw-bold"><i class="fas fa-comments text-primary"></i> Lo que escucharás y dirás</h3>
+                    
+                    <div class="list-group list-group-flush">
+                        {% for phrase in phrases %}
+                        <div class="list-group-item py-4 border-bottom">
+                            <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                <span class="badge {% if phrase.role == 'Waiter' or phrase.role == 'Staff' %}bg-danger{% else %}bg-success{% endif %} fs-6 rounded-pill px-3">
+                                    <i class="fas fa-user"></i> {{ phrase.role }}
+                                </span>
+                                <small class="text-muted text-uppercase fw-bold"><i class="fas fa-tag"></i> {{ phrase.phrase_type }}</small>
+                            </div>
+                            <h4 class="mb-1 fw-bold mt-3">{{ phrase.english_text }}</h4>
+                            <p class="mb-0 text-muted fs-5">{{ phrase.spanish_translation }}</p>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info rounded-4">Aún no hay frases clave para este escenario.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="simulation" role="tabpanel" tabindex="0">
+            <div class="card border-0 simulation-card rounded-4 overflow-hidden">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-vr-cardboard fa-4x text-warning mb-3"></i>
+                    </div>
+                    <h2 class="mb-3 fw-bold">Ponlo a Prueba</h2>
+                    <p class="lead mb-5 px-md-5">Es hora de aplicar lo aprendido. Enfrentarás situaciones reales en este escenario y deberás elegir la respuesta correcta.</p>
+                    
+                    {% if has_simulation %}
+                        <a href="{{ url_for('scenarios.simulate', scenario_id=scenario.id) }}" 
+                           class="btn btn-warning btn-lg px-5 py-3 rounded-pill fw-bold fs-5 shadow-lg">
+                            <i class="fas fa-play me-2"></i> INICIAR SIMULACIÓN
+                        </a>
+                        
+                        {% if progress and progress.simulation_score %}
+                        <div class="mt-4">
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-trophy me-1"></i> Mejor puntuación: {{ progress.simulation_score }}%
+                            </span>
+                            {% if progress.is_completed %}
+                            <span class="badge bg-primary fs-6 ms-2">
+                                <i class="fas fa-check me-1"></i> Completado
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info rounded-4">Aún no hay simulaciones disponibles para este módulo.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function startSimulation() {
+        alert('¡Iniciando simulación! Próximamente conectaremos la lógica de las preguntas.');
+    }
+</script>
+
+{% endblock %}

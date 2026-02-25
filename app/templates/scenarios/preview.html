@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/scenarios/scenarios.css') }}">
+{% endblock %}
+
+{% block title %}Desbloquear {{ scenario.title }} | Escenarios Reales{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <div class="mb-4">
+                <a href="{{ url_for('scenarios.list_scenarios') }}" class="text-decoration-none text-muted fw-bold transition-hover">
+                    <i class="fas fa-arrow-left"></i> Volver al Catálogo
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="preview-header text-white text-center py-5">
+                    <i class="{{ scenario.icon_or_image }} fa-5x mb-3 text-warning preview-icon"></i>
+                    <h1 class="display-5 fw-bold mb-0">{{ scenario.title }}</h1>
+                    <span class="badge bg-info text-dark mt-3 fs-6 px-3 py-2 rounded-pill">{{ scenario.category }}</span>
+                </div>
+                
+                <div class="card-body p-5">
+                    <h4 class="fw-bold mb-3 text-dark">Acerca de este escenario</h4>
+                    <p class="lead text-muted mb-4">{{ scenario.description }}</p>
+                    
+                    <hr class="mb-4 text-light">
+                    
+                    <h5 class="fw-bold mb-3"><i class="fas fa-gem text-primary"></i> Lo que desbloquearás:</h5>
+                    <ul class="list-unstyled mb-5">
+                        <li class="mb-3 fs-5"><i class="fas fa-check-circle text-success me-2"></i> Vocabulario específico del entorno.</li>
+                        <li class="mb-3 fs-5"><i class="fas fa-check-circle text-success me-2"></i> Frases clave para hablar y escuchar.</li>
+                        <li class="mb-3 fs-5"><i class="fas fa-check-circle text-success me-2"></i> Simulador interactivo de Roleplay.</li>
+                    </ul>
+                    
+                    <div class="p-4 rounded-4 text-center border border-2 shadow-sm">
+                        <p class="mb-1 text-muted text-uppercase fw-bold"><i class="fas fa-ticket-alt"></i> Precio de acceso</p>
+                        
+                        {% if scenario.is_premium %}
+                            <h2 class="display-4 fw-bold mb-3">
+                                <i class="fas fa-star text-warning"></i> {{ scenario.price_points }} <span class="fs-4 text-muted">pts</span>
+                            </h2>
+                            
+                            <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow w-100" onclick="alert('Pronto conectaremos este botón con tu billetera de puntos para que puedas comprarlo. 🛒')">
+                                <i class="fas fa-unlock-alt me-2"></i> Desbloquear Ahora
+                            </button>
+                            <p class="text-muted mt-3 mb-0 small">Se descontarán {{ scenario.price_points }} puntos de tu cuenta.</p>
+                        {% else %}
+                            <h2 class="display-4 fw-bold text-success mb-3">GRATIS</h2>
+                            <a href="{{ url_for('scenarios.dashboard', scenario_id=scenario.id) }}" class="btn btn-success btn-lg rounded-pill px-5 py-3 fw-bold shadow w-100">
+                                <i class="fas fa-play-circle me-2"></i> Entrar Ahora
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

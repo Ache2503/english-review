@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Favoritos{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="fas fa-heart text-danger"></i> Mis Favoritos
+            </h1>
+            <p class="text-muted">Frases y vocabulario que has guardado para revisar después</p>
+        </div>
+        <div class="col-md-4">
+            <div class="btn-group w-100" role="group">
+                <a href="{{ url_for('bookmarks.list', type='all') }}" class="btn btn-outline-primary {% if filter_type == 'all' %}active{% endif %}">Todos</a>
+                <a href="{{ url_for('bookmarks.list', type='phrase') }}" class="btn btn-outline-primary {% if filter_type == 'phrase' %}active{% endif %}">Frases</a>
+                <a href="{{ url_for('bookmarks.list', type='vocabulary') }}" class="btn btn-outline-primary {% if filter_type == 'vocabulary' %}active{% endif %}">Vocabulario</a>
+                <a href="{{ url_for('bookmarks.list', type='sentence') }}" class="btn btn-outline-primary {% if filter_type == 'sentence' %}active{% endif %}">Oraciones</a>
+            </div>
+        </div>
+    </div>
+
+    {% if bookmarks %}
+    <div class="row">
+        {% for bookmark in bookmarks %}
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <span class="badge bg-{% if bookmark.bookmark_type == 'phrase' %}info{% elif bookmark.bookmark_type == 'vocabulary' %}success{% else %}warning{% endif %}">
+                            {{ bookmark.bookmark_type }}
+                        </span>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <form action="{{ url_for('bookmarks.delete', bookmark_id=bookmark.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-trash me-2"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h5 class="card-title mt-3">{{ bookmark.english_text }}</h5>
+                    {% if bookmark.spanish_translation %}
+                    <p class="card-text text-muted">{{ bookmark.spanish_translation }}</p>
+                    {% endif %}
+                    
+                    {% if bookmark.notes %}
+                    <div class="bg-light p-2 rounded small">
+                        <i class="fas fa-sticky-note me-1"></i> {{ bookmark.notes }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if bookmark.source %}
+                    <small class="text-muted mt-2 d-block">
+                        <i class="fas fa-link me-1"></i> {{ bookmark.source }}
+                    </small>
+                    {% endif %}
+                    
+                    <small class="text-muted d-block mt-2">
+                        <i class="fas fa-calendar me-1"></i> {{ bookmark.created_at.strftime('%d/%m/%Y') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-heart-broken fa-4x text-muted mb-3"></i>
+        <h3>No tienes favoritos aún</h3>
+        <p class="text-muted">Guarda frases y vocabulario mientras aprendes</p>
+        <a href="{{ url_for('study.study_home') }}" class="btn btn-primary rounded-pill">
+            <i class="fas fa-book me-2"></i> Empezar a Aprender
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,460 @@
+/* =====================================================
+    KIDS ZONE - Estilos para sección infantil
+    Archivo: modules/kids/kids.css
+    Diseño divertido y colorido para niños
+    Usa variables de Bootstrap 5.3
+===================================================== */
+
+/* ===== FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+
+:root {
+    --kids-bg-dark: #1a1c29;
+    --kids-bg-sky: #87CEEB;
+    --kids-bg-yellow: #ffd166;
+    --kids-bg-purple: #8338ec;
+    --kids-accent-pink: #ef476f;
+    --kids-accent-orange: #fca311;
+    --kids-accent-yellow: #ffb703;
+    --kids-border-white: #ffffff;
+    --kids-shadow-dark: rgba(0,0,0,0.3);
+}
+
+/* ===== BASE KIDS STYLES ===== */
+.kids-body {
+    font-family: 'Fredoka', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+    min-height: 100vh;
+}
+
+/* ===== SELECT PROFILE PAGE ===== */
+.kids-select-bg {
+    background-color: var(--kids-bg-dark);
+    min-height: 100vh;
+}
+
+.profile-card {
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.profile-card:hover {
+    transform: scale(1.1) translateY(-10px);
+}
+
+.avatar-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid #4a4e69;
+    object-fit: cover;
+    background-color: white;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.profile-card:hover .avatar-img {
+    border-color: var(--kids-accent-orange);
+    transform: rotate(5deg);
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    margin-top: 15px;
+    color: #ccc;
+    transition: color 0.3s ease;
+    font-weight: 500;
+}
+
+.profile-card:hover .profile-name {
+    color: white;
+}
+
+.btn-exit {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.2rem;
+}
+
+/* ===== ADD PROFILE PAGE ===== */
+.kids-form-bg {
+    background-color: var(--kids-bg-dark);
+}
+
+.card-kids {
+    background: #2a2d3e;
+    border-radius: 30px;
+    padding: 40px;
+    border: 4px solid var(--kids-accent-orange);
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: kidsCardPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes kidsCardPop {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.card-kids .form-control {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.card-kids .form-control:focus {
+    border-color: var(--kids-accent-orange);
+    box-shadow: 0 0 0 4px rgba(252, 163, 17, 0.2);
+}
+
+/* ===== MAP PAGE ===== */
+.kids-map-bg {
+    background-color: var(--kids-bg-sky);
+    background-image: 
+        radial-gradient(circle, rgba(255,255,255,0.8) 10%, transparent 10%),
+        radial-gradient(circle, rgba(255,255,255,0.8) 10%, transparent 10%);
+    background-size: 50px 50px;
+    background-position: 0 0, 25px 25px;
+    font-family: 'Fredoka', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.kids-map-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(180deg, rgba(135,206,235,0.3) 0%, transparent 30%),
+        radial-gradient(ellipse at bottom, rgba(34,197,94,0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.btn-back-kids {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 10;
+    transition: transform 0.2s ease;
+}
+
+.btn-back-kids:hover {
+    transform: scale(1.05);
+}
+
+.kids-title-box {
+    background: white;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    border: 4px solid var(--kids-accent-yellow);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.kids-title-box h1 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.kids-subtitle {
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+    font-weight: 600;
+}
+
+/* ===== TOPIC CARDS ===== */
+.topic-card {
+    border-radius: 30px;
+    border: 6px solid white;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+
+.topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--kids-accent-pink), var(--kids-accent-yellow));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.topic-card:hover {
+    transform: scale(1.05) translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    border-color: var(--kids-accent-yellow);
+}
+
+.topic-card:hover::before {
+    transform: scaleX(1);
+}
+
+.topic-card .btn-jugar {
+    background: var(--kids-accent-yellow);
+    color: #000;
+    font-weight: 700;
+    border: 3px solid #000;
+    transition: all 0.2s ease;
+}
+
+.topic-card .btn-jugar:hover {
+    background: var(--kids-accent-orange);
+    transform: scale(1.05);
+}
+
+/* ===== TOPIC VIEW PAGE ===== */
+.kids-topic-bg {
+    background-color: var(--kids-bg-yellow);
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 50%);
+}
+
+.flashcard {
+    background: white;
+    border-radius: 40px;
+    border: 8px solid var(--kids-accent-pink);
+    box-shadow: 0 15px 0 #d90429;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.flashcard::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.flashcard:hover::before {
+    opacity: 1;
+    animation: flashcardShine 0.6s ease;
+}
+
+@keyframes flashcardShine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.flashcard:active {
+    transform: translateY(10px) scale(0.98);
+    box-shadow: 0 5px 0 #d90429;
+}
+
+.btn-close-game {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 2rem;
+    color: var(--kids-accent-pink);
+    text-decoration: none;
+    background: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 0 #d90429;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.btn-close-game:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 0 #d90429;
+}
+
+.btn-close-game:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 #d90429;
+}
+
+.word-text {
+    font-size: 4rem;
+    color: #118ab2;
+    font-weight: bold;
+    font-family: 'Fredoka', sans-serif;
+}
+
+.btn-play-game {
+    background: #22c55e;
+    border-radius: 50px;
+    padding: 1rem 2.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 4px solid white;
+    box-shadow: 0 8px 0 #15803d, 0 15px 20px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-play-game:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 0 #15803d, 0 20px 25px rgba(0,0,0,0.25);
+}
+
+.btn-play-game:active {
+    transform: translateY(8px);
+    box-shadow: 0 0 0 #15803d;
+}
+
+/* ===== GAME PAGE ===== */
+.kids-game-bg {
+    background: linear-gradient(135deg, var(--kids-bg-purple) 0%, #5a189a 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.kids-game-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 30%);
+    pointer-events: none;
+}
+
+.game-card {
+    background: white;
+    border-radius: 30px;
+    border: 6px solid var(--kids-accent-pink);
+    box-shadow: 0 10px 0 #d90429;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.game-card:hover::after {
+    opacity: 1;
+}
+
+.game-card:active {
+    transform: translateY(10px);
+    box-shadow: 0 0 0 #d90429;
+}
+
+.game-card img {
+    transition: transform 0.3s ease;
+}
+
+.game-card:hover img {
+    transform: scale(1.1);
+}
+
+#speaker-btn {
+    background: var(--kids-accent-yellow);
+    border: none;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    box-shadow: 0 8px 0 #e0a800, 0 10px 20px rgba(0,0,0,0.3);
+    transition: transform 0.1s;
+}
+
+#speaker-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 0 #e0a800, 0 15px 25px rgba(0,0,0,0.35);
+}
+
+#speaker-btn:active {
+    transform: translateY(8px);
+    box-shadow: 0 0 0 #e0a800;
+}
+
+.game-status {
+    animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .avatar-img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-name {
+        font-size: 1.2rem;
+    }
+    
+    .topic-card {
+        border-width: 4px;
+        border-radius: 20px;
+    }
+    
+    .flashcard {
+        height: 300px;
+        border-width: 6px;
+    }
+    
+    .word-text {
+        font-size: 2.5rem;
+    }
+    
+    .game-card {
+        height: 150px;
+    }
+    
+    #speaker-btn {
+        width: 80px;
+        height: 80px;
+    }
+    
+    #speaker-btn i {
+        font-size: 2rem !important;
+    }
+}

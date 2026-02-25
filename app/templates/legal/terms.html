@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Términos y Condiciones{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <h1 class="mb-4">Términos y Condiciones</h1>
+                    
+                    <h4 class="mt-4">1. Aceptación de Términos</h4>
+                    <p>Al acceder y utilizar esta plataforma, aceptas estar bound por estos términos y condiciones. Si no estás de acuerdo con alguno de estos términos, por favor no utilices la plataforma.</p>
+                    
+                    <h4 class="mt-4">2. Uso de la Plataforma</h4>
+                    <p>Esta plataforma está diseñada para ayudarte a aprender inglés de forma interactiva. Te comprometes a:</p>
+                    <ul>
+                        <li>Utilizar la plataforma solo con fines educativos</li>
+                        <li>No intentar acceder a cuentas de otros usuarios</li>
+                        <li>No modificar o alterar el contenido de la plataforma</li>
+                        <li>No usar la plataforma para actividades ilegales</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">3. Cuentas de Usuario</h4>
+                    <p>Para acceder a ciertas funciones, debes crear una cuenta. Eres responsable de:</p>
+                    <ul>
+                        <li>Mantener la confidencialidad de tu contraseña</li>
+                        <li>Todas las actividades que ocurran bajo tu cuenta</li>
+                        <li>Notificarnos inmediatamente sobre cualquier uso no autorizado</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">4. Propiedad Intelectual</h4>
+                    <p>Todo el contenido de esta plataforma, incluyendo textos, gráficos, logotipos e imágenes, son propiedad de la plataforma y están protegidos por leyes de propiedad intelectual.</p>
+                    
+                    <h4 class="mt-4">5. Limitación de Responsabilidad</h4>
+                    <p>La plataforma se proporciona "tal cual". No garantizamos que el servicio será ininterrumpido o libre de errores.</p>
+                    
+                    <h4 class="mt-4">6. Privacidad</h4>
+                    <p>Tu privacidad es importante para nosotros. Consulta nuestra Política de Privacidad para entender cómo recopilamos y usamos tu información.</p>
+                    
+                    <h4 class="mt-4">7. Modificaciones</h4>
+                    <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación.</p>
+                    
+                    <hr>
+                    <p class="text-muted">Última actualización: {{ current_date }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

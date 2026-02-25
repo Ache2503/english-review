@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Certificado{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <a href="{{ url_for('certificates.list_certificates') }}" class="btn btn-outline-secondary rounded-pill mb-3">
+                <i class="fas fa-arrow-left me-2"></i> Volver a Mis Certificados
+            </a>
+            <h1>{{ certificate.title }}</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('certificates.download_certificate', certificate_id=certificate.id) }}" 
+               class="btn btn-primary rounded-pill">
+                <i class="fas fa-download me-2"></i> Descargar PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow">
+        <div class="card-body p-0">
+            {{ html_content|safe }}
+        </div>
+    </div>
+
+    <div class="mt-4 p-3 bg-light rounded">
+        <h5>Detalles del Certificado</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Tipo:</strong> {{ certificate.certificate_type }}</p>
+                <p><strong>Fecha de emisión:</strong> {{ certificate.issue_date.strftime('%d de %B de %Y') }}</p>
+                {% if certificate.expiry_date %}
+                <p><strong>Fecha de expiración:</strong> {{ certificate.expiry_date.strftime('%d de %B de %Y') }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <p><strong>Número de certificado:</strong> <code>{{ certificate.certificate_number }}</code></p>
+                <p><strong>Código de verificación:</strong> <code>{{ certificate.verification_code }}</code></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h5>Compartir</h5>
+        <p class="text-muted">Comparte tu certificado usando el código de verificación:</p>
+        <input type="text" class="form-control" readonly 
+               value="https://tu-dominio.com/certificates/verify?certificate_number={{ certificate.certificate_number }}&verification_code={{ certificate.verification_code }}">
+    </div>
+</div>
+{% endblock %}

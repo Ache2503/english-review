@@ -92,6 +92,8 @@ def create_app(config_name='development'):
     from app.routes.review import review_bp
     from app.routes.writing import writing_bp
     from app.routes.unit_challenge import unit_challenge_bp
+    from app.routes.scenarios import scenarios_bp
+    from app.routes.kids import kids_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -117,6 +119,20 @@ def create_app(config_name='development'):
     app.register_blueprint(review_bp)
     app.register_blueprint(writing_bp)
     app.register_blueprint(unit_challenge_bp)
+    app.register_blueprint(scenarios_bp)
+    app.register_blueprint(kids_bp)
+    from app.routes.certificates import certificates_bp
+    from app.routes.simulation_api import simulation_bp
+    app.register_blueprint(certificates_bp)
+    app.register_blueprint(simulation_bp)
+    from app.routes.feedback import feedback_bp
+    from app.routes.bookmarks import bookmarks_bp
+    app.register_blueprint(feedback_bp)
+    app.register_blueprint(bookmarks_bp)
+    from app.routes.legal import legal_bp
+    app.register_blueprint(legal_bp)
+    from app.routes.profile import profile_bp
+    app.register_blueprint(profile_bp)
     
     # Error handlers
     @app.errorhandler(404)

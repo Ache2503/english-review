@@ -130,3 +130,195 @@ main {
 [data-bs-theme="dark"] .bg-light {
     background-color: var(--bs-tertiary-bg) !important;
 }
+
+/* ===== CARD FIXES FOR DARK MODE ===== */
+[data-bs-theme="dark"] .card.bg-light,
+[data-bs-theme="dark"] .card-header.bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+
+[data-bs-theme="dark"] .card.bg-white {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color);
+}
+
+/* ===== CARD HEADERS ===== */
+[data-bs-theme="dark"] .card-header.bg-white,
+[data-bs-theme="dark"] .card-header.bg-dark {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .card-header.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+/* ===== INPUT GROUPS ===== */
+[data-bs-theme="dark"] .input-group-text.bg-white {
+    background-color: var(--bs-tertiary-bg) !important;
+    border-color: var(--bs-border-color);
+}
+
+/* ===== CODE BLOCKS ===== */
+[data-bs-theme="dark"] code.bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+
+/* ===== BADGES - Better visibility in dark mode ===== */
+[data-bs-theme="dark"] .badge.bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+    color: var(--bs-body-color) !important;
+    border: 1px solid var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .badge.bg-white {
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+    border: 1px solid var(--bs-border-color);
+}
+
+/* ===== FOOTER FIXES ===== */
+[data-bs-theme="dark"] footer {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color);
+}
+
+/* ===== LIST GROUP ===== */
+[data-bs-theme="dark"] .list-group-item.bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+
+/* ===== ALERTS ===== */
+[data-bs-theme="dark"] .alert.bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+    color: var(--bs-body-color) !important;
+    border-color: var(--bs-border-color);
+}
+
+/* ===== PROGRESS BARS ===== */
+[data-bs-theme="dark"] .progress.bg-light {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+
+/* ===== TABLE FIXES ===== */
+[data-bs-theme="dark"] table,
+[data-bs-theme="dark"] .table {
+    --bs-table-bg: var(--bs-body-bg);
+    --bs-table-color: var(--bs-body-color);
+    --bs-table-border-color: var(--bs-border-color);
+}
+
+/* ===== DROPDOWN IN DARK MODE ===== */
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .dropdown-item {
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover,
+[data-bs-theme="dark"] .dropdown-item:focus {
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* ===== MODAL FIXES ===== */
+[data-bs-theme="dark"] .modal-content {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .modal-header,
+[data-bs-theme="dark"] .modal-footer {
+    border-color: var(--bs-border-color);
+}
+
+/* ===== PAGINATION ===== */
+[data-bs-theme="dark"] .page-link {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+/* ===== NAV TABS/PILLS ===== */
+[data-bs-theme="dark"] .nav-tabs .nav-link,
+[data-bs-theme="dark"] .nav-pills .nav-link {
+    color: var(--bs-secondary-color);
+}
+
+[data-bs-theme="dark"] .nav-tabs .nav-link.active,
+[data-bs-theme="dark"] .nav-pills .nav-link.active {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+/* ===== BORDER COLOR FIXES ===== */
+[data-bs-theme="dark"] .border-light {
+    border-color: var(--bs-border-color) !important;
+}
+
+[data-bs-theme="dark"] .border-white {
+    border-color: var(--bs-border-color) !important;
+}
+
+/* ===== TEXT COLORS IN DARK MODE ===== */
+[data-bs-theme="dark"] .text-muted {
+    color: var(--bs-tertiary-color) !important;
+}
+
+[data-bs-theme="dark"] .text-secondary {
+    color: var(--bs-secondary-color) !important;
+}
+
+/* ===== FORM CONTROLS ===== */
+[data-bs-theme="dark"] .form-control:disabled,
+[data-bs-theme="dark"] .form-control[readonly] {
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* ===== SPECIFIC PATTERNS FIX ===== */
+/* Cards with gradient backgrounds - keep text white */
+.card[style*="linear-gradient"] h4,
+.card[style*="linear-gradient"] h5,
+.card[style*="linear-gradient"] p,
+.card[style*="background: linear-gradient"] h4,
+.card[style*="background: linear-gradient"] h5,
+.card[style*="background: linear-gradient"] p {
+    color: white !important;
+}
+
+.card[style*="linear-gradient"] .text-muted,
+.card[style*="background: linear-gradient"] .text-muted {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+/* Prompt cards in writing practice */
+.prompt-card {
+    color: white;
+}
+
+.prompt-card h5,
+.prompt-card p,
+.prompt-card span {
+    color: white !important;
+}
+
+.prompt-card .opacity-75 {
+    opacity: 0.85 !important;
+}
+
+/* Topic hover in unit detail */
+a.topic-hover {
+    transition: all 0.2s ease;
+}
+
+a.topic-hover:hover {
+    transform: translateX(5px);
+    box-shadow: var(--bs-box-shadow);
+}

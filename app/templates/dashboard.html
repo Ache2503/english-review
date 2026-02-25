@@ -85,29 +85,52 @@
 </div>
 
 <!-- ================= ACCIONES RÁPIDAS ================= -->
-
 <div class="dashboard-section mb-5">
-    <h5 class="fw-bold mb-3">Acciones rápidas</h5>
+    <h5 class="fw-bold mb-3">Descubre y Aprende</h5>
 
     <div class="row g-4">
+        
+        <div class="col-md-6">
+            <a href="{{ url_for('scenarios.list_scenarios') }}" class="card text-white border-0 h-100 text-decoration-none shadow-sm transition-hover" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); border-radius: 20px;">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <i class="fas fa-globe-americas fa-3x me-4 text-info"></i>
+                    <div>
+                        <h4 class="fw-bold mb-1">Escenarios Reales</h4>
+                        <p class="mb-0 text-white-50">Aprende inglés para restaurantes, aeropuertos y situaciones cotidianas.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <a href="{{ url_for('kids.select_profile') }}" class="card text-white border-0 h-100 text-decoration-none shadow-sm transition-hover" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 20px;">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <i class="fas fa-shapes fa-3x me-4 text-warning"></i>
+                    <div>
+                        <h4 class="fw-bold mb-1">Kids Zone</h4>
+                        <p class="mb-0 text-white-50">Juegos, colores y animales para los más pequeños.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
 
         <div class="col-md-4">
-            <a href="{{ url_for('conversation.list') }}" class="dashboard-action-card">
-                <i class="fas fa-comments"></i>
+            <a href="{{ url_for('conversation.list') }}" class="dashboard-action-card h-100">
+                <i class="fas fa-comments text-primary"></i>
                 <span>Practicar Conversación</span>
             </a>
         </div>
 
         <div class="col-md-4">
-            <a href="{{ url_for('grammar.index') }}" class="dashboard-action-card">
-                <i class="fas fa-pen-fancy"></i>
+            <a href="{{ url_for('grammar.index') }}" class="dashboard-action-card h-100">
+                <i class="fas fa-pen-fancy text-success"></i>
                 <span>Estudiar Gramática</span>
             </a>
         </div>
 
         <div class="col-md-4">
-            <a href="{{ url_for('unit_challenge.units_overview') }}" class="dashboard-action-card">
-                <i class="fas fa-trophy"></i>
+            <a href="{{ url_for('unit_challenge.units_overview') }}" class="dashboard-action-card h-100">
+                <i class="fas fa-trophy text-warning"></i>
                 <span>Ver Desafíos</span>
             </a>
         </div>

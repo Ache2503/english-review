@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topic.title }} - Kids Zone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="{{ url_for('static', filename='css/modules/kids/kids.css') }}" rel="stylesheet">
+</head>
+<body class="kids-topic-bg kids-body d-flex flex-column">
+
+    <a href="{{ url_for('kids.learning_map', child_id=child.id) }}" class="btn-close-game">
+        <i class="fas fa-times"></i>
+    </a>
+
+    <div class="container flex-grow-1 d-flex flex-column justify-content-center align-items-center py-5">
+        <h1 class="display-3 fw-bold text-white mb-5" style="text-shadow: 3px 3px 0 #073b4c;">
+            {{ topic.title }}
+        </h1>
+        
+        <div id="kidsCarousel" class="carousel slide w-100" style="max-width: 600px;">
+            <div class="carousel-inner px-4 pb-4">
+                
+                {% for item in vocabulary %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <div class="flashcard" onclick="playSound('{{ item.audio_url_en }}')">
+                        <div style="font-size: 7rem; line-height: 1; text-shadow: 2px 2px 0px rgba(0,0,0,0.1);" class="mb-4">
+                            {% if item.image_url.startswith('/') %}
+                                <img src="{{ item.image_url }}" alt="{{ item.word_english }}" style="width: 150px; height: 150px; object-fit: contain;">
+                            {% else %}
+                                {{ item.image_url }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="word-text">{{ item.word_english }}</div>
+                        <p class="text-muted fs-4 mt-2 mb-0">{{ item.word_spanish }}</p>
+                        <p class="mt-4 text-warning"><i class="fas fa-volume-up fa-2x"></i> Toca para escuchar</p>
+                    </div>
+                    <div class="mt-5 text-center w-100">
+                        <a href="{{ url_for('kids.play_game', child_id=child.id, topic_id=topic.id) }}" class="btn-play-game">
+                            <i class="fas fa-gamepad"></i> ¡Hora de Jugar!
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+            
+            <button class="carousel-control-prev" type="button" data-bs-target="#kidsCarousel" data-bs-slide="prev" style="width: 10%;">
+                <i class="fas fa-chevron-circle-left fa-4x text-dark"></i>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#kidsCarousel" data-bs-slide="next" style="width: 10%;">
+                <i class="fas fa-chevron-circle-right fa-4x text-dark"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function playSound(audioUrl) {
+            const word = event.currentTarget.querySelector('.word-text').innerText;
+            const speech = new SpeechSynthesisUtterance(word);
+            speech.lang = 'en-US';
+            speech.rate = 0.8; 
+            speech.pitch = 1.2; 
+            window.speechSynthesis.speak(speech);
+            
+            const card = event.currentTarget;
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => card.style.transform = '', 150);
+        }
+    </script>
+</body>
+</html>

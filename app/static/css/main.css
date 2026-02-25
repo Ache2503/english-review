@@ -46,11 +46,13 @@
 @import url("modules/games/games.css");
 @import url("modules/grammar/grammar.css");
 @import url("modules/idioms/idioms.css");
+@import url("modules/kids/kids.css");
 @import url("modules/progress/progress.css");
 @import url("modules/quizz/quizz.css");
 @import url("modules/reading/reading.css");
 @import url("modules/reports/reports.css");
 @import url("modules/review/review.css");
+@import url("modules/scenarios/scenarios.css");
 @import url("modules/sentences/sentences.css");
 @import url("modules/stats/stats.css");
 @import url("modules/study/study.css");

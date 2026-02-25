@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Preferencias{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">Preferencias</h2>
+                    
+                    <form method="POST">
+                        <!-- Idioma preferido -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Idioma de la interfaz</label>
+                            <select name="preferred_language" class="form-select">
+                                <option value="es" {% if current_user.preferred_language == 'es' %}selected{% endif %}>Español</option>
+                                <option value="en" {% if current_user.preferred_language == 'en' %}selected{% endif %}>English</option>
+                                <option value="fr" {% if current_user.preferred_language == 'fr' %}selected{% endif %}>Français</option>
+                                <option value="de" {% if current_user.preferred_language == 'de' %}selected{% endif %}>Deutsch</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Zona horaria -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Zona horaria</label>
+                            <select name="timezone" class="form-select">
+                                <option value="America/Mexico_City" {% if current_user.timezone == 'America/Mexico_City' %}selected{% endif %}>México (GMT-6)</option>
+                                <option value="America/Bogota" {% if current_user.timezone == 'America/Bogota' %}selected{% endif %}>Colombia (GMT-5)</option>
+                                <option value="America/Buenos_Aires" {% if current_user.timezone == 'America/Buenos_Aires' %}selected{% endif %}>Argentina (GMT-3)</option>
+                                <option value="Europe/Madrid" {% if current_user.timezone == 'Europe/Madrid' %}selected{% endif %}>España (GMT+1)</option>
+                                <option value="America/New_York" {% if current_user.timezone == 'America/New_York' %}selected{% endif %}>EE.UU. Este (GMT-5)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Meta diaria -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Meta diaria de estudio (minutos)</label>
+                            <input type="number" name="daily_goal_minutes" class="form-control" 
+                                   value="{{ current_user.daily_goal_minutes or 15 }}" min="5" max="120">
+                            <small class="text-muted">¿Cuántos minutos quieres estudiar cada día?</small>
+                        </div>
+                        
+                        <!-- Notificaciones -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Notificaciones</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="notification_email" 
+                                       id="notif_email" {% if current_user.notification_email %}checked{% endif %}>
+                                <label class="form-check-label" for="notif_email">
+                                    Recibir actualizaciones por email
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="notification_daily" 
+                                       id="notif_daily" {% if current_user.notification_daily %}checked{% endif %}>
+                                <label class="form-check-label" for="notif_daily">
+                                    Recordatorios diarios de estudio
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary rounded-pill">
+                                <i class="fas fa-save me-2"></i> Guardar Preferencias
+                            </button>
+                            <a href="{{ url_for('profile.view') }}" class="btn btn-outline-secondary rounded-pill">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

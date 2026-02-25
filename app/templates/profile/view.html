@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--bs-primary);
+}
+.avatar-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bs-primary), var(--bs-info));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: white;
+}
+.stat-card {
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--bs-box-shadow);
+}
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-primary);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header del perfil -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    {% if current_user.avatar_url %}
+                    <img src="{{ current_user.avatar_url }}" alt="Avatar" class="profile-avatar mb-3">
+                    {% else %}
+                    <div class="avatar-placeholder mb-3 mx-auto">
+                        {{ current_user.username[0].upper() }}
+                    </div>
+                    {% endif %}
+                    <a href="{{ url_for('profile.edit') }}" class="btn btn-outline-primary rounded-pill btn-sm">
+                        <i class="fas fa-edit me-1"></i> Editar Perfil
+                    </a>
+                </div>
+                <div class="col-md-9">
+                    <h2>{{ current_user.full_name or current_user.username }}</h2>
+                    <p class="text-muted">@{{ current_user.username }}</p>
+                    
+                    {% if current_user.bio %}
+                    <p class="mb-2">{{ current_user.bio }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex gap-3 text-muted">
+                        {% if current_user.country %}
+                        <span><i class="fas fa-map-marker-alt me-1"></i> {{ current_user.country }}</span>
+                        {% endif %}
+                        <span><i class="fas fa-calendar me-1"></i> Miembro desde {{ current_user.created_at.strftime('%B %Y') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="mb-2" style="color: var(--bs-warning);">
+                    <i class="fas fa-fire fa-2x"></i>
+                </div>
+                <h4>{{ streak.current_streak if streak else 0 }}</h4>
+                <p class="text-muted mb-0">Días de racha</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="mb-2" style="color: var(--bs-success);">
+                    <i class="fas fa-trophy fa-2x"></i>
+                </div>
+                <h4>{{ badges_count }}</h4>
+                <p class="text-muted mb-0">Logros</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="mb-2" style="color: var(--bs-primary);">
+                    <i class="fas fa-certificate fa-2x"></i>
+                </div>
+                <h4>{{ certificates_count }}</h4>
+                <p class="text-muted mb-0">Certificados</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="mb-2" style="color: var(--bs-danger);">
+                    <i class="fas fa-heart fa-2x"></i>
+                </div>
+                <h4>{{ bookmarks_count }}</h4>
+                <p class="text-muted mb-0">Favoritos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="card border-0 shadow">
+        <div class="card-header border-0">
+            <h4 class="mb-0"><i class="fas fa-history me-2"></i>Actividad Reciente</h4>
+        </div>
+        <div class="card-body">
+            {% if recent_activities %}
+            <div class="timeline">
+                {% for activity in recent_activities %}
+                <div class="d-flex mb-3">
+                    <div class="me-3">
+                        <div class="activity-icon">
+                            <i class="fas fa-{{ 'book' if activity.activity_type == 'lesson_completed' else 'gamepad' if activity.activity_type == 'game_played' else 'comment' }}"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>{{ activity.title }}</strong>
+                        <p class="text-muted mb-0 small">{{ activity.description }}</p>
+                        <small class="text-muted">{{ activity.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No hay actividad reciente</p>
+                <a href="{{ url_for('study.study_home') }}" class="btn btn-primary rounded-pill">
+                    Empezar a Aprender
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('profile.preferences') }}" class="btn btn-outline-primary w-100 rounded-pill mb-2">
+                <i class="fas fa-cog me-2"></i> Preferencias
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('profile.account') }}" class="btn btn-outline-primary w-100 rounded-pill mb-2">
+                <i class="fas fa-user-cog me-2"></i> Cuenta
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('certificates.list_certificates') }}" class="btn btn-outline-primary w-100 rounded-pill mb-2">
+                <i class="fas fa-certificate me-2"></i> Mis Certificados
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

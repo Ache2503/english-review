@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Enviar Feedback{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-comment-dots fa-3x text-primary"></i>
+                        <h2 class="mt-3">¡Tu opinión nos importa!</h2>
+                        <p class="text-muted">Cuéntanos cómo podemos mejorar tu experiencia</p>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('feedback.submit') }}">
+                        <input type="hidden" name="page_url" value="{{ request.url }}">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tipo de feedback</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="feedback_type" id="type_suggestion" value="suggestion" checked>
+                                        <label class="form-check-label" for="type_suggestion">
+                                            <i class="fas fa-lightbulb text-warning"></i> Sugerencia
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="feedback_type" id="type_bug" value="bug">
+                                        <label class="form-check-label" for="type_bug">
+                                            <i class="fas fa-bug text-danger"></i> Error/Bug
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="feedback_type" id="type_compliment" value="compliment">
+                                        <label class="form-check-label" for="type_compliment">
+                                            <i class="fas fa-heart text-success"></i> Comentario positivo
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="feedback_type" id="type_complaint" value="complaint">
+                                        <label class="form-check-label" for="type_complaint">
+                                            <i class="fas fa-frown text-warning"></i> Queja
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Categoría</label>
+                            <select name="category" class="form-select">
+                                <option value="general">General</option>
+                                <option value="content">Contenido/Cursos</option>
+                                <option value="ui">Interfaz de usuario</option>
+                                <option value="bug">Error técnico</option>
+                                <option value="feature">Nueva característica</option>
+                                <option value="other">Otro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Título breve (opcional)</label>
+                            <input type="text" name="subject" class="form-control" placeholder="Ej: Error en los ejercicios de la unidad 5">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tu mensaje *</label>
+                            <textarea name="message" class="form-control" rows="5" required placeholder="Cuéntanos más detalles..."></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">¿Cómo calificarías tu experiencia? (opcional)</label>
+                            <div class="text-center">
+                                <div class="btn-group" role="group">
+                                    {% for i in range(1, 6) %}
+                                    <input type="radio" class="btn-check" name="rating" id="rating_{{ i }}" value="{{ i }}" autocomplete="off">
+                                    <label class="btn btn-outline-primary" for="rating_{{ i }}">{{ i }}</label>
+                                    {% endfor %}
+                                </div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <small class="text-muted">Malo</small>
+                                    <small class="text-muted">Excelente</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                                <i class="fas fa-paper-plane me-2"></i> Enviar Feedback
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
