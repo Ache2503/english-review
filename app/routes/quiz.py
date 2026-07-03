@@ -11,7 +11,7 @@ quiz_bp = Blueprint('quiz', __name__, url_prefix='/quiz')
 def list_quizzes(unit_id):
     unit = Unit.query.get_or_404(unit_id)
     quizzes = Quiz.query.filter_by(unit_id=unit_id).all()
-    return render_template('quiz_list.html', unit=unit, quizzes=quizzes)
+    return render_template('quizz/quiz_list.html', unit=unit, quizzes=quizzes)
 
 @quiz_bp.route('/take/<int:quiz_id>', methods=['GET', 'POST'])
 @login_required
@@ -39,7 +39,7 @@ def take_quiz(quiz_id):
         flash(f'Has completado el quiz con {score:.0f}%.', 'success')
         return redirect(url_for('quiz.result', submission_id=submission.id))
 
-    return render_template('quiz_take.html', quiz=quiz, questions=questions)
+    return render_template('quizz/quiz_take.html', quiz=quiz, questions=questions)
 
 @quiz_bp.route('/result/<int:submission_id>')
 @login_required
@@ -50,4 +50,4 @@ def result(submission_id):
         flash('No tienes permiso para ver este resultado.', 'danger')
         return redirect(url_for('dashboard.index'))
     quiz = Quiz.query.get(submission.quiz_id)
-    return render_template('quiz_result.html', submission=submission, quiz=quiz)
+    return render_template('quizz/quiz_result.html', submission=submission, quiz=quiz)

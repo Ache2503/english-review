@@ -2,6 +2,10 @@
 
 {% block title %}Flashcards - {{ unit.title }}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/flashcards/flashcards.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row mb-4">
@@ -9,9 +13,9 @@
             <a href="{{ url_for('units.view_unit', unit_id=unit.id) }}" class="btn btn-sm btn-outline-secondary mb-3">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
-            <h1>
-                <span class="badge bg-primary">Unit {{ unit.unit_number }}</span>
-                Flashcards - {{ unit.title }}
+            <h1 class="h3">
+                <span class="badge bg-primary me-2">Unit {{ unit.unit_number }}</span>
+                {{ unit.title }}
             </h1>
             <p class="text-muted">Repasa vocabulario con tarjetas rápidas</p>
         </div>
@@ -19,22 +23,21 @@
 
     <!-- Estadísticas SRS -->
     <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="card bg-gradient border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex justify-content-between align-items-center">
+        <div class="col-md-8 mb-3 mb-md-0">
+            <div class="card border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white py-3">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                         <div>
                             <h5 class="mb-1"><i class="fas fa-brain"></i> Modo Repetición Espaciada</h5>
-                            <p class="mb-0 opacity-75">Memoriza de forma científica y eficiente</p>
+                            <p class="mb-0 opacity-75 small">Memoriza de forma científica y eficiente</p>
                         </div>
-                        <div class="text-end">
+                        <div>
                             {% if srs_stats.due_today > 0 or srs_stats.new > 0 %}
-                            <a href="{{ url_for('flashcards.srs_study', unit_id=unit.id) }}" class="btn btn-light btn-lg">
-                                <i class="fas fa-play"></i> 
-                                Estudiar ({{ srs_stats.due_today + srs_stats.new }})
+                            <a href="{{ url_for('flashcards.srs_study', unit_id=unit.id) }}" class="btn btn-light">
+                                <i class="fas fa-play"></i> Estudiar ({{ srs_stats.due_today + srs_stats.new }})
                             </a>
                             {% else %}
-                            <span class="badge bg-success fs-6 p-2">
+                            <span class="badge bg-success fs-6">
                                 <i class="fas fa-check"></i> ¡Al día!
                             </span>
                             {% endif %}
@@ -45,20 +48,20 @@
         </div>
         <div class="col-md-4">
             <div class="card h-100">
-                <div class="card-body">
-                    <h6 class="card-title"><i class="fas fa-chart-pie"></i> Progreso SRS</h6>
+                <div class="card-body py-3">
+                    <h6 class="card-title mb-3"><i class="fas fa-chart-pie"></i> Progreso SRS</h6>
                     <div class="d-flex justify-content-around text-center">
                         <div>
-                            <strong class="text-success">{{ srs_stats.learned }}</strong>
-                            <small class="d-block text-muted">Dominadas</small>
+                            <strong class="text-success d-block">{{ srs_stats.learned }}</strong>
+                            <small class="text-muted">Dominadas</small>
                         </div>
                         <div>
-                            <strong class="text-warning">{{ srs_stats.learning }}</strong>
-                            <small class="d-block text-muted">Aprendiendo</small>
+                            <strong class="text-warning d-block">{{ srs_stats.learning }}</strong>
+                            <small class="text-muted">Aprendiendo</small>
                         </div>
                         <div>
-                            <strong class="text-secondary">{{ srs_stats.new }}</strong>
-                            <small class="d-block text-muted">Nuevas</small>
+                            <strong class="text-secondary d-block">{{ srs_stats.new }}</strong>
+                            <small class="text-muted">Nuevas</small>
                         </div>
                     </div>
                 </div>
@@ -67,19 +70,19 @@
     </div>
 
     <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-layer-group"></i> Progreso</h5>
+        <div class="col-md-6 mb-3 mb-md-0">
+            <div class="card">
+                <div class="card-body py-3">
+                    <h5 class="card-title mb-2"><i class="fas fa-layer-group"></i> Progreso</h5>
                     <p class="mb-1">Total: <strong>{{ total }}</strong></p>
                     <p class="mb-0">Revisadas: <strong>{{ reviewed }}</strong></p>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card bg-light">
-                <div class="card-body text-center">
-                    <h5 class="card-title"><i class="fas fa-percentage"></i> Retención</h5>
+            <div class="card">
+                <div class="card-body py-3 text-center">
+                    <h5 class="card-title mb-2"><i class="fas fa-percentage"></i> Retención</h5>
                     <h3 class="mb-0 text-primary">{{ srs_stats.retention_rate }}%</h3>
                 </div>
             </div>
@@ -87,34 +90,57 @@
     </div>
 
     {% if flashcards %}
-    <div class="row">
+    <div class="row g-3">
         {% for card in flashcards %}
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card flashcard h-100" data-flip="false">
-                <div class="card-body">
-                    <div class="flashcard-front">
-                        <h4 class="mb-2">{{ card.front }}</h4>
-                        {% if card.example %}
-                        <p class="text-muted small">Ejemplo: {{ card.example }}</p>
+        <div class="col-md-6 col-lg-4">
+            <div class="card flashcard-srs h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column p-3">
+                    <!-- Frente (Pregunta) -->
+                    <div class="flashcard-front text-center flex-grow-1 d-flex flex-column justify-content-center">
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">PALABRA</span>
+                        </div>
+                        <h4 class="mb-2 text-primary">{{ card.front }}</h4>
+                        {% if card.pronunciation %}
+                        <p class="text-muted small mb-2"><em>/{{ card.pronunciation }}/</em></p>
                         {% endif %}
-                        <button class="btn btn-outline-primary btn-sm mt-2" type="button" onclick="toggleFlip(this)">
-                            Ver respuesta
+                        {% if card.example %}
+                        <p class="text-muted small mb-3"><i class="fas fa-quote-left"></i> {{ card.example }}</p>
+                        {% endif %}
+                        <button class="btn btn-outline-primary mt-auto" type="button" onclick="toggleFlip(this)">
+                            <i class="fas fa-eye"></i> Mostrar respuesta
                         </button>
                     </div>
-                    <div class="flashcard-back d-none">
-                        <h5 class="mb-2">{{ card.back }}</h5>
-                        <div class="d-flex gap-2">
+                    
+                    <!-- Reverso (Respuesta) -->
+                    <div class="flashcard-back d-none text-center">
+                        <div class="mb-2">
+                            <span class="badge bg-success">RESPUESTA</span>
+                        </div>
+                        <h4 class="mb-2 text-success">{{ card.back }}</h4>
+                        {% if card.front %}
+                        <p class="text-muted small mb-2">{{ card.front }}</p>
+                        {% endif %}
+                        <hr class="my-2">
+                        <p class="text-muted small mb-3">
+                            <i class="fas fa-check-circle text-success"></i> ¿Sabías esta palabra?
+                        </p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">
                             <form method="POST" action="{{ url_for('flashcards.review_flashcard', flashcard_id=card.id) }}">
                                 <input type="hidden" name="result" value="known">
-                                <button class="btn btn-success btn-sm" type="submit">La sé</button>
+                                <button class="btn btn-success" type="submit">
+                                    <i class="fas fa-check"></i> La sé
+                                </button>
                             </form>
                             <form method="POST" action="{{ url_for('flashcards.review_flashcard', flashcard_id=card.id) }}">
                                 <input type="hidden" name="result" value="unknown">
-                                <button class="btn btn-warning btn-sm" type="submit">Necesito repaso</button>
+                                <button class="btn btn-warning" type="submit">
+                                    <i class="fas fa-redo"></i> Repasar
+                                </button>
                             </form>
                         </div>
-                        <button class="btn btn-link btn-sm mt-2" type="button" onclick="toggleFlip(this)">
-                            Volver
+                        <button class="btn btn-link btn-sm" type="button" onclick="toggleFlip(this)">
+                            <i class="fas fa-arrow-left"></i> Volver
                         </button>
                     </div>
                 </div>
@@ -124,26 +150,23 @@
     </div>
     {% else %}
     <div class="alert alert-info">
-        No hay flashcards para esta unidad todavía.
+        <i class="fas fa-info-circle"></i> No hay flashcards para esta unidad todavía.
     </div>
     {% endif %}
 </div>
 
 <script>
 function toggleFlip(button) {
-    const card = button.closest('.flashcard');
+    const card = button.closest('.flashcard-srs');
     const front = card.querySelector('.flashcard-front');
     const back = card.querySelector('.flashcard-back');
-    const isFlipped = card.getAttribute('data-flip') === 'true';
-
-    if (isFlipped) {
-        back.classList.add('d-none');
-        front.classList.remove('d-none');
-        card.setAttribute('data-flip', 'false');
-    } else {
+    
+    if (back.classList.contains('d-none')) {
         front.classList.add('d-none');
         back.classList.remove('d-none');
-        card.setAttribute('data-flip', 'true');
+    } else {
+        back.classList.add('d-none');
+        front.classList.remove('d-none');
     }
 }
 </script>

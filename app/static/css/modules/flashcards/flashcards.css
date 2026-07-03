@@ -140,7 +140,7 @@
 
 /* ===== SRS STUDY CARDS ===== */
 .flashcard-srs {
-    min-height: 380px;
+    min-height: 280px;
     border-radius: var(--bs-border-radius-lg);
     background: var(--bs-body-bg);
     border: 1px solid var(--bs-border-color);
@@ -165,8 +165,8 @@
 }
 
 .flashcard-srs:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
 .flashcard-srs:hover::before {

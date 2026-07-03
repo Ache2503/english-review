@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
     full_name = db.Column(db.String(120))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    is_active = db.Column(db.Boolean, default=True)
+    # Nota: is_active viene de UserMixin
     is_admin = db.Column(db.Boolean, default=False)
     last_login_date = db.Column(db.Date, nullable=True)
     daily_challenge_completed = db.Column(db.Boolean, default=False)
@@ -94,12 +94,22 @@ class User(UserMixin, db.Model):
 
     # NUEVO MÉTODO: Verificar permisos
     def has_access_to_scenario(self, scenario_id):
-        return True
-        """Verifica si el usuario puede ver este escenario"""
-        # if self.is_admin or self.subscription_type == 'premium_all_access':
-        #    return True
-        # Verifica si lo compró a la carta
-        # return any(scenario.id == scenario_id for scenario in self.unlocked_scenarios)
+        """
+        Verifica si el usuario puede acceder a un escenario.
+        
+        Returns:
+            bool: True si tiene acceso, False en caso contrario.
+        
+        Acceso garantizado si:
+        - Es administrador
+        - Tiene suscripción premium_all_access
+        - El escenario está desbloqueado para el usuario
+        """
+        if self.is_admin:
+            return True
+        if self.subscription_type == 'premium_all_access':
+            return True
+        return any(scenario.id == scenario_id for scenario in self.unlocked_scenarios)
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -544,9 +554,6 @@ class UserStreak(db.Model):
     def __repr__(self):
         return f'<UserStreak User:{self.user_id} Current:{self.current_streak}>'
 
-    def __repr__(self):
-        return f'<UserSentencePractice {self.id} Unit:{self.unit_id}>'
-
 
 class UnitExtra(db.Model):
     """Extra JSON content per unit: study/practice/tips/prompts"""
@@ -732,9 +739,11 @@ class TopicExplanation(db.Model):
 class Conversation(db.Model):
     __tablename__ = 'conversations'
     id = db.Column(db.Integer, primary_key=True)
-    scenario = db.Column(db.String(100), nullable=False, unique=True, index=True)  # Ej: 'tienda', 'saludos'
-    title = db.Column(db.String(200), nullable=False)  # Ej: 'En la tienda'
+    scenario = db.Column(db.String(100), nullable=False, unique=True, index=True)  # Ej: 'store', 'greetings'
+    title = db.Column(db.String(200), nullable=False)  # Ej: 'At the Store'
     description = db.Column(db.Text)
+    # Metadatos para diálogos interactivos
+    extra_data = db.Column(db.JSON, nullable=True)  # {user_role, system_role, icon, difficulty}
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -745,9 +754,12 @@ class ConversationLine(db.Model):
     __tablename__ = 'conversation_lines'
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversations.id'), nullable=False, index=True)
-    speaker = db.Column(db.String(100), nullable=False)  # Ej: 'Cliente', 'Vendedor'
+    speaker = db.Column(db.String(100), nullable=False)  # Ej: 'system', 'user'
     text = db.Column(db.Text, nullable=False)
-    order = db.Column(db.Integer, default=0)  # Para el orden de las líneas
+    # Campos para diálogo interactivo (nullable para compatibilidad)
+    expected = db.Column(db.Text, nullable=True)  # Respuesta esperada del usuario
+    options = db.Column(db.JSON, nullable=True)  # Opciones alternativas de respuesta
+    order = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 

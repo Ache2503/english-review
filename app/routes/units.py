@@ -15,7 +15,6 @@ def check_unit_unlocked(unit_id):
         return False, "Debes completar la unidad anterior primero."
     return True, None
 
-
 @units_bp.route('/<int:unit_id>')
 @login_required
 def view_unit(unit_id):
@@ -54,7 +53,6 @@ def view_unit(unit_id):
                            activities=activities,
                            unit_status=unit_status)
 
-
 @units_bp.route('/<int:unit_id>/grammar')
 @login_required
 def view_grammar(unit_id):
@@ -76,7 +74,6 @@ def view_grammar(unit_id):
                            unit=unit,
                            grammar_rules=grammar_rules)
 
-
 @units_bp.route('/<int:unit_id>/vocabulary')
 @login_required
 def view_vocabulary(unit_id):
@@ -94,10 +91,9 @@ def view_vocabulary(unit_id):
     unlock_system = UnitUnlockSystem(current_user.id)
     unlock_system.mark_section_complete(unit_id, 'vocabulary')
     
-    return render_template('vocabulary_view.html',
+    return render_template('vocabulary/vocabulary_view.html',
                            unit=unit,
                            vocab_categories=vocab_categories)
-
 
 @units_bp.route('/<int:unit_id>/writing')
 @login_required
@@ -116,10 +112,9 @@ def view_writing_practices(unit_id):
     unlock_system = UnitUnlockSystem(current_user.id)
     unlock_system.mark_section_complete(unit_id, 'exercises')
     
-    return render_template('writing_practice.html',
+    return render_template('writing/writing_practice.html',
                            unit=unit,
                            writing_practices=writing_practices)
-
 
 @units_bp.route('/<int:unit_id>/sentence-structures')
 @login_required
@@ -208,11 +203,10 @@ def view_sentence_structures(unit_id):
         }
     }
     
-    return render_template('sentence_structures.html',
+    return render_template('sentences/sentence_structures.html',
                            unit=unit,
                            grammar_rules=grammar_rules,
                            sentence_patterns=sentence_patterns)
-
 
 @units_bp.route('/<int:unit_id>/mark-complete', methods=['POST'])
 @login_required

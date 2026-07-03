@@ -17,20 +17,12 @@ class RoleplaySimulator:
     
     PASSING_SCORE = 70.0
     
-    # Moods del cliente
-    MOOD_SCORES = {
-        'happy': 100,
-        'neutral': 75,
-        'annoyed': 50,
-        'angry': 25
-    }
-    
-    # Cambios de mood según la respuesta
+    # Cambios de mood según la respuesta (lógica de negocio)
     MOOD_IMPACT = {
-        'correct': +15,      # Respuesta correcta mejora el mood
-        'partial': +5,       # Respuesta parcial
-        'incorrect': -20,     # Respuesta incorrecta baja el mood
-        'very_bad': -35      # Respuesta muy mala
+        'correct': +15,
+        'partial': +5,
+        'incorrect': -20,
+        'very_bad': -35
     }
     
     def __init__(self, user_id, scenario_id, difficulty='normal'):
@@ -55,7 +47,7 @@ class RoleplaySimulator:
         # Ajustar dificultad
         initial_mood = self._get_initial_mood()
         self.current_mood = initial_mood
-        self.mood_score = self.MOOD_SCORES.get(initial_mood, 75)
+        self.mood_score = self._get_mood_score(initial_mood)
         
         # Crear intento
         self.attempt = SimulationAttempt(
@@ -252,14 +244,17 @@ class RoleplaySimulator:
             'is_complete': next_step_obj is None
         }, None
     
+    def _get_mood_score(self, mood_name):
+        """Obtener la puntuación base de un mood desde la DB"""
+        mood = CustomerMood.query.filter_by(name=mood_name).first()
+        return mood.mood_score if mood else 75
+
     def _get_mood_from_score(self, score):
-        """Obtener mood desde la puntuación"""
-        if score >= 90:
-            return 'happy'
-        elif score >= 60:
-            return 'neutral'
-        elif score >= 35:
-            return 'annoyed'
+        """Obtener mood desde la puntuación consultando CustomerMood"""
+        moods = CustomerMood.query.order_by(CustomerMood.mood_score.desc()).all()
+        for mood in moods:
+            if score >= mood.mood_score - 25:
+                return mood.name
         return 'angry'
     
     def complete_attempt(self):

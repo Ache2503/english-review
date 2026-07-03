@@ -150,6 +150,22 @@ SEED_ORDER = [
         'dependencies': ['cefr_units'],
         'tables': ['readings']
     },
+    {
+        'name': 'conversations_interactive',
+        'file': 'seed_conversations_interactive.py',
+        'description': 'Conversaciones interactivas (diálogos con expected/options)',
+        'required': True,
+        'dependencies': [],
+        'tables': ['conversations', 'conversation_lines']
+    },
+    {
+        'name': 'customer_moods',
+        'file': 'seed_customer_moods.py',
+        'description': 'Estados de ánimo del cliente para el simulador roleplay',
+        'required': True,
+        'dependencies': [],
+        'tables': ['customer_moods']
+    },
 ]
 
 
