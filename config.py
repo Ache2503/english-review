@@ -69,7 +69,7 @@ class ProductionConfig(Config):
 
 # Diccionario que mapea nombres de entornos a sus respectivas clases de configuración.
 # Facilita la carga de la configuración correcta al iniciar la aplicación.
-config = {
+config = { # type: ignore
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
