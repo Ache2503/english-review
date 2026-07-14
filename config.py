@@ -13,28 +13,27 @@ from datetime import timedelta
 class Config:
     """
     Configuración base de la que heredan todas las demás.
-    
-    Contiene las configuraciones por defecto o comunes a todos los entornos.
     """
     # Clave secreta para proteger formularios y sesiones contra CSRF.
-    # Es crucial que esta clave sea segura y no se exponga públicamente.
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-change-in-production'
     
-    # URI de la base de datos. Lee desde una variable de entorno o usa una local.
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql:///english_learning'
+    # --- INICIO DEL PARCHE PARA RENDER ---
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url and db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+        
+    SQLALCHEMY_DATABASE_URI = db_url or 'postgresql:///english_learning'
+    # --- FIN DEL PARCHE ---
     
-    # Desactiva el sistema de eventos de Flask-SQLAlchemy, que no es necesario y consume recursos.
+    # Desactiva el sistema de eventos de Flask-SQLAlchemy
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Duración de la sesión de usuario antes de que expire.
     PERMANENT_SESSION_LIFETIME = timedelta(days=1)
     
     # --- Configuraciones de Cookies de Sesión ---
-    # Asegura que las cookies solo se envíen a través de HTTPS en producción.
     SESSION_COOKIE_SECURE = False  # Cambiar a True en producción con HTTPS
-    # Previene que el JavaScript del lado del cliente acceda a las cookies de sesión.
     SESSION_COOKIE_HTTPONLY = True
-    # Mitiga el riesgo de ataques CSRF. 'Lax' es un buen equilibrio entre seguridad y usabilidad.
     SESSION_COOKIE_SAMESITE = 'Lax'
     
     # --- Configuración de Flask-Mail para el envío de correos ---
