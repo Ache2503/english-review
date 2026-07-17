@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import (
-    GrammarDrill, UserDrillResult, UserErrorPattern, ErrorLog, Unit
+    GrammarDrill, UserDrillResult, UserErrorPattern, ErrorLog, Unit, ErrorTipContent
 )
 from datetime import datetime, timedelta
 from sqlalchemy import func
@@ -301,44 +301,14 @@ def log_error(user_id, source, error_type, message, context=None):
 
 
 def get_error_tips(category, error_type):
-    """Obtener consejos para un tipo de error"""
-    tips = {
-        'grammar': {
-            'verb_tenses': [
-                'Practica identificar el tiempo verbal en oraciones',
-                'Crea tarjetas con las conjugaciones irregulares',
-                'Lee textos y subraya los verbos'
-            ],
-            'articles': [
-                'Recuerda: "a" antes de consonante, "an" antes de vocal',
-                'Los nombres propios no llevan artículo',
-                'Usa "the" para cosas específicas'
-            ],
-            'prepositions': [
-                'Las preposiciones de tiempo: in (meses/años), on (días), at (hora)',
-                'Memoriza las combinaciones verbo + preposición',
-                'Practica con ejercicios de fill-in-the-blank'
-            ]
-        },
-        'vocabulary': {
-            'spelling': [
-                'Lee en voz alta mientras escribes',
-                'Usa la técnica de "look, cover, write, check"',
-                'Agrupa palabras con patrones similares'
-            ],
-            'word_choice': [
-                'Usa un diccionario de sinónimos',
-                'Aprende palabras en contexto, no aisladas',
-                'Practica con ejercicios de matching'
-            ]
-        }
-    }
-    
-    return tips.get(category, {}).get(error_type, [
+    tip = ErrorTipContent.query.filter_by(category=category, error_type=error_type).first()
+    if tip:
+        return tip.tips
+    return [
         'Practica regularmente',
         'Revisa tus errores anteriores',
         'Pide feedback en tus escritos'
-    ])
+    ]
 
 
 def get_recommended_drills(error_type):

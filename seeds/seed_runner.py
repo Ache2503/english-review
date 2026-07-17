@@ -166,6 +166,38 @@ SEED_ORDER = [
         'dependencies': [],
         'tables': ['customer_moods']
     },
+    {
+        'name': 'study_content',
+        'file': 'seed_study_content.py',
+        'description': 'Contenido de temas de estudio intensivo (migrado desde hardcoded)',
+        'required': True,
+        'dependencies': [],
+        'tables': ['study_topic_contents']
+    },
+    {
+        'name': 'grammar_topics',
+        'file': 'seed_grammar_topics.py',
+        'description': 'Contenido de temas gramaticales de referencia (migrado desde hardcoded)',
+        'required': True,
+        'dependencies': [],
+        'tables': ['grammar_topic_contents']
+    },
+    {
+        'name': 'writing_content',
+        'file': 'seed_writing_content.py',
+        'description': 'Patrones de errores y tips de escritura (migrado desde hardcoded)',
+        'required': True,
+        'dependencies': [],
+        'tables': ['writing_error_patterns', 'writing_tip_contents']
+    },
+    {
+        'name': 'remaining_content',
+        'file': 'seed_remaining_content.py',
+        'description': 'Patrones de oraciones, sinónimos, tips de errores, logros (migrado desde hardcoded)',
+        'required': True,
+        'dependencies': [],
+        'tables': ['sentence_pattern_contents', 'concept_synonyms', 'error_tip_contents', 'achievement_milestones']
+    },
 ]
 
 

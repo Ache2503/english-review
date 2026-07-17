@@ -409,44 +409,30 @@ def compare_stats(current, previous):
 
 
 def get_next_achievements(user_id):
-    """Próximos logros a alcanzar"""
+    from app.models import AchievementMilestone
     achievements = []
     
-    # Verificar progreso hacia badges
     user_points = UserPoints.query.filter_by(user_id=user_id).first()
     points = user_points.total_points if user_points else 0
-    
-    if points < 100:
-        achievements.append({
-            'name': 'First 100 Points',
-            'progress': points,
-            'goal': 100,
-            'percentage': points
-        })
-    elif points < 500:
-        achievements.append({
-            'name': 'Reach 500 Points',
-            'progress': points,
-            'goal': 500,
-            'percentage': points / 5
-        })
     
     streak = UserStreak.query.filter_by(user_id=user_id).first()
     current_streak = streak.current_streak if streak else 0
     
-    if current_streak < 7:
-        achievements.append({
-            'name': '7-Day Streak',
-            'progress': current_streak,
-            'goal': 7,
-            'percentage': current_streak / 7 * 100
-        })
-    elif current_streak < 30:
-        achievements.append({
-            'name': '30-Day Streak',
-            'progress': current_streak,
-            'goal': 30,
-            'percentage': current_streak / 30 * 100
-        })
+    milestones = AchievementMilestone.query.filter_by(is_active=True).all()
+    for m in milestones:
+        if m.milestone_type == 'points' and points < m.threshold:
+            achievements.append({
+                'name': m.name,
+                'progress': points,
+                'goal': m.threshold,
+                'percentage': points / m.threshold * 100
+            })
+        elif m.milestone_type == 'streak' and current_streak < m.threshold:
+            achievements.append({
+                'name': m.name,
+                'progress': current_streak,
+                'goal': m.threshold,
+                'percentage': current_streak / m.threshold * 100
+            })
     
     return achievements

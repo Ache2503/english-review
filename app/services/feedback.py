@@ -154,25 +154,17 @@ def analyze_text(text: str, unit_number: int, grammar_titles: Optional[List[str]
 
     # Helper: decide if a check should run based on grammar_titles
     # Synonyms map for recognizing grammar concepts from various titles
-    CONCEPT_SYNONYMS = {
-        'articles': ['article', 'articles', 'a/an/the', 'definite article', 'indefinite article', 'zero article', 'no article'],
-        'used to': ['used to'],
-        'reflexive pronouns': ['reflexive pronouns', 'reflexive'],
-        'infinitive of purpose': ['infinitive of purpose', 'to-infinitive', 'purpose'],
-        'first conditional': ['first conditional', 'conditional type 1', 'type 1 conditional'],
-        'second conditional': ['second conditional', 'conditional type 2', 'type 2 conditional'],
-        'gerunds': ['gerunds', 'gerund', '-ing form as noun'],
-        'adjective clauses': ['adjective clauses', 'essential adjective clauses', 'relative clauses'],
-        'comparatives': ['comparatives', 'comparative', 'more/less than', 'er than'],
-        'superlatives': ['superlatives', 'superlative', 'the most', 'the least', 'est'],
-        'need to': ['need to', 'need'],
-        'passive voice': ['passive voice', 'passive'],
-        'adjective + infinitive': ['adjective + infinitive', 'it is adj to verb'],
-        'where words': ['words with -where', 'somewhere', 'nowhere', 'everywhere', '-where'],
-        'reported speech': ['reported speech', 'indirect speech', 'reported statements'],
-        'past perfect': ['past perfect', 'pluperfect'],
-        'should': ['should']
-    }
+    CONCEPT_SYNONYMS = {}
+    try:
+        from app.models import ConceptSynonym
+        for cs in ConceptSynonym.query.all():
+            CONCEPT_SYNONYMS[cs.concept_key] = cs.synonyms or []
+    except Exception:
+        CONCEPT_SYNONYMS = {
+            'articles': ['article', 'articles', 'a/an/the'],
+            'used to': ['used to'],
+            'passive voice': ['passive voice', 'passive'],
+        }
 
     def has_concept(concept_key: str) -> bool:
         if not grammar_titles:

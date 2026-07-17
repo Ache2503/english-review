@@ -70,49 +70,59 @@ class WritingFeedback:
 class WritingAnalyzer:
     """Analizador avanzado de escritura en inglés."""
     
-    # Patrones comunes de errores para hispanohablantes
-    COMMON_SPANISH_ERRORS = {
-        r"\bi am agree\b": "Use 'I agree' (not 'I am agree')",
-        r"\bthe people is\b": "Use 'people are' (people is plural)",
-        r"\bpeoples\b": "Use 'people' (already plural, no 's' needed)",
-        r"\binformations?\b": "'Information' is uncountable (no plural)",
-        r"\badvices?\b": "'Advice' is uncountable (use 'pieces of advice')",
-        r"\bin the last years\b": "Use 'in recent years' or 'in the last few years'",
-        r"\bactually\b": "Make sure 'actually' means 'really' (not 'currently')",
-        r"\beventually\b": "Check if you mean 'finally' or 'possibly' (common false friend)",
-        r"\bsince \d+ years\b": "Use 'for X years' (since + point in time)",
-        r"\bfor a long time ago\b": "Use 'a long time ago' (without 'for')",
-        r"\bI have \d+ years\b": "Use 'I am X years old' or 'I've been X for X years'",
-        r"\bis very\b(?!\s+\w+\s+(?:to|that))": "Consider using stronger adjectives instead of 'very + adjective'",
-        r"\bmake a party\b": "Use 'have/throw a party' (not 'make')",
-        r"\bdo a mistake\b": "Use 'make a mistake' (not 'do')",
-        r"\bopen the light\b": "Use 'turn on the light' (not 'open')",
-        r"\bclose the light\b": "Use 'turn off the light' (not 'close')",
-    }
+    COMMON_SPANISH_ERRORS = {}
+    STYLE_IMPROVEMENTS = {}
+    CONNECTORS_BY_LEVEL = {}
+    _patterns_loaded = False
     
-    # Patrones para mejorar el estilo
-    STYLE_IMPROVEMENTS = {
-        r"\bvery good\b": ["excellent", "outstanding", "superb"],
-        r"\bvery bad\b": ["terrible", "awful", "dreadful"],
-        r"\bvery big\b": ["huge", "enormous", "massive"],
-        r"\bvery small\b": ["tiny", "minute", "minuscule"],
-        r"\bvery happy\b": ["delighted", "thrilled", "ecstatic"],
-        r"\bvery sad\b": ["devastated", "heartbroken", "miserable"],
-        r"\bvery tired\b": ["exhausted", "worn out", "drained"],
-        r"\bvery angry\b": ["furious", "livid", "irate"],
-        r"\bvery scared\b": ["terrified", "petrified", "horrified"],
-        r"\bvery cold\b": ["freezing", "frigid", "icy"],
-        r"\bvery hot\b": ["scorching", "boiling", "sweltering"],
-    }
-    
-    # Conectores por nivel
-    CONNECTORS_BY_LEVEL = {
-        'basic': ['and', 'but', 'or', 'so', 'because'],
-        'intermediate': ['however', 'therefore', 'moreover', 'although', 'nevertheless'],
-        'advanced': ['consequently', 'furthermore', 'notwithstanding', 'hence', 'thus']
-    }
+    @classmethod
+    def _load_patterns_from_db(cls):
+        if cls._patterns_loaded:
+            return
+        try:
+            from app.models import WritingErrorPattern
+            from app import create_app
+            try:
+                from flask import current_app
+                if not current_app._get_current_object():
+                    app = create_app()
+                    with app.app_context():
+                        cls._load_patterns_from_db()
+                        return
+            except RuntimeError:
+                app = create_app()
+                with app.app_context():
+                    cls._load_patterns_from_db()
+                    return
+            
+            for p in WritingErrorPattern.query.filter_by(pattern_type='spanish_error', is_active=True).all():
+                cls.COMMON_SPANISH_ERRORS[p.pattern] = p.message
+            
+            for p in WritingErrorPattern.query.filter_by(pattern_type='style_improvement', is_active=True).all():
+                cls.STYLE_IMPROVEMENTS[p.pattern] = p.replacements or []
+            
+            connectors = {}
+            for p in WritingErrorPattern.query.filter_by(pattern_type='connector', is_active=True).all():
+                connectors.setdefault(p.level, []).append(p.pattern)
+            cls.CONNECTORS_BY_LEVEL = connectors
+            
+            cls._patterns_loaded = True
+        except Exception:
+            cls.COMMON_SPANISH_ERRORS = {
+                r"\bi am agree\b": "Use 'I agree' (not 'I am agree')",
+                r"\bthe people is\b": "Use 'people are' (people is plural)",
+                r"\bpeoples\b": "Use 'people' (already plural, no 's' needed)",
+                r"\binformations?\b": "'Information' is uncountable (no plural)",
+                r"\badvices?\b": "'Advice' is uncountable (use 'pieces of advice')",
+                r"\bmake a party\b": "Use 'have/throw a party' (not 'make')",
+                r"\bdo a mistake\b": "Use 'make a mistake' (not 'do')",
+                r"\bopen the light\b": "Use 'turn on the light' (not 'open')",
+                r"\bclose the light\b": "Use 'turn off the light' (not 'close')",
+            }
+            cls._patterns_loaded = True
 
     def __init__(self):
+        self._load_patterns_from_db()
         self.tool = get_language_tool() if LANGUAGE_TOOL_AVAILABLE else None
     
     def analyze(self, text: str, context: Optional[Dict] = None) -> WritingFeedback:

@@ -338,71 +338,23 @@ def history():
 @writing_bp.route('/tips/<error_type>')
 @login_required
 def get_tips(error_type):
-    """Obtiene consejos específicos para un tipo de error."""
-    
-    # Base de conocimiento de consejos
-    tips_database = {
-        'SPANISH_SPEAKER_ERROR': {
-            'title': 'Errores comunes de hispanohablantes',
-            'description': 'Estos errores son típicos al traducir directamente del español.',
-            'tips': [
-                "Evita traducciones literales del español",
-                "Recuerda que 'people' es plural en inglés",
-                "Algunos sustantivos son incontables: information, advice, news",
-                "'Actually' significa 'en realidad', no 'actualmente'",
-                "Usa 'for' con duraciones y 'since' con puntos en el tiempo"
-            ],
-            'examples': [
-                {'wrong': 'I am agree', 'correct': 'I agree'},
-                {'wrong': 'The people is happy', 'correct': 'The people are happy'},
-                {'wrong': 'I have 25 years', 'correct': 'I am 25 years old'}
-            ]
-        },
-        'STYLE_IMPROVEMENT': {
-            'title': 'Mejoras de estilo',
-            'description': 'Usa palabras más precisas para un inglés más natural.',
-            'tips': [
-                "Evita 'very + adjective', usa adjetivos más fuertes",
-                "Varía las estructuras de tus oraciones",
-                "Usa conectores para mejorar la fluidez",
-                "Evita repetir las mismas palabras"
-            ],
-            'examples': [
-                {'wrong': 'very happy', 'correct': 'delighted, thrilled, ecstatic'},
-                {'wrong': 'very big', 'correct': 'huge, enormous, massive'},
-                {'wrong': 'very good', 'correct': 'excellent, outstanding, superb'}
-            ]
-        },
-        'SENTENCE_CASE': {
-            'title': 'Uso de mayúsculas',
-            'description': 'Las reglas de capitalización en inglés.',
-            'tips': [
-                "Siempre inicia las oraciones con mayúscula",
-                "Los nombres propios llevan mayúscula",
-                "Los días de la semana y meses van con mayúscula",
-                "'I' siempre va en mayúscula"
-            ],
-            'examples': [
-                {'wrong': 'i went to london on monday', 'correct': 'I went to London on Monday'},
-            ]
-        },
-        'default': {
-            'title': 'Consejos generales de escritura',
-            'description': 'Mejora tu escritura en inglés con estos consejos.',
-            'tips': [
-                "Lee en voz alta para detectar errores",
-                "Revisa la concordancia sujeto-verbo",
-                "Verifica los tiempos verbales",
-                "Usa puntuación correctamente",
-                "Practica escribiendo regularmente"
-            ],
-            'examples': []
-        }
-    }
-    
-    tips = tips_database.get(error_type, tips_database['default'])
-    
-    return jsonify(tips)
+    from app.models import WritingTipContent
+    tip = WritingTipContent.query.filter_by(error_type=error_type).first()
+    if not tip:
+        tip = WritingTipContent.query.filter_by(error_type='default').first()
+    if tip:
+        return jsonify({
+            'title': tip.title,
+            'description': tip.description,
+            'tips': tip.tips or [],
+            'examples': tip.examples or []
+        })
+    return jsonify({
+        'title': 'Consejos generales',
+        'description': 'Mejora tu escritura en inglés.',
+        'tips': [],
+        'examples': []
+    })
 
 
 @writing_bp.route('/practice')

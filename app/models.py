@@ -2255,3 +2255,144 @@ class UserActivity(db.Model):
     
     def __repr__(self):
         return f'<UserActivity User:{self.user_id} Type:{self.activity_type}>'
+
+
+# ============================================================================
+# CONTENIDO EDUCATIVO MIGRADO DESDE HARDCODED
+# ============================================================================
+
+class StudyTopicContent(db.Model):
+    """Contenido de temas de estudio intensivo (migrado desde study_content.py)"""
+    __tablename__ = 'study_topic_contents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(100), nullable=False, unique=True, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    icon = db.Column(db.String(10))
+    difficulty = db.Column(db.String(30))
+    estimated_time = db.Column(db.String(20))
+    description = db.Column(db.Text)
+    theory = db.Column(db.JSON)
+    common_mistakes = db.Column(db.JSON)
+    tips = db.Column(db.JSON)
+    exercises = db.Column(db.JSON)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<StudyTopicContent {self.slug}>'
+
+
+class GrammarTopicContent(db.Model):
+    """Contenido de temas gramaticales de referencia (migrado desde grammar.py)"""
+    __tablename__ = 'grammar_topic_contents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(100), nullable=False, unique=True, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    subtitle = db.Column(db.String(300))
+    icon = db.Column(db.String(10))
+    level = db.Column(db.String(30))
+    category = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    estimated_time = db.Column(db.String(20))
+    sections = db.Column(db.JSON)
+    tips = db.Column(db.JSON)
+    common_mistakes = db.Column(db.JSON)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<GrammarTopicContent {self.slug}>'
+
+
+class SentencePatternContent(db.Model):
+    """Patrones de oraciones por tema gramatical (migrado desde units.py)"""
+    __tablename__ = 'sentence_pattern_contents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    topic_name = db.Column(db.String(100), nullable=False, unique=True, index=True)
+    patterns = db.Column(db.JSON, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<SentencePatternContent {self.topic_name}>'
+
+
+class WritingErrorPattern(db.Model):
+    """Patrones de errores de escritura (migrado desde writing_analysis.py)"""
+    __tablename__ = 'writing_error_patterns'
+
+    id = db.Column(db.Integer, primary_key=True)
+    pattern_type = db.Column(db.String(50), nullable=False, index=True)
+    pattern = db.Column(db.String(300), nullable=False)
+    message = db.Column(db.Text)
+    replacements = db.Column(db.JSON)
+    level = db.Column(db.String(20))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<WritingErrorPattern {self.pattern_type}: {self.pattern[:30]}>'
+
+
+class WritingTipContent(db.Model):
+    """Tips de escritura por tipo de error (migrado desde writing.py)"""
+    __tablename__ = 'writing_tip_contents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    error_type = db.Column(db.String(50), nullable=False, unique=True, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    tips = db.Column(db.JSON)
+    examples = db.Column(db.JSON)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<WritingTipContent {self.error_type}>'
+
+
+class ConceptSynonym(db.Model):
+    """Sinónimos de conceptos gramaticales (migrado desde feedback.py)"""
+    __tablename__ = 'concept_synonyms'
+
+    id = db.Column(db.Integer, primary_key=True)
+    concept_key = db.Column(db.String(100), nullable=False, unique=True, index=True)
+    synonyms = db.Column(db.JSON, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ConceptSynonym {self.concept_key}>'
+
+
+class ErrorTipContent(db.Model):
+    """Tips por categoría de error (migrado desde drills.py)"""
+    __tablename__ = 'error_tip_contents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(50), nullable=False, index=True)
+    error_type = db.Column(db.String(50), nullable=False, index=True)
+    tips = db.Column(db.JSON, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        db.UniqueConstraint('category', 'error_type', name='uq_category_error_type'),
+    )
+
+    def __repr__(self):
+        return f'<ErrorTipContent {self.category}.{self.error_type}>'
+
+
+class AchievementMilestone(db.Model):
+    """Hitos de logros (migrado desde reports.py)"""
+    __tablename__ = 'achievement_milestones'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    milestone_type = db.Column(db.String(30), nullable=False, index=True)
+    threshold = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(10))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<AchievementMilestone {self.name}>'

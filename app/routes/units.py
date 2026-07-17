@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Unit, UserProgress, GrammarRule, VocabularyCategory, WritingPractice, UnitExtra, Topic, TopicExplanation
+from app.models import Unit, UserProgress, GrammarRule, VocabularyCategory, WritingPractice, UnitExtra, Topic, TopicExplanation, SentencePatternContent
 from app.services.unit_unlock import UnitUnlockSystem
 
 units_bp = Blueprint('units', __name__, url_prefix='/units')
@@ -129,79 +129,9 @@ def view_sentence_structures(unit_id):
     unit = Unit.query.get_or_404(unit_id)
     grammar_rules = GrammarRule.query.filter_by(unit_id=unit_id).order_by(GrammarRule.order).all()
     
-    # Definir estructuras de oraciones por tema gramatical
-    sentence_patterns = {
-        'Articles': {
-            'patterns': [
-                {'structure': 'I go to [the] school', 'meaning': '[the] = edificio específico | sin artículo = como estudiante'},
-                {'structure': 'Use [the] for specific things', 'meaning': 'Ej: The cat is black (gato específico)'},
-                {'structure': 'Use [a/an] for general things', 'meaning': 'Ej: A cat is an animal (categoría general)'}
-            ]
-        },
-        'Used to': {
-            'patterns': [
-                {'structure': 'Subject + used to + verb', 'meaning': 'Ej: I used to play soccer'},
-                {'structure': 'I used to wake up early', 'meaning': 'Acción habitual en el pasado (ya no ocurre)'},
-                {'structure': 'Did you use to...? / He used to...', 'meaning': 'Preguntas y respuestas negativas'}
-            ]
-        },
-        'Reflexive Pronouns': {
-            'patterns': [
-                {'structure': 'Subject + verb + reflexive pronoun', 'meaning': 'Ej: I hurt myself'},
-                {'structure': 'myself, yourself, himself, herself, itself, ourselves, yourselves, themselves', 'meaning': 'Cuando el sujeto y objeto son el mismo'},
-                {'structure': 'She taught herself to code', 'meaning': 'Ella misma se enseñó (por su propia acción)'}
-            ]
-        },
-        'Infinitive of Purpose': {
-            'patterns': [
-                {'structure': 'Subject + verb + to + infinitive', 'meaning': 'Ej: I went to the store to buy milk'},
-                {'structure': '[action] + TO + [reason/purpose]', 'meaning': 'Ej: He exercises to stay healthy'},
-                {'structure': 'I came to help you', 'meaning': 'Viniste CON EL PROPÓSITO DE ayudar'}
-            ]
-        },
-        'First Conditional': {
-            'patterns': [
-                {'structure': 'If + Present + will + verb', 'meaning': 'Situación real/posible'},
-                {'structure': 'If it rains, I will stay home', 'meaning': 'Si llueve (probable), me quedaré en casa'},
-                {'structure': 'If you study, you will pass the exam', 'meaning': 'Resultado natural y lógico'}
-            ]
-        },
-        'Second Conditional': {
-            'patterns': [
-                {'structure': 'If + Past + would + verb', 'meaning': 'Situación imaginaria/hipotética'},
-                {'structure': 'If I had money, I would travel', 'meaning': 'Si tuviera dinero (no tengo), viajaría'},
-                {'structure': 'If she were a bird, she would fly', 'meaning': 'Imaginario, no es real'}
-            ]
-        },
-        'Gerunds': {
-            'patterns': [
-                {'structure': 'Verb + -ing (actuando como sustantivo)', 'meaning': 'Ej: Swimming is fun'},
-                {'structure': 'Subject + verb + gerund', 'meaning': 'Ej: I enjoy reading books'},
-                {'structure': 'Spending money is easy', 'meaning': 'El acto/acción como sustantivo'}
-            ]
-        },
-        'Comparatives': {
-            'patterns': [
-                {'structure': 'Subject + verb + adjective + than + object', 'meaning': 'Ej: My house is bigger than yours'},
-                {'structure': 'More + adjective + than', 'meaning': 'Para adjetivos largos: more expensive than'},
-                {'structure': 'Adjective + -er + than', 'meaning': 'Para adjetivos cortos: faster than, taller than'}
-            ]
-        },
-        'Superlatives': {
-            'patterns': [
-                {'structure': 'The + adjective + -est', 'meaning': 'Ej: the tallest, the fastest'},
-                {'structure': 'The most + adjective', 'meaning': 'Para adjetivos largos: the most beautiful'},
-                {'structure': 'Subject + verb + the + superlative', 'meaning': 'Ej: She is the smartest student'}
-            ]
-        },
-        'Passive Voice': {
-            'patterns': [
-                {'structure': 'Object + be + past participle + by + subject', 'meaning': 'Ej: The car was washed by John'},
-                {'structure': 'Plastic is found everywhere', 'meaning': 'La acción es más importante que quien la hace'},
-                {'structure': 'The book was written by the author', 'meaning': 'Se enfoca en lo que pasó, no en quién lo hizo'}
-            ]
-        }
-    }
+    sentence_patterns = {}
+    for sp in SentencePatternContent.query.all():
+        sentence_patterns[sp.topic_name] = {'patterns': sp.patterns}
     
     return render_template('sentences/sentence_structures.html',
                            unit=unit,

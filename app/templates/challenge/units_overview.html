@@ -225,7 +225,7 @@
                     <div class="progress mt-3" style="height: 20px;">
                         <div class="progress-bar bg-success" 
                              role="progressbar" 
-                             style="width: {{ (completed_units / total_units * 100)|round(1) }}%"
+                             style="width: {{ (completed_units / total_units * 100)|round(1) if total_units > 0 else 0 }}%"
                              title="Completadas">
                             {% if completed_units > 0 %}{{ (completed_units / total_units * 100)|round(0)|int }}%{% endif %}
                         </div>
