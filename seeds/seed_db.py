@@ -130,8 +130,8 @@ UNITS_DATA_FALLBACK = [
 def load_units_data() -> list:
     here = os.path.dirname(os.path.abspath(__file__))
     # Preferir el nuevo esquema: unit_data.json
-    preferred_path = os.path.join(here, 'seeds', 'unit_data.json')
-    legacy_path = os.path.join(here, 'seeds', 'units_data.json')
+    preferred_path = os.path.join(here, 'unit_data.json')
+    legacy_path = os.path.join(here, 'units_data.json')
     for data_path in (preferred_path, legacy_path):
         if os.path.exists(data_path):
             with open(data_path, 'r', encoding='utf-8') as f:

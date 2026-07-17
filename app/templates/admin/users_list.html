@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+{% block title %}Usuarios - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="fas fa-users"></i> Gestionar Usuarios</h4>
+    <form class="d-flex gap-2" method="GET">
+        <input type="text" class="form-control form-control-sm" name="q" value="{{ search }}" placeholder="Buscar usuario...">
+        <button class="btn btn-outline-primary btn-sm" type="submit"><i class="fas fa-search"></i></button>
+        {% if search %}<a href="{{ url_for('admin.users_list') }}" class="btn btn-outline-secondary btn-sm">Limpiar</a>{% endif %}
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Suscripcion</th>
+                        <th>Rol</th>
+                        <th>Registro</th>
+                        <th>Ultimo login</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td class="text-muted">{{ u.id }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.user_detail', id=u.id) }}" class="fw-semibold">
+                                {{ u.username }}
+                            </a>
+                        </td>
+                        <td class="text-muted">{{ u.email }}</td>
+                        <td>
+                            {% if u.subscription_type == 'premium_all_access' %}
+                                <span class="badge bg-warning text-dark">Premium</span>
+                            {% elif u.subscription_type == 'kids_pass' %}
+                                <span class="badge bg-info">Kids Pass</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Free</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if u.is_admin %}
+                                <span class="badge bg-danger">Admin</span>
+                            {% else %}
+                                <span class="badge bg-light text-dark">User</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted">{{ u.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td class="text-muted">{{ u.last_login_date.strftime('%d/%m/%Y') if u.last_login_date else '-' }}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('admin.user_detail', id=u.id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No se encontraron usuarios.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<small class="text-muted mt-2 d-block">{{ users|length }} usuario(s)</small>
+{% endblock %}

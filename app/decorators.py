@@ -111,3 +111,15 @@ def kids_zone_required(f):
         
         return f(*args, **kwargs)
     return decorated_function
+
+
+def admin_required(f):
+    """Decorador para proteger rutas de administrador"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return redirect(url_for('auth.login'))
+        if not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function

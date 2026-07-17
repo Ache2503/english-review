@@ -23,9 +23,14 @@ def units_overview():
     """Vista general de todas las unidades con su estado de desbloqueo"""
     unlock_system = UnitUnlockSystem(current_user.id)
     units_status = unlock_system.get_all_units_status()
-    
+
+    grouped_units = {}
+    for item in units_status:
+        grouped_units.setdefault(item['level'], []).append(item)
+
     return render_template('challenge/units_overview.html',
-                           units_status=units_status)
+                           units_status=units_status,
+                           grouped_units=grouped_units)
 
 
 @unit_challenge_bp.route('/unit/<int:unit_id>/requirements')

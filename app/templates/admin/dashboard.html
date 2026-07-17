@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard Admin - English Learning{% endblock %}
+
+{% block admin_content %}
+<h4 class="fw-bold mb-4"><i class="fas fa-chart-pie"></i> Panel de Administracion</h4>
+
+<!-- KPIs Usuarios -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-primary">{{ total_users }}</h4>
+            <small>Usuarios totales</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-success">{{ active_users }}</h4>
+            <small>Usuarios activos</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-warning">{{ premium_users }}</h4>
+            <small>Premium / Kids Pass</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-danger">{{ admin_users }}</h4>
+            <small>Administradores</small>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs Actividad -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ total_quizzes }}</h4>
+            <small>Quizzes realizados</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ total_writings }}</h4>
+            <small>Escritos enviados</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ total_readings }}</h4>
+            <small>Lecturas completadas</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ total_study }}</h4>
+            <small>Ejercicios de estudio</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Contenido en DB -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header fw-bold">
+                <i class="fas fa-database"></i> Contenido en Base de Datos
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        <tr><td>Temas de estudio</td><td class="text-end fw-bold">{{ content_stats.study_topics }}</td></tr>
+                        <tr><td>Temas de gramatica</td><td class="text-end fw-bold">{{ content_stats.grammar_topics }}</td></tr>
+                        <tr><td>Patrones de oraciones</td><td class="text-end fw-bold">{{ content_stats.sentence_patterns }}</td></tr>
+                        <tr><td>Patrones de errores</td><td class="text-end fw-bold">{{ content_stats.writing_patterns }}</td></tr>
+                        <tr><td>Tips de escritura</td><td class="text-end fw-bold">{{ content_stats.writing_tips }}</td></tr>
+                        <tr><td>Sinonimos</td><td class="text-end fw-bold">{{ content_stats.concept_synonyms }}</td></tr>
+                        <tr><td>Tips por error</td><td class="text-end fw-bold">{{ content_stats.error_tips }}</td></tr>
+                        <tr><td>Hitos de logros</td><td class="text-end fw-bold">{{ content_stats.milestones }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usuarios recientes -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header fw-bold">
+                <i class="fas fa-user-plus"></i> Usuarios Recientes
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Usuario</th><th>Email</th><th>Registro</th></tr></thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('admin.user_detail', id=u.id) }}">{{ u.username }}</a>
+                                {% if u.is_admin %}<span class="badge bg-danger">admin</span>{% endif %}
+                            </td>
+                            <td class="text-muted">{{ u.email }}</td>
+                            <td class="text-muted">{{ u.created_at.strftime('%d/%m/%Y') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

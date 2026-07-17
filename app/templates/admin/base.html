@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Admin - English Learning{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-layout { display: flex; min-height: 80vh; }
+    .admin-sidebar {
+        width: 240px; min-width: 240px; background: var(--bs-body-bg);
+        border-right: 1px solid var(--bs-border-color); padding: 1rem 0;
+        position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
+    }
+    .admin-sidebar .nav-link {
+        padding: 0.5rem 1.25rem; color: var(--bs-body-color); font-size: 0.9rem;
+        border-left: 3px solid transparent; transition: all 0.15s;
+    }
+    .admin-sidebar .nav-link:hover { background: var(--bs-tertiary-bg); }
+    .admin-sidebar .nav-link.active {
+        background: var(--bs-primary-bg-subtle); color: var(--bs-primary);
+        border-left-color: var(--bs-primary); font-weight: 600;
+    }
+    .admin-sidebar .nav-link i { width: 20px; text-align: center; margin-right: 0.5rem; }
+    .admin-sidebar .nav-section {
+        font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+        color: var(--bs-secondary-color); padding: 1rem 1.25rem 0.25rem; font-weight: 600;
+    }
+    .admin-content { flex: 1; padding: 1.5rem 2rem; min-width: 0; }
+    .admin-kpi { border-radius: 0.5rem; padding: 1rem 1.25rem; border: 1px solid var(--bs-border-color); }
+    .admin-kpi h4 { font-size: 1.5rem; font-weight: 700; margin: 0; }
+    .admin-kpi small { color: var(--bs-secondary-color); }
+    .admin-table th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--bs-secondary-color); }
+    .btn-sm { font-size: 0.8rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <nav class="admin-sidebar">
+        <div class="nav-section">Panel</div>
+        <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
+           href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-chart-pie"></i> Dashboard
+        </a>
+
+        <div class="nav-section">Contenido</div>
+        <a class="nav-link {% if 'study' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.study_list') }}">
+            <i class="fas fa-graduation-cap"></i> Temas de Estudio
+        </a>
+        <a class="nav-link {% if 'grammar' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.grammar_list') }}">
+            <i class="fas fa-book"></i> Gramatica
+        </a>
+        <a class="nav-link {% if 'writing_pattern' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.writing_patterns_list') }}">
+            <i class="fas fa-spell-check"></i> Patrones Escritura
+        </a>
+        <a class="nav-link {% if 'writing_tip' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.writing_tips_list') }}">
+            <i class="fas fa-lightbulb"></i> Tips Escritura
+        </a>
+        <a class="nav-link {% if 'sentence_pattern' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.sentence_patterns_list') }}">
+            <i class="fas fa-align-left"></i> Patrones Oraciones
+        </a>
+        <a class="nav-link {% if 'concept_synonym' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.concept_synonyms_list') }}">
+            <i class="fas fa-link"></i> Sinonimos
+        </a>
+        <a class="nav-link {% if 'error_tip' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.error_tips_list') }}">
+            <i class="fas fa-exclamation-triangle"></i> Tips por Error
+        </a>
+        <a class="nav-link {% if 'milestone' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.milestones_list') }}">
+            <i class="fas fa-trophy"></i> Hitos
+        </a>
+
+        <div class="nav-section">Usuarios</div>
+        <a class="nav-link {% if 'user' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.users_list') }}">
+            <i class="fas fa-users"></i> Gestionar Usuarios
+        </a>
+
+        <div class="nav-section">Resultados</div>
+        <a class="nav-link {% if 'results' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.results_overview') }}">
+            <i class="fas fa-chart-bar"></i> Ver Resultados
+        </a>
+    </nav>
+    <div class="admin-content">
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

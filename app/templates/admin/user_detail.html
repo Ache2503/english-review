@@ -1,0 +1,179 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ user.username }} - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0">
+            <i class="fas fa-user"></i> {{ user.username }}
+            {% if user.is_admin %}<span class="badge bg-danger ms-2">Admin</span>{% endif %}
+        </h4>
+        <small class="text-muted">{{ user.email }}</small>
+    </div>
+    <a href="{{ url_for('admin.users_list') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<!-- Info basica -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h5>{{ user.full_name or '-' }}</h5>
+            <small>Nombre completo</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h5>
+                {% if user.subscription_type == 'premium_all_access' %}
+                    <span class="text-warning">Premium</span>
+                {% elif user.subscription_type == 'kids_pass' %}
+                    <span class="text-info">Kids Pass</span>
+                {% else %}
+                    <span class="text-secondary">Free</span>
+                {% endif %}
+            </h5>
+            <small>Suscripcion</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h5>{{ user.created_at.strftime('%d/%m/%Y') }}</h5>
+            <small>Registro</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h5>{{ user.last_login_date.strftime('%d/%m/%Y') if user.last_login_date else 'Nunca' }}</h5>
+            <small>Ultimo login</small>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones rapidas -->
+<div class="d-flex gap-2 mb-4">
+    <form method="POST" action="{{ url_for('admin.user_toggle_admin', id=user.id) }}">
+        <button type="submit" class="btn btn-outline-warning btn-sm">
+            <i class="fas fa-shield-alt"></i>
+            {% if user.is_admin %}Quitar admin{% else %}Hacer admin{% endif %}
+        </button>
+    </form>
+    <form method="POST" action="{{ url_for('admin.user_toggle_active', id=user.id) }}">
+        <button type="submit" class="btn btn-outline-{{ 'danger' if user.is_active else 'success' }} btn-sm">
+            <i class="fas fa-{{ 'ban' if user.is_active else 'check' }}"></i>
+            {% if user.is_active %}Desactivar{% else %}Activar{% endif %}
+        </button>
+    </form>
+    <form method="POST" action="{{ url_for('admin.user_set_subscription', id=user.id) }}" class="d-flex gap-1">
+        <select name="subscription_type" class="form-select form-select-sm" style="width: auto;">
+            <option value="free" {% if user.subscription_type == 'free' %}selected{% endif %}>Free</option>
+            <option value="premium_all_access" {% if user.subscription_type == 'premium_all_access' %}selected{% endif %}>Premium</option>
+            <option value="kids_pass" {% if user.subscription_type == 'kids_pass' %}selected{% endif %}>Kids Pass</option>
+        </select>
+        <button type="submit" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-save"></i> Guardar
+        </button>
+    </form>
+</div>
+
+{% if streak %}
+<div class="alert alert-info">
+    <i class="fas fa-fire"></i> Racha actual: <strong>{{ streak.current_streak }} dias</strong>
+    | Maxima: <strong>{{ streak.longest_streak }} dias</strong>
+</div>
+{% endif %}
+
+<!-- Progreso por unidad -->
+{% if progress %}
+<div class="card mb-4">
+    <div class="card-header fw-bold"><i class="fas fa-chart-line"></i> Progreso por Unidad</div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Unidad</th><th>Completada</th><th>Puntos</th></tr></thead>
+            <tbody>
+                {% for p in progress %}
+                <tr>
+                    <td>{{ p.unit_id }}</td>
+                    <td>{% if p.completed %}<span class="badge bg-success">Si</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</td>
+                    <td>{{ p.points_earned or 0 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+    <!-- Quiz submissions -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header fw-bold"><i class="fas fa-question-circle"></i> Quizzes (ultimos 20)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>ID</th><th>Tema</th><th>Puntaje</th><th>Fecha</th></tr></thead>
+                    <tbody>
+                        {% for q in quiz_subs %}
+                        <tr>
+                            <td>{{ q.id }}</td>
+                            <td>{{ q.unit_id or '-' }}</td>
+                            <td><strong>{{ q.score }}</strong></td>
+                            <td class="text-muted">{{ q.submitted_at.strftime('%d/%m') if q.submitted_at else '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted">Sin registros</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Writing submissions -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header fw-bold"><i class="fas fa-keyboard"></i> Escritos (ultimos 20)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>ID</th><th>Tema</th><th>Puntaje</th><th>Fecha</th></tr></thead>
+                    <tbody>
+                        {% for w in writing_subs %}
+                        <tr>
+                            <td>{{ w.id }}</td>
+                            <td>{{ w.topic or w.unit_id or '-' }}</td>
+                            <td><strong>{{ w.score or '-' }}</strong></td>
+                            <td class="text-muted">{{ w.submitted_at.strftime('%d/%m') if w.submitted_at else '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted">Sin registros</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Study results -->
+{% if study_results %}
+<div class="card mt-4">
+    <div class="card-header fw-bold"><i class="fas fa-graduation-cap"></i> Ejercicios de Estudio (ultimos 20)</div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Tema</th><th>Ejercicio</th><th>Correcto</th><th>Fecha</th></tr></thead>
+            <tbody>
+                {% for s in study_results %}
+                <tr>
+                    <td>{{ s.topic_id or '-' }}</td>
+                    <td>{{ s.exercise_index or '-' }}</td>
+                    <td>{% if s.is_correct %}<span class="badge bg-success">Si</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                    <td class="text-muted">{{ s.completed_at.strftime('%d/%m %H:%M') if s.completed_at else '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

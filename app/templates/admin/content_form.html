@@ -1,0 +1,272 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block admin_content %}
+<h4 class="fw-bold mb-4">
+    <i class="fas fa-edit"></i> {{ title }}
+</h4>
+
+<div class="card" style="max-width: 900px;">
+    <div class="card-body">
+        <form method="POST" action="{{ action }}">
+            {% set model = item.__class__.__name__ if item else '' %}
+
+            {# ===== StudyTopicContent ===== #}
+            {% if model == 'StudyTopicContent' or (not item and 'study' in action) %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Slug</label>
+                    <input type="text" class="form-control" name="slug" value="{{ item.slug if item else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Titulo</label>
+                    <input type="text" class="form-control" name="title" value="{{ item.title if item else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Icono</label>
+                    <input type="text" class="form-control" name="icon" value="{{ item.icon if item and item.icon else '' }}" placeholder="ej: fa-book">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Dificultad</label>
+                    <select class="form-select" name="difficulty">
+                        <option value="">-- Seleccionar --</option>
+                        {% for d in ['Beginner', 'Elementary', 'Intermediate', 'Upper Intermediate', 'Advanced'] %}
+                        <option value="{{ d }}" {% if item and item.difficulty == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tiempo estimado</label>
+                    <input type="text" class="form-control" name="estimated_time" value="{{ item.estimated_time if item and item.estimated_time else '' }}" placeholder="ej: 15 min">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Descripcion</label>
+                    <textarea class="form-control" name="description" rows="3">{{ item.description if item and item.description else '' }}</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Theory <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="theory" rows="6">{{ item.theory | tojson if item and item.theory else '' }}</textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Common Mistakes <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="common_mistakes" rows="6">{{ item.common_mistakes | tojson if item and item.common_mistakes else '' }}</textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tips <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="tips" rows="6">{{ item.tips | tojson if item and item.tips else '' }}</textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Exercises <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="exercises" rows="6">{{ item.exercises | tojson if item and item.exercises else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== GrammarTopicContent ===== #}
+            {% elif model == 'GrammarTopicContent' or (not item and 'grammar' in action) %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Slug</label>
+                    <input type="text" class="form-control" name="slug" value="{{ item.slug if item else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Titulo</label>
+                    <input type="text" class="form-control" name="title" value="{{ item.title if item else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Subtitulo</label>
+                    <input type="text" class="form-control" name="subtitle" value="{{ item.subtitle if item and item.subtitle else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Icono</label>
+                    <input type="text" class="form-control" name="icon" value="{{ item.icon if item and item.icon else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nivel</label>
+                    <select class="form-select" name="level">
+                        <option value="">-- Seleccionar --</option>
+                        {% for l in ['A1', 'A2', 'B1', 'B2', 'C1'] %}
+                        <option value="{{ l }}" {% if item and item.level == l %}selected{% endif %}>{{ l }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Categoria</label>
+                    <input type="text" class="form-control" name="category" value="{{ item.category if item and item.category else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tiempo estimado</label>
+                    <input type="text" class="form-control" name="estimated_time" value="{{ item.estimated_time if item and item.estimated_time else '' }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Descripcion</label>
+                    <textarea class="form-control" name="description" rows="3">{{ item.description if item and item.description else '' }}</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Sections <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="sections" rows="8">{{ item.sections | tojson if item and item.sections else '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tips <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="tips" rows="6">{{ item.tips | tojson if item and item.tips else '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Common Mistakes <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="common_mistakes" rows="6">{{ item.common_mistakes | tojson if item and item.common_mistakes else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== WritingErrorPattern ===== #}
+            {% elif model == 'WritingErrorPattern' or (not item and 'writing_pattern' in action) %}
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de patron</label>
+                    <select class="form-select" name="pattern_type" required>
+                        {% for t in ['spanish_error', 'style_improvement', 'connector'] %}
+                        <option value="{{ t }}" {% if item and item.pattern_type == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nivel</label>
+                    <select class="form-select" name="level">
+                        <option value="">-- Ninguno --</option>
+                        {% for l in ['basic', 'intermediate', 'advanced'] %}
+                        <option value="{{ l }}" {% if item and item.level == l %}selected{% endif %}>{{ l }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="is_active"
+                               {% if not item or item.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">Activo</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Regex Pattern</label>
+                    <input type="text" class="form-control font-monospace" name="pattern"
+                           value="{{ item.pattern if item else '' }}" required placeholder="ej: \bi am agree\b">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Mensaje</label>
+                    <textarea class="form-control" name="message" rows="3">{{ item.message if item and item.message else '' }}</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Replacements <small class="text-muted">(JSON array)</small></label>
+                    <textarea class="form-control font-monospace" name="replacements" rows="4">{{ item.replacements | tojson if item and item.replacements else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== WritingTipContent ===== #}
+            {% elif model == 'WritingTipContent' or (not item and 'writing_tip' in action) %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tipo de error</label>
+                    <input type="text" class="form-control" name="error_type" value="{{ item.error_type if item else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Titulo</label>
+                    <input type="text" class="form-control" name="title" value="{{ item.title if item else '' }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Descripcion</label>
+                    <textarea class="form-control" name="description" rows="3">{{ item.description if item and item.description else '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tips <small class="text-muted">(JSON array)</small></label>
+                    <textarea class="form-control font-monospace" name="tips" rows="6">{{ item.tips | tojson if item and item.tips else '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ejemplos <small class="text-muted">(JSON)</small></label>
+                    <textarea class="form-control font-monospace" name="examples" rows="6">{{ item.examples | tojson if item and item.examples else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== SentencePatternContent ===== #}
+            {% elif model == 'SentencePatternContent' or (not item and 'sentence_pattern' in action) %}
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Topic Name</label>
+                    <input type="text" class="form-control" name="topic_name" value="{{ item.topic_name if item else '' }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Patterns <small class="text-muted">(JSON array de objetos)</small></label>
+                    <textarea class="form-control font-monospace" name="patterns" rows="10">{{ item.patterns | tojson if item and item.patterns else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== ConceptSynonym ===== #}
+            {% elif model == 'ConceptSynonym' or (not item and 'concept_synonym' in action) %}
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Concept Key</label>
+                    <input type="text" class="form-control" name="concept_key" value="{{ item.concept_key if item else '' }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Synonyms <small class="text-muted">(JSON array de strings)</small></label>
+                    <textarea class="form-control font-monospace" name="synonyms" rows="4">{{ item.synonyms | tojson if item and item.synonyms else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== ErrorTipContent ===== #}
+            {% elif model == 'ErrorTipContent' or (not item and 'error_tip' in action) %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Categoria</label>
+                    <input type="text" class="form-control" name="category" value="{{ item.category if item else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tipo de error</label>
+                    <input type="text" class="form-control" name="error_type" value="{{ item.error_type if item else '' }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Tips <small class="text-muted">(JSON array)</small></label>
+                    <textarea class="form-control font-monospace" name="tips" rows="6">{{ item.tips | tojson if item and item.tips else '' }}</textarea>
+                </div>
+            </div>
+
+            {# ===== AchievementMilestone ===== #}
+            {% elif model == 'AchievementMilestone' or (not item and 'milestone' in action) %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" name="name" value="{{ item.name if item else '' }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tipo</label>
+                    <input type="text" class="form-control" name="milestone_type" value="{{ item.milestone_type if item else '' }}" required placeholder="ej: streak">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Umbral (puntos)</label>
+                    <input type="number" class="form-control" name="threshold" value="{{ item.threshold if item else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Icono</label>
+                    <input type="text" class="form-control" name="icon" value="{{ item.icon if item and item.icon else '' }}" placeholder="ej: fa-fire">
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="is_active_milestone"
+                               {% if not item or item.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active_milestone">Activo</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Descripcion</label>
+                    <textarea class="form-control" name="description" rows="3">{{ item.description if item and item.description else '' }}</textarea>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+                <a href="{{ request.referrer or url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "admin/base.html" %}
+{% block title %}Resultados - Admin{% endblock %}
+
+{% block admin_content %}
+<h4 class="fw-bold mb-4"><i class="fas fa-chart-bar"></i> Resultados de Estudiantes</h4>
+
+<!-- KPIs -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-primary">{{ "%.1f"|format(quiz_avg) }}</h4>
+            <small>Promedio quizzes</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ quiz_count }}</h4>
+            <small>Total quizzes</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ writing_count }}</h4>
+            <small>Total escritos</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-kpi">
+            <h4 class="text-info">{{ study_count }}</h4>
+            <small>Total ejercicios estudio</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Quizzes recientes -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header fw-bold"><i class="fas fa-question-circle"></i> Quizzes Recientes</div>
+            <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Usuario</th><th>Tema</th><th>Score</th></tr></thead>
+                    <tbody>
+                        {% for q in recent_quizzes %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('admin.user_detail', id=q.user_id) }}">
+                                    {{ q.user.username if q.user else 'N/A' }}
+                                </a>
+                            </td>
+                            <td>{{ q.unit_id or '-' }}</td>
+                            <td><strong>{{ q.score }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Escritos recientes -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header fw-bold"><i class="fas fa-keyboard"></i> Escritos Recientes</div>
+            <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Usuario</th><th>Tema</th><th>Score</th></tr></thead>
+                    <tbody>
+                        {% for w in recent_writings %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('admin.user_detail', id=w.user_id) }}">
+                                    {{ w.user.username if w.user else 'N/A' }}
+                                </a>
+                            </td>
+                            <td>{{ w.topic or w.unit_id or '-' }}</td>
+                            <td><strong>{{ w.score or '-' }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estudio reciente -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header fw-bold"><i class="fas fa-graduation-cap"></i> Estudio Reciente</div>
+            <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Usuario</th><th>Tema</th><th>OK</th></tr></thead>
+                    <tbody>
+                        {% for s in recent_study %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('admin.user_detail', id=s.user_id) }}">
+                                    {{ s.user.username if s.user else 'N/A' }}
+                                </a>
+                            </td>
+                            <td>{{ s.topic_id or '-' }}</td>
+                            <td>
+                                {% if s.is_correct %}
+                                    <span class="badge bg-success">Si</span>
+                                {% else %}
+                                    <span class="badge bg-danger">No</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

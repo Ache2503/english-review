@@ -16,14 +16,14 @@ class Config:
     """
     # Clave secreta para proteger formularios y sesiones contra CSRF.
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-change-in-production'
-    
-    # --- INICIO DEL PARCHE PARA RENDER ---
+
+    # Resolver la URL de base de datos desde variables de entorno.
     db_url = os.environ.get('DATABASE_URL')
-    if db_url and db_url.startswith("postgres://"):
-        db_url = db_url.replace("postgres://", "postgresql://", 1)
-        
-    SQLALCHEMY_DATABASE_URI = db_url or 'postgresql:///english_learning'
-    # --- FIN DEL PARCHE ---
+    if db_url:
+        db_url = db_url.strip()
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = db_url or os.environ.get('SQLALCHEMY_DATABASE_URI') or 'postgresql:///english_learning'
     
     # Desactiva el sistema de eventos de Flask-SQLAlchemy
     SQLALCHEMY_TRACK_MODIFICATIONS = False

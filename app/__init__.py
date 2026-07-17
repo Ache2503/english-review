@@ -1,3 +1,4 @@
+import os
 import re
 from flask import Flask
 from markupsafe import Markup
@@ -29,16 +30,23 @@ cache = Cache(config={
 def create_app(config_name='development'):
     """Factory function para crear la aplicación Flask"""
     app = Flask(__name__)
-    
+
     # Cargar variables de entorno PRIMERO
-    load_dotenv(override=True)
-    
+    load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'), override=True)
+
     # Cargar configuración
     app.config.from_object(config[config_name])
-    
+
+    # Sobrescribir la URI de la base de datos con la variable de entorno si existe.
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        db_url = db_url.strip()
+        if db_url.startswith('postgres://'):
+            db_url = db_url.replace('postgres://', 'postgresql://', 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+
     # Cargar configuraciones adicionales desde variables de entorno
     # para Flask-Mail
-    import os
     app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
     app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
@@ -130,9 +138,11 @@ def create_app(config_name='development'):
     app.register_blueprint(feedback_bp)
     app.register_blueprint(bookmarks_bp)
     from app.routes.legal import legal_bp
-    app.register_blueprint(legal_bp)
     from app.routes.profile import profile_bp
+    from app.routes.admin import admin_bp
+    app.register_blueprint(legal_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(admin_bp)
     
     # Error handlers
     @app.errorhandler(404)

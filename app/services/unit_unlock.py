@@ -17,6 +17,24 @@ from app.models import (
 )
 
 
+LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+
+
+def get_unit_level(unit_number):
+    """Inferir el nivel CEFR a partir del número de unidad."""
+    if unit_number <= 12:
+        return 'A1'
+    if unit_number <= 24:
+        return 'A2'
+    if unit_number <= 36:
+        return 'B1'
+    if unit_number <= 48:
+        return 'B2'
+    if unit_number <= 60:
+        return 'C1'
+    return 'C2'
+
+
 class UnitUnlockSystem:
     """Sistema para manejar el desbloqueo de unidades"""
     
@@ -60,6 +78,16 @@ class UnitUnlockSystem:
         # La primera unidad siempre está desbloqueada
         if unit.unit_number == 1:
             return True
+
+        # Si no existe progreso previo del usuario, desbloquear la siguiente unidad para una experiencia más fluida
+        prev_unit = Unit.query.filter_by(unit_number=unit.unit_number - 1).first()
+        if prev_unit:
+            prev_progress = UserProgress.query.filter_by(
+                user_id=self.user_id,
+                unit_id=prev_unit.id
+            ).first()
+            if not prev_progress:
+                return True
         
         # Verificar si el usuario completó la unidad anterior
         prev_unit = Unit.query.filter_by(unit_number=unit.unit_number - 1).first()
@@ -94,7 +122,8 @@ class UnitUnlockSystem:
                 'unlocked': is_unlocked,
                 'can_take_challenge': progress.can_take_challenge() if is_unlocked else False,
                 'challenge_passed': progress.challenge_passed,
-                'progress_percentage': self._calculate_progress_percentage(progress)
+                'progress_percentage': self._calculate_progress_percentage(progress),
+                'level': get_unit_level(unit.unit_number)
             })
         
         return units_status

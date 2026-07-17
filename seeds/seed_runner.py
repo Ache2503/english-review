@@ -20,9 +20,13 @@ import argparse
 import importlib.util
 import traceback
 from datetime import datetime
+from pathlib import Path
 
 # Agregar el directorio raíz al path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = Path(__file__).resolve().parent.parent
+SEEDS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(0, str(SEEDS_DIR))
 
 # ============================================================================
 # CONFIGURACIÓN DE SEEDS
@@ -239,24 +243,73 @@ def check_seed_status(app, seed_config):
 
 
 def run_seed_file(seed_file, dry_run=False):
-    """Ejecutar un archivo de seed"""
-    if not os.path.exists(seed_file):
+    """Ejecutar un archivo de seed y reportar errores sin detener el resto."""
+    seed_path = Path(seed_file)
+    if not seed_path.is_absolute():
+        seed_path = SEEDS_DIR / seed_path
+    seed_path = seed_path.resolve()
+    if not seed_path.exists():
         return False, f"Archivo no encontrado: {seed_file}"
-    
+
     if dry_run:
         return True, "Simulación - no ejecutado"
-    
+
     try:
-        # Cargar y ejecutar el módulo
-        spec = importlib.util.spec_from_file_location("seed_module", seed_file)
+        spec = importlib.util.spec_from_file_location("seed_module", seed_path)
+        if spec is None or spec.loader is None:
+            return False, f"No se pudo cargar el módulo desde {seed_file}"
+
         module = importlib.util.module_from_spec(spec)
-        
-        # Redirigir stdout temporalmente para capturar output
-        old_stdout = sys.stdout
-        sys.stdout = sys.stdout  # Mantener stdout normal
-        
+        sys.modules[spec.name] = module
         spec.loader.exec_module(module)
-        
+
+        if hasattr(module, 'main') and callable(module.main):
+            module.main()
+        elif hasattr(module, 'seed_database') and callable(module.seed_database):
+            module.seed_database(clean=False)
+        elif hasattr(module, 'seed_units') and callable(module.seed_units):
+            module.seed_units()
+        elif hasattr(module, 'add_badges') and callable(module.add_badges):
+            module.add_badges()
+        elif hasattr(module, 'add_readings') and callable(module.add_readings):
+            module.add_readings()
+        elif hasattr(module, 'add_sentence_exercises') and callable(module.add_sentence_exercises):
+            module.add_sentence_exercises()
+        elif hasattr(module, 'seed_vocabulary') and callable(module.seed_vocabulary):
+            module.seed_vocabulary()
+        elif hasattr(module, 'seed_quizzes') and callable(module.seed_quizzes):
+            module.seed_quizzes()
+        elif hasattr(module, 'seed_motivational_messages') and callable(module.seed_motivational_messages):
+            module.seed_motivational_messages()
+        elif hasattr(module, 'seed_unit_explanations') and callable(module.seed_unit_explanations):
+            module.seed_unit_explanations()
+        elif hasattr(module, 'seed_phrasal_verbs') and callable(module.seed_phrasal_verbs):
+            module.seed_phrasal_verbs()
+        elif hasattr(module, 'seed_idioms') and callable(module.seed_idioms):
+            module.seed_idioms()
+        elif hasattr(module, 'seed_conversations') and callable(module.seed_conversations):
+            module.seed_conversations()
+        elif hasattr(module, 'seed_additional_readings') and callable(module.seed_additional_readings):
+            module.seed_additional_readings()
+        elif hasattr(module, 'seed_study_content') and callable(module.seed_study_content):
+            module.seed_study_content()
+        elif hasattr(module, 'seed_grammar_topics') and callable(module.seed_grammar_topics):
+            module.seed_grammar_topics()
+        elif hasattr(module, 'seed_writing_content') and callable(module.seed_writing_content):
+            module.seed_writing_content()
+        elif hasattr(module, 'seed_sentence_patterns') and callable(module.seed_sentence_patterns):
+            module.seed_sentence_patterns()
+        elif hasattr(module, 'seed_error_patterns') and callable(module.seed_error_patterns):
+            module.seed_error_patterns()
+        elif hasattr(module, 'seed_tip_contents') and callable(module.seed_tip_contents):
+            module.seed_tip_contents()
+        elif hasattr(module, 'seed_achievement_milestones') and callable(module.seed_achievement_milestones):
+            module.seed_achievement_milestones()
+        elif hasattr(module, 'seed_database_extended') and callable(module.seed_database_extended):
+            module.seed_database_extended()
+        else:
+            return False, f"No se encontró una función ejecutable para {seed_file}"
+
         return True, "Ejecutado correctamente"
     except Exception as e:
         return False, f"Error: {str(e)}\n{traceback.format_exc()}"
@@ -286,7 +339,7 @@ def print_status(app):
 
 
 def run_all_seeds(app, dry_run=False, only=None, skip=None):
-    """Ejecutar todos los seeds en orden"""
+    """Ejecutar todos los seeds en orden con manejo de errores y sin reincluir datos ya existentes."""
     print("\n" + "="*80)
     print("🌱 SEED RUNNER - English Learning Platform")
     print("="*80)
@@ -306,11 +359,16 @@ def run_all_seeds(app, dry_run=False, only=None, skip=None):
         if skip and seed['name'] == skip:
             skipped.append(f"{seed['name']} (saltado)")
             continue
-        if not os.path.exists(seed['file']):
+
+        seed_path = Path(seed['file'])
+        if not seed_path.is_absolute():
+            seed_path = SEEDS_DIR / seed_path
+        seed_path = seed_path.resolve()
+        if not seed_path.exists():
             skipped.append(f"{seed['name']} (archivo no existe)")
             continue
-        
-        seeds_to_run.append(seed)
+
+        seeds_to_run.append((seed, seed_path))
     
     if skipped:
         print(f"\n⏭️  Seeds saltados: {', '.join(skipped)}")
@@ -321,7 +379,7 @@ def run_all_seeds(app, dry_run=False, only=None, skip=None):
     executed = set()
     results = []
     
-    for seed in seeds_to_run:
+    for seed, seed_path in seeds_to_run:
         print(f"\n{'─'*60}")
         print(f"▶️  {seed['name'].upper()}")
         print(f"   📄 Archivo: {seed['file']}")
@@ -349,16 +407,15 @@ def run_all_seeds(app, dry_run=False, only=None, skip=None):
         status, count = check_seed_status(app, seed)
         if status == 'seeded' and count > 0:
             print(f"   ℹ️  Ya tiene {count} registros")
-            confirm = input("   ¿Ejecutar de nuevo? (s/N): ").strip().lower()
-            if confirm != 's':
-                print(f"   ⏭️  Saltado")
+            if not only and not dry_run:
+                print(f"   ⏭️  Se omite la ejecución para evitar duplicados")
                 executed.add(seed['name'])
                 results.append((seed['name'], True, f"Saltado (ya tiene {count} registros)"))
                 continue
         
         # Ejecutar
         print(f"   🔄 Ejecutando...")
-        success, message = run_seed_file(seed['file'], dry_run)
+        success, message = run_seed_file(str(seed_path), dry_run)
         
         if success:
             print(f"   ✅ {message}")

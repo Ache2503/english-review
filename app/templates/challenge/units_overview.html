@@ -39,17 +39,14 @@
     
     <div class="accordion" id="unitsAccordion">
         {% for level in levels %}
-        
-        {% set ns = namespace(completed=0, unlocked=0, total=0) %}
-        {% for item in units_status %}
-            {% if level in item.unit.title %}
-                {% set ns.total = ns.total + 1 %}
-                {% if item.challenge_passed %}
-                    {% set ns.completed = ns.completed + 1 %}
-                {% endif %}
-                {% if item.unlocked %}
-                    {% set ns.unlocked = ns.unlocked + 1 %}
-                {% endif %}
+        {% set level_items = grouped_units.get(level, []) %}
+        {% set ns = namespace(completed=0, unlocked=0, total=level_items|length) %}
+        {% for item in level_items %}
+            {% if item.challenge_passed %}
+                {% set ns.completed = ns.completed + 1 %}
+            {% endif %}
+            {% if item.unlocked %}
+                {% set ns.unlocked = ns.unlocked + 1 %}
             {% endif %}
         {% endfor %}
         
@@ -85,8 +82,7 @@
                  data-bs-parent="#unitsAccordion">
                 <div class="accordion-body p-0">
                     <div class="list-group list-group-flush">
-                        {% for item in units_status %}
-                            {% if level in item.unit.title %}
+                        {% for item in level_items %}
                             <div class="list-group-item list-group-item-action py-3 
                                 {% if item.challenge_passed %}list-group-item-success{% endif %}
                                 {% if not item.unlocked %}bg-light{% endif %}">
@@ -182,7 +178,6 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
