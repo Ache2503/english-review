@@ -11,10 +11,10 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 GAME_ROUTES = {
     'word_scramble': 'games.word_scramble',
     'hangman': 'games.hangman',
-    'memory': 'games.memory',
+    'memory': 'games.memory_game',
     'fill_gaps': 'games.fill_gaps',
     'quick_quiz': 'games.quick_quiz',
-    'reading': 'games.reading',
+    'reading': 'games.reading_list',
     'speed_typing': 'games.speed_typing'
 }
 

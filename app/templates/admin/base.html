@@ -3,11 +3,12 @@
 
 {% block extra_css %}
 <style>
-    .admin-layout { display: flex; min-height: 80vh; }
+    .admin-layout { display: flex; min-height: 80vh; position: relative; }
     .admin-sidebar {
         width: 240px; min-width: 240px; background: var(--bs-body-bg);
         border-right: 1px solid var(--bs-border-color); padding: 1rem 0;
         position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
+        transition: transform 0.25s ease;
     }
     .admin-sidebar .nav-link {
         padding: 0.5rem 1.25rem; color: var(--bs-body-color); font-size: 0.9rem;
@@ -29,24 +30,83 @@
     .admin-kpi small { color: var(--bs-secondary-color); }
     .admin-table th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--bs-secondary-color); }
     .btn-sm { font-size: 0.8rem; }
+    .admin-sidebar-toggle {
+        display: none; position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 1050;
+        width: 48px; height: 48px; border-radius: 50%; border: none;
+        background: var(--bs-primary); color: #fff; font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25); cursor: pointer;
+    }
+    .admin-sidebar-overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+        z-index: 1040;
+    }
+    @media (max-width: 991.98px) {
+        .admin-sidebar {
+            position: fixed; top: 56px; left: 0; z-index: 1045;
+            height: calc(100vh - 56px); transform: translateX(-100%);
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+        .admin-sidebar.show { transform: translateX(0); }
+        .admin-sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+        .admin-sidebar-overlay.show { display: block; }
+        .admin-content { padding: 1rem; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="admin-layout">
-    <nav class="admin-sidebar">
+    <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="toggleAdminSidebar()"></div>
+    <button class="admin-sidebar-toggle" id="sidebarToggle" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+    <nav class="admin-sidebar" id="adminSidebar">
         <div class="nav-section">Panel</div>
         <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
            href="{{ url_for('admin.dashboard') }}">
             <i class="fas fa-chart-pie"></i> Dashboard
         </a>
 
-        <div class="nav-section">Contenido</div>
+        <div class="nav-section">Contenido Base</div>
+        <a class="nav-link {% if 'unit' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.units_list') }}">
+            <i class="fas fa-layer-group"></i> Unidades
+        </a>
+        <a class="nav-link {% if 'topic' in request.endpoint|default('') and 'study' not in request.endpoint|default('') and 'grammar' not in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.topics_list') }}">
+            <i class="fas fa-list-ul"></i> Temas
+        </a>
+        <a class="nav-link {% if 'vocab' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.vocab_categories_list') }}">
+            <i class="fas fa-spell-check"></i> Vocabulario
+        </a>
+        <a class="nav-link {% if 'writing_practice' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.writing_practices_list') }}">
+            <i class="fas fa-pen"></i> Prac. Escritura
+        </a>
+        <a class="nav-link {% if 'unit_reading' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.unit_readings_list') }}">
+            <i class="fas fa-book-reader"></i> Lecturas (Unidad)
+        </a>
+        <a class="nav-link {% if 'quiz' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.quizzes_list') }}">
+            <i class="fas fa-question-circle"></i> Quizzes
+        </a>
+        <a class="nav-link {% if 'grammar_rule' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.grammar_rules_list') }}">
+            <i class="fas fa-book-open"></i> Reglas Gramaticales
+        </a>
+        <a class="nav-link {% if 'challenge' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.challenges_list') }}">
+            <i class="fas fa-trophy"></i> Desafios
+        </a>
+
+        <div class="nav-section">Contenido Estudio</div>
         <a class="nav-link {% if 'study' in request.endpoint|default('') %}active{% endif %}"
            href="{{ url_for('admin.study_list') }}">
             <i class="fas fa-graduation-cap"></i> Temas de Estudio
         </a>
-        <a class="nav-link {% if 'grammar' in request.endpoint|default('') %}active{% endif %}"
+        <a class="nav-link {% if 'grammar' in request.endpoint|default('') and 'grammar_rule' not in request.endpoint|default('') %}active{% endif %}"
            href="{{ url_for('admin.grammar_list') }}">
             <i class="fas fa-book"></i> Gramatica
         </a>
@@ -75,10 +135,42 @@
             <i class="fas fa-trophy"></i> Hitos
         </a>
 
+        <div class="nav-section">Mini Games</div>
+        <a class="nav-link {% if 'game' in request.endpoint|default('') and 'content' not in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.games_list') }}">
+            <i class="fas fa-gamepad"></i> Config Juegos
+        </a>
+        <a class="nav-link {% if 'game_content' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.game_content_list') }}">
+            <i class="fas fa-puzzle-piece"></i> Contenido Juegos
+        </a>
+        <a class="nav-link {% if 'quick_quiz' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.quick_quiz_list') }}">
+            <i class="fas fa-bolt"></i> Quick Quiz
+        </a>
+        <a class="nav-link {% if 'reading' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.readings_list') }}">
+            <i class="fas fa-book-reader"></i> Reading
+        </a>
+        <a class="nav-link {% if 'speed_typing' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.speed_typing_list') }}">
+            <i class="fas fa-keyboard"></i> Speed Typing
+        </a>
+
+        <div class="nav-section">Escenarios</div>
+        <a class="nav-link {% if 'scenario' in request.endpoint|default('') %}active{% endif %}"
+           href="{{ url_for('admin.scenarios_list') }}">
+            <i class="fas fa-theater-masks"></i> Escenarios
+        </a>
+
         <div class="nav-section">Usuarios</div>
-        <a class="nav-link {% if 'user' in request.endpoint|default('') %}active{% endif %}"
+        <a class="nav-link {% if request.endpoint == 'admin.users_list' %}active{% endif %}"
            href="{{ url_for('admin.users_list') }}">
             <i class="fas fa-users"></i> Gestionar Usuarios
+        </a>
+        <a class="nav-link {% if request.endpoint == 'admin.user_create' %}active{% endif %}"
+           href="{{ url_for('admin.user_create') }}">
+            <i class="fas fa-user-plus"></i> Crear Usuario
         </a>
 
         <div class="nav-section">Resultados</div>
@@ -91,4 +183,18 @@
         {% block admin_content %}{% endblock %}
     </div>
 </div>
+<script>
+function toggleAdminSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('show');
+    overlay.classList.toggle('show');
+}
+// Close sidebar when clicking a nav link on mobile
+document.querySelectorAll('.admin-sidebar .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth < 992) toggleAdminSidebar();
+    });
+});
+</script>
 {% endblock %}

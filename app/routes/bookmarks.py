@@ -2,14 +2,12 @@
 Rutas para Bookmarks/Favoritos
 =============================
 """
-
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app.models import Bookmark, UserActivity
 from app.extensions import db
 
 bookmarks_bp = Blueprint('bookmarks', __name__, url_prefix='/bookmarks')
-
 
 @bookmarks_bp.route('/')
 @login_required

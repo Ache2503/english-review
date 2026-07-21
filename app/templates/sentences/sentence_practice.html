@@ -116,7 +116,7 @@
     try {
       const res = await fetch('{{ url_for('practice.api_analyze') }}', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content },
         body: JSON.stringify({ text, unit_number: unitNumber })
       });
       const data = await res.json();

@@ -162,6 +162,14 @@
                     <h5 class="card-title">Quick Quiz</h5>
                     <p class="card-text text-muted small">Preguntas rápidas sobre vocabulario y gramática</p>
                     
+                    {% set qs = user_stats.get('quick_quiz', {}) %}
+                    {% if qs and qs.get('games_played', 0) > 0 %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Mejor puntuación</small>
+                        <strong class="text-info">{{ qs.best_score }}</strong>
+                    </div>
+                    {% endif %}
+                    
                     <div class="dropdown">
                         <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             Jugar
@@ -176,7 +184,7 @@
                 </div>
                 <div class="card-footer bg-transparent text-center">
                     <small class="text-muted">
-                        <i class="fas fa-question-circle"></i> 22 preguntas
+                        <i class="fas fa-play me-1"></i>{{ qs.get('games_played', 0) }} partidas
                     </small>
                 </div>
             </div>
@@ -196,7 +204,7 @@
                 </div>
                 <div class="card-footer bg-transparent text-center">
                     <small class="text-muted">
-                        <i class="fas fa-book"></i> 4 lecturas
+                        <i class="fas fa-play me-1"></i>{{ user_stats.get('reading', {}).get('games_played', 0) }} partidas
                     </small>
                 </div>
             </div>
@@ -209,6 +217,14 @@
                     <div class="display-4 text-secondary mb-3">⚡</div>
                     <h5 class="card-title">Speed Typing</h5>
                     <p class="card-text text-muted small">Escribe frases rápidamente y con precisión</p>
+                    
+                    {% set st = user_stats.get('speed_typing', {}) %}
+                    {% if st and st.get('games_played', 0) > 0 %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Mejor puntuación</small>
+                        <strong class="text-secondary">{{ st.best_score }}</strong>
+                    </div>
+                    {% endif %}
                     
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -224,7 +240,7 @@
                 </div>
                 <div class="card-footer bg-transparent text-center">
                     <small class="text-muted">
-                        <i class="fas fa-keyboard"></i> 23 frases
+                        <i class="fas fa-play me-1"></i>{{ st.get('games_played', 0) }} partidas
                     </small>
                 </div>
             </div>
@@ -239,29 +255,35 @@
                     <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Tus Estadísticas</h5>
                 </div>
                 <div class="card-body">
+                    {% set total_plays = [] %}
+                    {% set all_best = [] %}
+                    {% set all_avg = [] %}
+                    {% for gs in user_stats.values() %}
+                        {% if gs.games_played is defined %}
+                            {% if total_plays.append(gs.games_played) %}{% endif %}
+                        {% endif %}
+                        {% if gs.best_score is defined and gs.best_score > 0 %}
+                            {% if all_best.append(gs.best_score) %}{% endif %}
+                        {% endif %}
+                        {% if gs.avg_score is defined and gs.avg_score > 0 %}
+                            {% if all_avg.append(gs.avg_score) %}{% endif %}
+                        {% endif %}
+                    {% endfor %}
                     <div class="row text-center">
                         <div class="col-md-3 mb-3 mb-md-0">
-                            <div class="display-6 text-primary">
-                                {{ user_stats.values()|selectattr('games_played')|map(attribute='games_played')|sum }}
-                            </div>
+                            <div class="display-6 text-primary">{{ total_plays|sum }}</div>
                             <small class="text-muted">Partidas jugadas</small>
                         </div>
                         <div class="col-md-3 mb-3 mb-md-0">
-                            <div class="display-6 text-success">
-                                {{ user_stats.values()|selectattr('best_score')|map(attribute='best_score')|max|default(0) }}
-                            </div>
+                            <div class="display-6 text-success">{{ all_best|max|default(0) }}</div>
                             <small class="text-muted">Mejor puntuación</small>
                         </div>
                         <div class="col-md-3 mb-3 mb-md-0">
-                            <div class="display-6 text-warning">
-                                {{ "%.0f"|format(user_stats.values()|selectattr('avg_score')|map(attribute='avg_score')|list|sum / (user_stats.values()|selectattr('avg_score')|list|length or 1)) }}
-                            </div>
+                            <div class="display-6 text-warning">{{ "%.0f"|format((all_avg|sum / (all_avg|length or 1))) }}</div>
                             <small class="text-muted">Promedio</small>
                         </div>
                         <div class="col-md-3">
-                            <div class="display-6 text-info">
-                                {{ games|length }}
-                            </div>
+                            <div class="display-6 text-info">{{ games|length }}</div>
                             <small class="text-muted">Juegos disponibles</small>
                         </div>
                     </div>

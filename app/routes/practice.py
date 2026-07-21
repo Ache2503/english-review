@@ -61,7 +61,7 @@ def writing_practice(practice_id):
         practice_id=practice_id
     ).order_by(UserWritingSubmission.submitted_at.desc()).first()
     
-    return render_template('writing_exercise.html',
+    return render_template('writing/writing_exercise.html',
                            practice=practice,
                            previous_submission=previous_submission)
 
@@ -133,7 +133,7 @@ def sentence_practice(unit_id):
     extra = UnitExtra.query.filter_by(unit_id=unit_id).first()
     activities = extra.data if extra and extra.data else {}
 
-    return render_template('sentence_practice.html', unit=unit, submissions=submissions, activities=activities)
+    return render_template('sentences/sentence_practice.html', unit=unit, submissions=submissions, activities=activities)
 
 
 @practice_bp.route('/sentence-exercises/<int:unit_id>')
@@ -169,7 +169,7 @@ def sentence_exercises(unit_id):
     # Crear diccionario de respuestas previas
     previous_answers = {sub.exercise_id: sub for sub in user_submissions}
     
-    return render_template('sentence_exercises.html',
+    return render_template('sentences/sentence_exercises.html',
                            unit=unit,
                            exercises_by_grammar=exercises_by_grammar,
                            grammar_rules=grammar_rules,

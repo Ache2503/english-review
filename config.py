@@ -56,6 +56,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Configuración para el entorno de pruebas (testing)."""
     TESTING = True
+    WTF_CSRF_ENABLED = False
     # Usa una base de datos en memoria para que las pruebas sean rápidas y aisladas.
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 

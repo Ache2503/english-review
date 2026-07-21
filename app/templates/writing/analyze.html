@@ -159,7 +159,7 @@ async function quickAnalyze(text) {
     try {
         const response = await fetch('{{ url_for("writing.quick_check") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content },
             body: JSON.stringify({ text: text })
         });
         
@@ -227,7 +227,7 @@ async function analyzeText() {
     try {
         const response = await fetch('{{ url_for("writing.analyze_text") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content },
             body: JSON.stringify({ 
                 text: text, 
                 unit_number: unitNumber || null,

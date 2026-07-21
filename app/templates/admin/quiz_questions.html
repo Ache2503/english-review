@@ -1,0 +1,65 @@
+{% extends "admin/base.html" %}
+{% block title %}Preguntas: {{ quiz.title }} - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0"><i class="fas fa-question-circle"></i> Preguntas del Quiz</h4>
+        <small class="text-muted">{{ quiz.title }} | Unidad {{ quiz.unit_id }}</small>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.quiz_question_create', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Nueva Pregunta
+        </a>
+        <a href="{{ url_for('admin.quizzes_list') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Pregunta</th>
+                        <th>Opciones</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr>
+                        <td class="text-muted">{{ q.order }}</td>
+                        <td>{{ q.prompt }}</td>
+                        <td>
+                            {% for opt in q.options.all() %}
+                                <span class="badge {% if opt.is_correct %}bg-success{% else %}bg-secondary{% endif %} me-1">
+                                    {{ opt.text }}
+                                </span>
+                            {% endfor %}
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a href="{{ url_for('admin.quiz_question_edit', quiz_id=quiz.id, qid=q.id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('admin.quiz_question_delete', quiz_id=quiz.id, qid=q.id) }}" class="d-inline"
+                                  onsubmit="return confirm('Eliminar esta pregunta?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">No hay preguntas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<small class="text-muted mt-2 d-block">{{ questions.total }} pregunta(s)</small>
+{% endblock %}

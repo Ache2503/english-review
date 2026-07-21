@@ -2,6 +2,45 @@ from app.extensions import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import enum
+
+
+# ==========================================
+# ENUM Types for validation
+# ==========================================
+class DifficultyLevel(enum.Enum):
+    A1 = 'A1'
+    A2 = 'A2'
+    B1 = 'B1'
+    B2 = 'B2'
+    C1 = 'C1'
+    C2 = 'C2'
+
+
+class SubscriptionType(enum.Enum):
+    free = 'free'
+    premium_all_access = 'premium_all_access'
+    kids_pass = 'kids_pass'
+
+
+class QuestionType(enum.Enum):
+    multiple_choice = 'multiple_choice'
+    fill_blank = 'fill_blank'
+    true_false = 'true_false'
+    open_ended = 'open_ended'
+
+
+class FeedbackStatus(enum.Enum):
+    new = 'new'
+    reviewed = 'reviewed'
+    resolved = 'resolved'
+    dismissed = 'dismissed'
+
+
+class GameDifficulty(enum.Enum):
+    easy = 'easy'
+    medium = 'medium'
+    hard = 'hard'
 
 # ==========================================
 # Tabla de asociación para User-Badge (muchos a muchos).
@@ -64,6 +103,46 @@ class User(UserMixin, db.Model):
     
     # NUEVA RELACIÓN: Escenarios desbloqueados individualmente
     unlocked_scenarios = db.relationship('ThematicScenario', secondary=user_unlocked_scenarios, backref='unlocked_by_users')
+    
+    # Cascading deletes para tablas de progreso/usuario
+    writing_submissions = db.relationship('UserWritingSubmission', back_populates='user', cascade='all, delete-orphan')
+    reading_submissions = db.relationship('UserReadingSubmission', back_populates='user', cascade='all, delete-orphan')
+    quiz_submissions = db.relationship('UserQuizSubmission', back_populates='user', cascade='all, delete-orphan')
+    challenge_attempts = db.relationship('UserChallengeAttempt', back_populates='user', cascade='all, delete-orphan')
+    flashcard_reviews = db.relationship('UserFlashcardReview', back_populates='user', cascade='all, delete-orphan')
+    flashcard_srs = db.relationship('UserFlashcardSRS', back_populates='user', cascade='all, delete-orphan')
+    sentence_practices = db.relationship('UserSentencePractice', back_populates='user', cascade='all, delete-orphan')
+    sentence_exercises = db.relationship('UserSentenceExercise', back_populates='user', cascade='all, delete-orphan')
+    game_scores = db.relationship('UserGameScore', back_populates='user', cascade='all, delete-orphan')
+    quiz_scores = db.relationship('UserQuizScore', back_populates='user', cascade='all, delete-orphan')
+    reading_scores = db.relationship('UserReadingScore', back_populates='user', cascade='all, delete-orphan')
+    typing_scores = db.relationship('UserTypingScore', back_populates='user', cascade='all, delete-orphan')
+    drill_results = db.relationship('UserDrillResult', back_populates='user', cascade='all, delete-orphan')
+    daily_challenges = db.relationship('UserDailyChallenge', back_populates='user', cascade='all, delete-orphan')
+    exam_attempts = db.relationship('UserExamAttempt', back_populates='user', cascade='all, delete-orphan')
+    error_logs = db.relationship('ErrorLog', back_populates='user', cascade='all, delete-orphan')
+    error_patterns = db.relationship('UserErrorPattern', back_populates='user', cascade='all, delete-orphan')
+    points = db.relationship('UserPoints', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    points_transactions = db.relationship('PointsTransaction', back_populates='user', cascade='all, delete-orphan')
+    idiom_progress = db.relationship('UserIdiomProgress', back_populates='user', cascade='all, delete-orphan')
+    phrasal_verb_progress = db.relationship('UserPhrasalVerbProgress', back_populates='user', cascade='all, delete-orphan')
+    vocabulary_progress = db.relationship('UserVocabularyProgress', back_populates='user', cascade='all, delete-orphan')
+    grammar_progress = db.relationship('UserGrammarProgress', back_populates='user', cascade='all, delete-orphan')
+    review_logs = db.relationship('ReviewSessionLog', back_populates='user', cascade='all, delete-orphan')
+    writing_logs = db.relationship('WritingAnalysisLog', back_populates='user', cascade='all, delete-orphan')
+    study_results = db.relationship('StudyExerciseResult', back_populates='user', cascade='all, delete-orphan')
+    study_progress_records = db.relationship('StudyProgress', back_populates='user', cascade='all, delete-orphan')
+    scenario_progress = db.relationship('UserScenarioProgress', backref='user', cascade='all, delete-orphan')
+    simulation_attempts = db.relationship('SimulationAttempt', back_populates='user', cascade='all, delete-orphan')
+    certificates = db.relationship('Certificate', back_populates='user', cascade='all, delete-orphan')
+    feedback = db.relationship('UserFeedback', back_populates='user', cascade='all, delete-orphan')
+    bookmarks = db.relationship('Bookmark', back_populates='user', cascade='all, delete-orphan')
+    activities = db.relationship('UserActivity', back_populates='user', cascade='all, delete-orphan')
+    user_sentences = db.relationship('UserSentence', back_populates='user', cascade='all, delete-orphan')
+    sentence_likes = db.relationship('SentenceLike', backref='user', cascade='all, delete-orphan')
+    grammar_results = db.relationship('GrammarExerciseResult', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    conversation_practices = db.relationship('ConversationPractice', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    streak = db.relationship('UserStreak', back_populates='user', uselist=False, cascade='all, delete-orphan')
 
     @property
     def age(self):
@@ -128,6 +207,8 @@ class Unit(db.Model):
     overview = db.Column(db.Text)  # Vista general de los temas
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relaciones
     topics = db.relationship('Topic', backref='unit', lazy='dynamic', cascade='all, delete-orphan')
@@ -157,6 +238,8 @@ class Topic(db.Model):
     tips = db.Column(db.JSON)  # Consejos útiles en array
     examples = db.Column(db.JSON)  # Ejemplos ilustrativos en array
     order = db.Column(db.Integer, default=0)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relaciones
     explanations = db.relationship('TopicExplanation', backref='topic', lazy='dynamic', cascade='all, delete-orphan')
@@ -182,6 +265,8 @@ class GrammarRule(db.Model):
     exceptions = db.Column(db.Text)  # Excepciones a la regla
     order = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     def __repr__(self):
         return f'<GrammarRule {self.topic}>'
@@ -196,6 +281,8 @@ class VocabularyCategory(db.Model):
     category_name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     order = db.Column(db.Integer, default=0)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relaciones
     vocabulary_items = db.relationship('VocabularyItem', backref='category', lazy='dynamic', cascade='all, delete-orphan')
@@ -231,6 +318,8 @@ class WritingPractice(db.Model):
     example_text = db.Column(db.Text, nullable=False)
     difficulty = db.Column(db.String(20), default='intermediate')  # beginner, intermediate, advanced
     order = db.Column(db.Integer, default=0)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relaciones
     user_submissions = db.relationship('UserWritingSubmission', backref='practice', lazy='dynamic', cascade='all, delete-orphan')
@@ -330,7 +419,7 @@ class UserChallengeAttempt(db.Model):
     time_taken = db.Column(db.Integer)  # Segundos
     
     # Relaciones
-    user = db.relationship('User', backref='challenge_attempts')
+    user = db.relationship('User', back_populates='challenge_attempts')
     challenge = db.relationship('UnitChallenge', backref='attempts')
     
     def __repr__(self):
@@ -350,7 +439,7 @@ class UserWritingSubmission(db.Model):
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relaciones
-    user = db.relationship('User', backref='writing_submissions')
+    user = db.relationship('User', back_populates='writing_submissions')
     
     def __repr__(self):
         return f'<UserWritingSubmission {self.id}>'
@@ -367,7 +456,7 @@ class UserSentencePractice(db.Model):
     score = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship('User', backref='sentence_practices')
+    user = db.relationship('User', back_populates='sentence_practices')
 
 
 class SentenceExercise(db.Model):
@@ -416,7 +505,7 @@ class UserSentenceExercise(db.Model):
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relaciones
-    user = db.relationship('User', backref='exercise_submissions')
+    user = db.relationship('User', back_populates='sentence_exercises')
     exercise = db.relationship('SentenceExercise', backref='submissions')
     
     def __repr__(self):
@@ -453,7 +542,7 @@ class UserFlashcardReview(db.Model):
     is_correct = db.Column(db.Boolean, default=False)
     reviewed_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship('User', backref='flashcard_reviews')
+    user = db.relationship('User', back_populates='flashcard_reviews')
     flashcard = db.relationship('Flashcard', backref='reviews')
 
     def __repr__(self):
@@ -487,7 +576,7 @@ class UserFlashcardSRS(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    user = db.relationship('User', backref='flashcard_srs')
+    user = db.relationship('User', back_populates='flashcard_srs')
     flashcard = db.relationship('Flashcard', backref='srs_records')
 
     __table_args__ = (
@@ -531,7 +620,7 @@ class ErrorLog(db.Model):
     rule = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship('User', backref='error_logs')
+    user = db.relationship('User', back_populates='error_logs')
     unit = db.relationship('Unit', backref='error_logs')
 
     def __repr__(self):
@@ -549,7 +638,7 @@ class UserStreak(db.Model):
     last_activity_date = db.Column(db.Date)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    user = db.relationship('User', backref='streak')
+    user = db.relationship('User', back_populates='streak')
 
     def __repr__(self):
         return f'<UserStreak User:{self.user_id} Current:{self.current_streak}>'
@@ -579,6 +668,8 @@ class Quiz(db.Model):
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     unit = db.relationship('Unit', backref='quizzes')
     questions = db.relationship('QuizQuestion', backref='quiz', lazy='dynamic', cascade='all, delete-orphan')
@@ -623,7 +714,7 @@ class UserQuizSubmission(db.Model):
     score = db.Column(db.Float)
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship('User', backref='quiz_submissions')
+    user = db.relationship('User', back_populates='quiz_submissions')
     quiz = db.relationship('Quiz', backref='submissions')
 
     def __repr__(self):
@@ -642,6 +733,8 @@ class Reading(db.Model):
     instructions = db.Column(db.String(500))  # Instrucción para el usuario
     order = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     unit = db.relationship('Unit', backref='readings')
     submissions = db.relationship('UserReadingSubmission', backref='reading', cascade='all, delete-orphan')
@@ -662,7 +755,7 @@ class UserReadingSubmission(db.Model):
     score = db.Column(db.Float)  # Puntuación de 0-100
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='reading_submissions')
+    user = db.relationship('User', back_populates='reading_submissions')
     
     def __repr__(self):
         return f'<UserReadingSubmission {self.id} User:{self.user_id}>'
@@ -774,7 +867,7 @@ class ConversationPractice(db.Model):
     practice_data = db.Column(db.JSON)  # Historial detallado de respuestas
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship('User', backref=db.backref('conversation_practices', lazy='dynamic'))
+    user = db.relationship('User', back_populates='conversation_practices')
 
 
 class AlternativeResponse(db.Model):
@@ -840,7 +933,7 @@ class UserSentence(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relación con usuario
-    user = db.relationship('User', backref=db.backref('sentences', lazy='dynamic'))
+    user = db.relationship('User', back_populates='user_sentences')
     
     __table_args__ = (
         db.Index('idx_sentence_topic_approved', 'grammar_topic', 'is_approved'),
@@ -951,7 +1044,7 @@ class GrammarExerciseResult(db.Model):
     time_spent_seconds = db.Column(db.Integer)  # Tiempo en segundos
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref=db.backref('grammar_results', lazy='dynamic'))
+    user = db.relationship('User', back_populates='grammar_results')
     
     __table_args__ = (
         db.Index('idx_grammar_result_user_topic', 'user_id', 'grammar_topic'),
@@ -995,7 +1088,7 @@ class UserDailyChallenge(db.Model):
     time_taken_seconds = db.Column(db.Integer)
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='daily_challenges_completed')
+    user = db.relationship('User', back_populates='daily_challenges')
     challenge = db.relationship('DailyChallenge', backref='completions')
     
     __table_args__ = (
@@ -1062,7 +1155,7 @@ class UserExamAttempt(db.Model):
     started_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime)
     
-    user = db.relationship('User', backref='exam_attempts')
+    user = db.relationship('User', back_populates='exam_attempts')
     exam = db.relationship('ExamSimulator', backref='attempts')
     
     def __repr__(self):
@@ -1086,7 +1179,7 @@ class UserErrorPattern(db.Model):
     last_occurrence = db.Column(db.DateTime, default=datetime.utcnow)
     suggestions = db.Column(db.JSON)  # Sugerencias de mejora
     
-    user = db.relationship('User', backref='error_patterns')
+    user = db.relationship('User', back_populates='error_patterns')
     
     __table_args__ = (
         db.UniqueConstraint('user_id', 'error_category', 'error_type', name='unique_user_error'),
@@ -1110,6 +1203,8 @@ class MiniGame(db.Model):
     difficulty_levels = db.Column(db.JSON)  # Configuración por nivel
     points_per_level = db.Column(db.JSON)  # Puntos por nivel
     is_active = db.Column(db.Boolean, default=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     def __repr__(self):
         return f'<MiniGame {self.game_type}>'
@@ -1145,7 +1240,7 @@ class UserGameScore(db.Model):
     streak_bonus = db.Column(db.Integer, default=0)
     played_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='game_scores')
+    user = db.relationship('User', back_populates='game_scores')
     
     __table_args__ = (
         db.Index('idx_user_game', 'user_id', 'game_type'),
@@ -1190,7 +1285,7 @@ class UserDrillResult(db.Model):
     answers = db.Column(db.JSON)
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='drill_results')
+    user = db.relationship('User', back_populates='drill_results')
     drill = db.relationship('GrammarDrill', backref='results')
 
 
@@ -1211,7 +1306,7 @@ class UserPoints(db.Model):
     experience = db.Column(db.Integer, default=0)
     last_points_update = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref=db.backref('points', uselist=False))
+    user = db.relationship('User', back_populates='points')
     
     def __repr__(self):
         return f'<UserPoints User:{self.user_id} Total:{self.total_points}>'
@@ -1228,7 +1323,7 @@ class PointsTransaction(db.Model):
     description = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='points_history')
+    user = db.relationship('User', back_populates='points_transactions')
 
 
 # ==========================================
@@ -1302,7 +1397,7 @@ class UserIdiomProgress(db.Model):
     last_reviewed = db.Column(db.DateTime)
     next_review = db.Column(db.DateTime)
     
-    user = db.relationship('User', backref='idiom_progress')
+    user = db.relationship('User', back_populates='idiom_progress')
     idiom = db.relationship('Idiom', backref='user_progress')
     
     __table_args__ = (
@@ -1323,7 +1418,7 @@ class UserPhrasalVerbProgress(db.Model):
     last_reviewed = db.Column(db.DateTime)
     next_review = db.Column(db.DateTime)
     
-    user = db.relationship('User', backref='phrasal_verb_progress')
+    user = db.relationship('User', back_populates='phrasal_verb_progress')
     phrasal_verb = db.relationship('PhrasalVerb', backref='user_progress')
     
     __table_args__ = (
@@ -1349,7 +1444,7 @@ class UserVocabularyProgress(db.Model):
     next_review = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='vocabulary_progress')
+    user = db.relationship('User', back_populates='vocabulary_progress')
     vocabulary = db.relationship('VocabularyItem', backref='user_progress')
     
     __table_args__ = (
@@ -1383,7 +1478,7 @@ class ReviewSessionLog(db.Model):
     started_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime)
     
-    user = db.relationship('User', backref='review_sessions')
+    user = db.relationship('User', back_populates='review_logs')
     
     def __repr__(self):
         return f'<ReviewSessionLog User:{self.user_id} Score:{self.score}>'
@@ -1409,7 +1504,7 @@ class WritingAnalysisLog(db.Model):
     improvements = db.Column(db.JSON)  # Sugerencias de mejora
     analyzed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='writing_analyses')
+    user = db.relationship('User', back_populates='writing_logs')
     unit = db.relationship('Unit', backref='writing_analyses')
     
     def __repr__(self):
@@ -1431,7 +1526,7 @@ class UserGrammarProgress(db.Model):
     next_review = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='grammar_progress')
+    user = db.relationship('User', back_populates='grammar_progress')
     
     __table_args__ = (
         db.UniqueConstraint('user_id', 'grammar_topic', name='unique_user_grammar_topic'),
@@ -1468,6 +1563,8 @@ class QuickQuiz(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     __table_args__ = (
         db.Index('idx_quiz_level_category', 'cefr_level', 'category'),
@@ -1498,7 +1595,7 @@ class UserQuizScore(db.Model):
     
     played_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='quiz_scores')
+    user = db.relationship('User', back_populates='quiz_scores')
     quiz = db.relationship('QuickQuiz', backref='user_scores')
     
     __table_args__ = (
@@ -1524,6 +1621,8 @@ class ReadingComprehension(db.Model):
     
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     questions = db.relationship('ReadingQuestion', backref='reading', cascade='all, delete-orphan')
     
@@ -1570,7 +1669,7 @@ class UserReadingScore(db.Model):
     
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='reading_scores')
+    user = db.relationship('User', back_populates='reading_scores')
     reading = db.relationship('ReadingComprehension', backref='user_scores')
     
     __table_args__ = (
@@ -1603,6 +1702,8 @@ class SpeedTyping(db.Model):
     
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     __table_args__ = (
         db.Index('idx_typing_level', 'cefr_level'),
@@ -1629,7 +1730,7 @@ class UserTypingScore(db.Model):
     
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='typing_scores')
+    user = db.relationship('User', back_populates='typing_scores')
     typing = db.relationship('SpeedTyping', backref='user_scores')
     
     __table_args__ = (
@@ -1655,7 +1756,7 @@ class StudyExerciseResult(db.Model):
     attempts = db.Column(db.Integer, default=1)
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='study_results')
+    user = db.relationship('User', back_populates='study_results')
     
     __table_args__ = (
         db.Index('idx_user_topic_exercise', 'user_id', 'topic_id'),
@@ -1689,7 +1790,7 @@ class StudyProgress(db.Model):
     # Última actualización
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    user = db.relationship('User', backref='study_progress')
+    user = db.relationship('User', back_populates='study_progress_records')
     
     __table_args__ = (
         db.UniqueConstraint('user_id', 'topic_id', name='uq_user_topic_study'),
@@ -1953,7 +2054,7 @@ class SimulationAttempt(db.Model):
     
     answers_log = db.Column(db.JSON)  # Historial de respuestas
     
-    user = db.relationship('User', backref='simulation_attempts')
+    user = db.relationship('User', back_populates='simulation_attempts')
     scenario = db.relationship('ThematicScenario', backref='attempts')
     
     __table_args__ = (
@@ -1992,7 +2093,7 @@ class Certificate(db.Model):
     pdf_url = db.Column(db.String(500))
     is_active = db.Column(db.Boolean, default=True)
     
-    user = db.relationship('User', backref='certificates')
+    user = db.relationship('User', back_populates='certificates')
     scenario = db.relationship('ThematicScenario', backref='certificates')
     
     __table_args__ = (
@@ -2167,7 +2268,7 @@ class UserFeedback(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='feedback')
+    user = db.relationship('User', back_populates='feedback')
     
     __table_args__ = (
         db.Index('idx_feedback_type', 'feedback_type'),
@@ -2195,7 +2296,7 @@ class Bookmark(db.Model):
     # Referencias al contenido
     vocabulary_id = db.Column(db.Integer, db.ForeignKey('vocabulary_items.id'), nullable=True)
     phrase_id = db.Column(db.Integer, db.ForeignKey('scenario_phrases.id'), nullable=True)
-    grammar_id = db.Column(db.ForeignKey('grammar_rules.id'), nullable=True)
+    grammar_id = db.Column(db.Integer, db.ForeignKey('grammar_rules.id'), nullable=True)
     sentence_id = db.Column(db.Integer, db.ForeignKey('user_sentences.id'), nullable=True)
     
     # Contenido guardado (para no depender de foreign keys)
@@ -2208,7 +2309,7 @@ class Bookmark(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='bookmarks')
+    user = db.relationship('User', back_populates='bookmarks')
     vocabulary = db.relationship('VocabularyItem', backref='bookmarks')
     
     __table_args__ = (
@@ -2247,7 +2348,7 @@ class UserActivity(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    user = db.relationship('User', backref='activities')
+    user = db.relationship('User', back_populates='activities')
     
     __table_args__ = (
         db.Index('idx_activity_user_time', 'user_id', 'created_at'),
@@ -2277,6 +2378,8 @@ class StudyTopicContent(db.Model):
     tips = db.Column(db.JSON)
     exercises = db.Column(db.JSON)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<StudyTopicContent {self.slug}>'
@@ -2299,6 +2402,8 @@ class GrammarTopicContent(db.Model):
     tips = db.Column(db.JSON)
     common_mistakes = db.Column(db.JSON)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<GrammarTopicContent {self.slug}>'
@@ -2312,6 +2417,8 @@ class SentencePatternContent(db.Model):
     topic_name = db.Column(db.String(100), nullable=False, unique=True, index=True)
     patterns = db.Column(db.JSON, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<SentencePatternContent {self.topic_name}>'
@@ -2329,6 +2436,8 @@ class WritingErrorPattern(db.Model):
     level = db.Column(db.String(20))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<WritingErrorPattern {self.pattern_type}: {self.pattern[:30]}>'
@@ -2345,6 +2454,8 @@ class WritingTipContent(db.Model):
     tips = db.Column(db.JSON)
     examples = db.Column(db.JSON)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<WritingTipContent {self.error_type}>'
@@ -2358,6 +2469,8 @@ class ConceptSynonym(db.Model):
     concept_key = db.Column(db.String(100), nullable=False, unique=True, index=True)
     synonyms = db.Column(db.JSON, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<ConceptSynonym {self.concept_key}>'
@@ -2372,6 +2485,8 @@ class ErrorTipContent(db.Model):
     error_type = db.Column(db.String(50), nullable=False, index=True)
     tips = db.Column(db.JSON, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     __table_args__ = (
         db.UniqueConstraint('category', 'error_type', name='uq_category_error_type'),
@@ -2393,6 +2508,8 @@ class AchievementMilestone(db.Model):
     icon = db.Column(db.String(10))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __repr__(self):
         return f'<AchievementMilestone {self.name}>'

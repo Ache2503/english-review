@@ -185,7 +185,10 @@ async function endGame() {
     // Save score
     await fetch('/games/fill-gaps/submit', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
         body: JSON.stringify({
             score: score,
             level: level,

@@ -196,7 +196,8 @@ async function submitAnswers() {
         const response = await fetch(`{{ url_for('games.submit_reading_answers', reading_id=reading.id) }}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
             },
             body: JSON.stringify({
                 answers: answers,

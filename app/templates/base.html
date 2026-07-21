@@ -20,6 +20,9 @@
     <meta property="og:description" content="Plataforma interactiva para aprender inglés">
     <meta property="og:type" content="website">
     
+    <!-- CSRF Token for AJAX -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <!-- Title -->
     <title>{% block title %}English Learning Platform{% endblock %}</title>
     
@@ -147,24 +150,6 @@
         </div>
     </nav>
 
-    <!-- Mensajes Flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mt-3">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {% if category == 'success' %}<i class="fas fa-check-circle"></i>{% endif %}
-                        {% if category == 'danger' %}<i class="fas fa-exclamation-circle"></i>{% endif %}
-                        {% if category == 'warning' %}<i class="fas fa-exclamation-triangle"></i>{% endif %}
-                        {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
     <!-- Contenido Principal -->
     <main class="app-main">
         <div class="container">
@@ -217,7 +202,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             {% for category, message in messages %}
-            window.showToast('{{ message }}', '{{ category }}');
+            window.showToast('{{ message }}', '{{ 'danger' if category == 'error' else category }}');
             {% endfor %}
         });
     </script>

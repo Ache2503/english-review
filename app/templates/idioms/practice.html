@@ -217,7 +217,7 @@ function selectAnswer(selected, correct_answer, idiomId) {
     // Record progress
     fetch(`/idioms/quiz/${idiomId}`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content},
         body: JSON.stringify({correct: isCorrect})
     });
 }

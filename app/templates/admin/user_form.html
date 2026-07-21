@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ title }} - Admin{% endblock %}
+
+{% block admin_content %}
+<h4 class="fw-bold mb-4"><i class="fas fa-user-edit"></i> {{ title }}</h4>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="POST" action="{{ action }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" value="{{ user.username if user else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" value="{{ user.email if user else '' }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" class="form-control" name="full_name" value="{{ user.full_name if user and user.full_name else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Password {% if user %}<small class="text-muted">(dejar vacio para no cambiar)</small>{% endif %}</label>
+                    <input type="password" class="form-control" name="password" {% if not user %}required{% endif %} minlength="6">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Suscripcion</label>
+                    <select class="form-select" name="subscription_type">
+                        {% for st in ['free', 'premium_all_access', 'kids_pass'] %}
+                        <option value="{{ st }}" {% if user and user.subscription_type == st %}selected{% endif %}>{{ st }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if not user %}
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin">
+                        <label class="form-check-label" for="is_admin">Es administrador</label>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                <a href="{{ url_for('admin.users_list') }}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

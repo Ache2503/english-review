@@ -4,7 +4,6 @@ from app.models import Badge, User
 
 badges_bp = Blueprint('badges', __name__, url_prefix='/badges')
 
-
 @badges_bp.route('/my-badges')
 @login_required
 def my_badges():

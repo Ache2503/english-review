@@ -100,7 +100,8 @@ function nextStep(step) {
 
 function completeOnboarding() {
     fetch('/profile/complete-onboarding', {
-        method: 'POST'
+        method: 'POST',
+        headers: {'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content}
     }).then(() => {
         window.location.href = '{{ url_for("dashboard.index") }}';
     });

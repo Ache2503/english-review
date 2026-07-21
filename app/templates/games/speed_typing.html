@@ -292,7 +292,8 @@ async function submitPhrase() {
         const response = await fetch('/games/speed-typing/submit-answer', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
             },
             body: JSON.stringify({
                 typing_id: phrase.id,

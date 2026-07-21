@@ -294,7 +294,7 @@ function selectAnswer(selected, correctAnswer, pv) {
     // Record progress
     fetch(`/idioms/phrasal-verbs/quiz/${pv.id}`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content},
         body: JSON.stringify({correct: isCorrect})
     });
 }

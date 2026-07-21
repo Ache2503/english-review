@@ -1,10 +1,10 @@
 import os
 import re
-from flask import Flask
+from flask import Flask, render_template
 from markupsafe import Markup
 from flask_caching import Cache
 from config import config
-from app.extensions import db, login_manager, init_app
+from app.extensions import db, login_manager, csrf, init_app
 from app.models import User
 from dotenv import load_dotenv
 from app.routes.conversation import conversation_bp
@@ -38,12 +38,14 @@ def create_app(config_name='development'):
     app.config.from_object(config[config_name])
 
     # Sobrescribir la URI de la base de datos con la variable de entorno si existe.
-    db_url = os.environ.get('DATABASE_URL')
-    if db_url:
-        db_url = db_url.strip()
-        if db_url.startswith('postgres://'):
-            db_url = db_url.replace('postgres://', 'postgresql://', 1)
-        app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+    # Skip in testing mode to preserve SQLite in-memory from TestingConfig.
+    if config_name != 'testing':
+        db_url = os.environ.get('DATABASE_URL')
+        if db_url:
+            db_url = db_url.strip()
+            if db_url.startswith('postgres://'):
+                db_url = db_url.replace('postgres://', 'postgresql://', 1)
+            app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 
     # Cargar configuraciones adicionales desde variables de entorno
     # para Flask-Mail
@@ -62,6 +64,20 @@ def create_app(config_name='development'):
     # Registrar filtros personalizados de Jinja2
     app.jinja_env.filters['md'] = markdown_to_html
     app.jinja_env.filters['markdown'] = markdown_to_html
+    
+    def _build_query(**kwargs):
+        """Build query string preserving existing args, overriding specified ones."""
+        from flask import request
+        args = request.args.to_dict()
+        for k, v in kwargs.items():
+            if v is None:
+                args.pop(k, None)
+            else:
+                args[k] = v
+        from urllib.parse import urlencode
+        return urlencode(args)
+    
+    app.jinja_env.globals['_build_query'] = _build_query
     
     # Inicializar extensiones
     init_app(app)
@@ -144,20 +160,17 @@ def create_app(config_name='development'):
     app.register_blueprint(profile_bp)
     app.register_blueprint(admin_bp)
     
+    # Exempt admin blueprint from CSRF (forms don't have CSRF tokens yet)
+    csrf.exempt(admin_bp)
+    
     # Error handlers
     @app.errorhandler(404)
     def not_found(error):
-        return {
-            'error': 'No encontrado',
-            'message': 'La página que buscas no existe'
-        }, 404
+        return render_template('404.html'), 404
     
     @app.errorhandler(500)
     def server_error(error):
         db.session.rollback()
-        return {
-            'error': 'Error del servidor',
-            'message': 'Algo salió mal en nuestro servidor'
-        }, 500
+        return render_template('500.html'), 500
     
     return app

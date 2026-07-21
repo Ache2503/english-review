@@ -204,7 +204,8 @@ function rateCard(quality) {
         method: 'POST',
         body: formData,
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
         }
     }).then(response => response.json()).then(data => {
         console.log('Review saved:', data);

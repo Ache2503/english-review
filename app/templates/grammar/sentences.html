@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       fetch('/grammar/submit-sentence', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content},
         body: JSON.stringify({
           topic: '{{ topic_key }}',
           sentence: sentence,
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const sentenceId = this.dataset.id;
       const countSpan = this.querySelector('.likes-count');
       
-      fetch(`/grammar/like-sentence/${sentenceId}`, {method: 'POST'})
+      fetch(`/grammar/like-sentence/${sentenceId}`, {method: 'POST', headers: {'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content}})
         .then(r => r.json())
         .then(data => {
           if (data.success) {

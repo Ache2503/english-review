@@ -243,7 +243,8 @@ async function saveScore(won) {
         const response = await fetch('/games/hangman/submit', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
             },
             body: JSON.stringify({
                 score: guessedLetters.filter(l => word.includes(l)).length * 10,

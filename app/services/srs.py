@@ -261,7 +261,9 @@ def review_flashcard_srs(user_id: int, flashcard_id: int, quality: int) -> Dict:
             flashcard_id=flashcard_id,
             ease_factor=2.5,
             interval=1,
-            repetitions=0
+            repetitions=0,
+            total_reviews=0,
+            correct_reviews=0
         )
         db.session.add(srs)
     
